@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.4.3</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>com.jcondotta</groupId>
+	<artifactId>bank-accounts-system</artifactId>
+	<version>1.0.0</version>
+
+	<packaging>pom</packaging>
+	<name>bank-accounts-system</name>
+
+	<modules>
+		<module>bank-accounts-domain</module>
+		<module>bank-accounts-application</module>
+	</modules>
+
+	<properties>
+		<java.version>21</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<lombok.version>1.18.38</lombok.version>
+		<mapstruct.version>1.6.3</mapstruct.version>
+
+		<software.amazon.awssdk.version>2.33.4</software.amazon.awssdk.version>
+		<spring-cloud-aws.version>3.4.0</spring-cloud-aws.version>
+		<spring-cloud-dependencies.version>2024.0.1</spring-cloud-dependencies.version>
+
+		<micrometer.version>1.15.5</micrometer.version>
+
+		<commons-validator.version>1.7</commons-validator.version>
+		<commons-lang3.version>3.14.0</commons-lang3.version>
+
+		<testcontainers.version>1.21.1</testcontainers.version>
+		<testcontainers-redis.version>1.6.4</testcontainers-redis.version>
+		<rest-assured.version>5.5.1</rest-assured.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.jcondotta</groupId>
+				<artifactId>bank-accounts-domain</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.jcondotta</groupId>
+				<artifactId>bank-accounts-application</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>${software.amazon.awssdk.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud-dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>io.awspring.cloud</groupId>
+				<artifactId>spring-cloud-aws</artifactId>
+				<version>${spring-cloud-aws.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>io.micrometer</groupId>
+				<artifactId>micrometer-bom</artifactId>
+				<version>${micrometer.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mapstruct</groupId>
+				<artifactId>mapstruct</artifactId>
+				<version>${mapstruct.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-validator</groupId>
+				<artifactId>commons-validator</artifactId>
+				<version>${commons-validator.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.rest-assured</groupId>
+				<artifactId>rest-assured</artifactId>
+				<version>${rest-assured.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>${testcontainers.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>localstack</artifactId>
+				<version>${testcontainers.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>com.redis.testcontainers</groupId>
+				<artifactId>testcontainers-redis</artifactId>
+				<version>${testcontainers-redis.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+<!--	<dependencies>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter</artifactId>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-test</artifactId>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+<!--	</dependencies>-->
+
+<!--	<build>-->
+<!--		<plugins>-->
+<!--			<plugin>-->
+<!--				<groupId>org.springframework.boot</groupId>-->
+<!--				<artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--			</plugin>-->
+<!--		</plugins>-->
+<!--	</build>-->
+
+</project>
