@@ -16,8 +16,7 @@ import java.util.Objects;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AddJointAccountHolderUseCaseImpl
-  implements AddJointAccountHolderUseCase {
+public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUseCase {
 
   private final BankAccountLookupRepository bankAccountLookupRepository;
   private final BankAccountUpdateRepository bankAccountUpdateRepository;
