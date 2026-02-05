@@ -2,7 +2,6 @@ package com.jcondotta.bankaccounts.domain.value_objects;
 
 import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public record BankAccountId(UUID value) {

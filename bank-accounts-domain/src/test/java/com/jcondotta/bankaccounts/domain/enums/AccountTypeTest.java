@@ -1,6 +1,7 @@
 package com.jcondotta.bankaccounts.domain.enums;
 
 import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AccountTypeTest {
