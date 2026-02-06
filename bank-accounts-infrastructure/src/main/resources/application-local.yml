@@ -1,0 +1,15 @@
+app:
+  environment: ${APPLICATION_ENV:local}
+
+cloud:
+  aws:
+    region:
+      static: ${AWS_DEFAULT_REGION:us-east-1}
+    credentials:
+      access-key-id: ${AWS_ACCESS_KEY_ID:test}
+      secret-key: ${AWS_SECRET_ACCESS_KEY:test}
+    dynamodb:
+      endpoint: ${AWS_DYNAMODB_ENDPOINT:http://127.0.0.1:4576}
+      tables:
+        bank-accounts:
+          table-name: ${AWS_DYNAMODB_BANK_ACCOUNTS_TABLE_NAME:bank-accounts}

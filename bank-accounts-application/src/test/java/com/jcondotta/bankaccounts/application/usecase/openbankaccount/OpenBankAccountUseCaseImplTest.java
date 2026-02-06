@@ -9,7 +9,10 @@ import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.Open
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.value_objects.*;
+import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
+import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
+import com.jcondotta.bankaccounts.domain.value_objects.Iban;
+import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -6,8 +6,6 @@ import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
 import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
 import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
 
-import java.util.Objects;
-
 import static java.util.Objects.requireNonNull;
 
 public record OpenBankAccountCommand(
