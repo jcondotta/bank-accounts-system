@@ -40,6 +40,20 @@
 		<testcontainers.version>1.21.1</testcontainers.version>
 		<testcontainers-redis.version>1.6.4</testcontainers-redis.version>
 		<rest-assured.version>5.5.1</rest-assured.version>
+
+		<jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+
+		<sonar.projectKey>jcondotta_bank-accounts-system</sonar.projectKey>
+		<sonar.organization>jcondotta</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+		<sonar.coverage.jacoco.xmlReportPaths>
+			${project.basedir}/target/site/jacoco/jacoco.xml
+		</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.coverage.exclusions>
+			**/*Application.java,
+			**/config/**
+		</sonar.coverage.exclusions>
 	</properties>
 
 	<dependencyManagement>
@@ -163,5 +177,27 @@
 <!--			</plugin>-->
 <!--		</plugins>-->
 <!--	</build>-->
+
+	<build>
+		<pluginManagement>
+			<plugins></plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
