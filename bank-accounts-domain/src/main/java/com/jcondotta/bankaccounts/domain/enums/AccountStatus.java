@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.domain.enums;
 
 public enum AccountStatus {
-  PENDING, ACTIVE, CANCELLED, BLOCKED;
+  PENDING, ACTIVE, BLOCKED;
 
   public boolean isPending() {
     return this == PENDING;
@@ -9,10 +9,6 @@ public enum AccountStatus {
 
   public boolean isActive() {
     return this == ACTIVE;
-  }
-
-  public boolean isCancelled() {
-    return this == CANCELLED;
   }
 
   public boolean isBlocked() {

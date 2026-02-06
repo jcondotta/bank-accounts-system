@@ -83,6 +83,21 @@ public final class BankAccount {
     this.status = AccountStatus.ACTIVE;
   }
 
+  public void block() {
+    if (status == AccountStatus.BLOCKED) {
+      return;
+    }
+
+    if (status != AccountStatus.ACTIVE) {
+      throw new InvalidBankAccountStateTransitionException(
+        status,
+        AccountStatus.BLOCKED
+      );
+    }
+
+    this.status = AccountStatus.BLOCKED;
+  }
+
   public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, ZonedDateTime createdAt) {
     if (!status.isActive()) {
       throw new BankAccountNotActiveException(status);

@@ -112,13 +112,13 @@ class BankAccountTest {
   }
 
   @Test
-  void shouldNotThrow_whenActivateIsCalledTwice() {
+  void shouldNotThrowAnyException_whenActivateIsCalledTwice() {
     var bankAccount = openValidBankAccount(AccountType.CHECKING, Currency.USD);
 
     bankAccount.activate();
     bankAccount.activate();
 
-    assertThat(bankAccount.getStatus()).isEqualTo(AccountStatus.ACTIVE);
+    assertThat(bankAccount.getStatus().isActive()).isTrue();
   }
 
   @ParameterizedTest
@@ -128,6 +128,36 @@ class BankAccountTest {
     ReflectionTestUtils.setField(bankAccount, "status", status);
 
     assertThatThrownBy(bankAccount::activate)
+      .isInstanceOf(InvalidBankAccountStateTransitionException.class);
+  }
+
+  @Test
+  void shouldBlockBankAccount_whenStatusIsActive() {
+    var bankAccount = openValidBankAccount(AccountType.CHECKING, Currency.USD);
+    bankAccount.activate();
+
+    bankAccount.block();
+    assertThat(bankAccount.getStatus().isBlocked()).isTrue();
+  }
+
+  @Test
+  void shouldNotThrowAnyException_whenBlockIsCalledTwice() {
+    var bankAccount = openValidBankAccount(AccountType.CHECKING, Currency.USD);
+    bankAccount.activate();
+
+    bankAccount.block();
+    bankAccount.block();
+
+    assertThat(bankAccount.getStatus().isBlocked()).isTrue();
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = AccountStatus.class, names = { "BLOCKED", "ACTIVE" }, mode = EnumSource.Mode.EXCLUDE)
+  void shouldThrowInvalidBankAccountStateTransitionException_whenBlockingFromInvalidState(AccountStatus status) {
+    var bankAccount = openValidBankAccount(AccountType.CHECKING, Currency.USD);
+    ReflectionTestUtils.setField(bankAccount, "status", status);
+
+    assertThatThrownBy(bankAccount::block)
       .isInstanceOf(InvalidBankAccountStateTransitionException.class);
   }
 
