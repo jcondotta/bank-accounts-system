@@ -11,5 +11,5 @@ cloud:
     dynamodb:
       endpoint: ${AWS_DYNAMODB_ENDPOINT:http://127.0.0.1:4576}
       tables:
-        bank-accounts:
-          table-name: ${AWS_DYNAMODB_BANK_ACCOUNTS_TABLE_NAME:bank-accounts}
+        banking-entities:
+          table-name: ${AWS_DYNAMODB_BANKING_ENTITIES_TABLE_NAME:banking-entities}
