@@ -1,0 +1,31 @@
+services:
+
+  localstack:
+    container_name: "bank-accounts-localstack-4.6.0"
+    image: localstack/localstack:4.6.0
+    ports:
+      - '127.0.0.1:4567:4566'
+    environment:
+      SERVICES: dynamodb
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
+      LS_LOG: ${LS_LOG:-debug}v
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4566/_localstack/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bank_accounts_network
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - ./localstack:/etc/localstack/init/ready.d
+      - bank_accounts_localstack:/var/lib/localstack
+
+volumes:
+  bank_accounts_localstack:
+    name: bank-accounts-localstack-data
+networks:
+  bank_accounts_network:
+    name: bank-accounts-network

@@ -4,11 +4,14 @@ import com.jcondotta.bankaccounts.application.argument_provider.AccountTypeAndCu
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.ports.output.IbanGenerator;
-import com.jcondotta.bankaccounts.application.ports.output.repository.openbankaccount.OpenBankAccountRepository;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.openbankaccount.OpenBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.OpenBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
+import com.jcondotta.bankaccounts.domain.events.BankAccountOpenedEvent;
+import com.jcondotta.bankaccounts.domain.events.DomainEvent;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
 import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
 import com.jcondotta.bankaccounts.domain.value_objects.Iban;
@@ -19,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -47,11 +51,25 @@ class OpenBankAccountUseCaseImplTest {
   @Mock
   private IbanGenerator ibanGenerator;
 
+  @Mock
+  private DomainEventPublisher domainEventPublisher;
+
+  @Captor
+  private ArgumentCaptor<DomainEvent> eventArgumentCaptor;
+
+  @Captor
+  private ArgumentCaptor<BankAccount> bankAccountCaptor;
+
   private OpenBankAccountUseCase useCase;
 
   @BeforeEach
   void setUp() {
-    useCase = new OpenBankAccountUseCaseImpl(openBankAccountRepository, ibanGenerator, FIXED_CLOCK);
+    useCase = new OpenBankAccountUseCaseImpl(
+      openBankAccountRepository,
+      ibanGenerator,
+      domainEventPublisher,
+      FIXED_CLOCK
+    );
   }
 
   @ParameterizedTest
@@ -60,15 +78,14 @@ class OpenBankAccountUseCaseImplTest {
     when(ibanGenerator.generate(accountType, currency))
       .thenReturn(GENERATED_IBAN);
 
-    var command = OpenBankAccountCommand.of(ACCOUNT_HOLDER_NAME, PASSPORT_NUMBER, DATE_OF_BIRTH, accountType, currency);
+    var command = new OpenBankAccountCommand(ACCOUNT_HOLDER_NAME, PASSPORT_NUMBER, DATE_OF_BIRTH, accountType, currency);
 
     useCase.execute(command);
 
-    ArgumentCaptor<BankAccount> bankAccountCaptor = ArgumentCaptor.forClass(BankAccount.class);
-
     verify(ibanGenerator).generate(accountType, currency);
-    verify(openBankAccountRepository).save(bankAccountCaptor.capture());
-    verifyNoMoreInteractions(ibanGenerator, openBankAccountRepository);
+    verify(openBankAccountRepository).create(bankAccountCaptor.capture());
+    verify(domainEventPublisher).publish(eventArgumentCaptor.capture());
+    verifyNoMoreInteractions(ibanGenerator, openBankAccountRepository, domainEventPublisher);
 
     assertThat(bankAccountCaptor.getValue())
       .satisfies(bankAccount -> {
@@ -89,6 +106,20 @@ class OpenBankAccountUseCaseImplTest {
             assertThat(accountHolder.isPrimaryAccountHolder()).isTrue();
             assertThat(accountHolder.getCreatedAt()).isEqualTo(CREATED_AT);
           });
+
+        assertThat(eventArgumentCaptor.getAllValues())
+          .hasSize(1)
+          .singleElement()
+          .isInstanceOfSatisfying(BankAccountOpenedEvent.class, event -> {
+              assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
+              assertThat(event.accountType()).isEqualTo(accountType);
+              assertThat(event.currency()).isEqualTo(currency);
+              assertThat(event.iban()).isEqualTo(GENERATED_IBAN);
+              assertThat(event.status()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
+              assertThat(event.primaryAccountHolderId()).isNotNull();
+              assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
+            }
+          );
       });
   }
 
@@ -98,6 +129,6 @@ class OpenBankAccountUseCaseImplTest {
       .isInstanceOf(NullPointerException.class)
       .hasMessage("command must not be null");
 
-    verifyNoInteractions(openBankAccountRepository, ibanGenerator);
+    verifyNoInteractions(openBankAccountRepository, ibanGenerator, domainEventPublisher);
   }
 }

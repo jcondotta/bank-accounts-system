@@ -20,10 +20,6 @@ public record AddJointAccountHolderCommand(
     Objects.requireNonNull(passportNumber, "passportNumber must not be null");
     Objects.requireNonNull(dateOfBirth, "dateOfBirth must not be null");
   }
-
-  public static AddJointAccountHolderCommand of(BankAccountId bankAccountId, AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth) {
-    return new AddJointAccountHolderCommand(bankAccountId, accountHolderName, passportNumber, dateOfBirth);
-  }
 }
 
 

@@ -1,7 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.openbankaccount;
 
 import com.jcondotta.bankaccounts.application.ports.output.IbanGenerator;
-import com.jcondotta.bankaccounts.application.ports.output.repository.openbankaccount.OpenBankAccountRepository;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.openbankaccount.OpenBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.OpenBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import io.micrometer.observation.annotation.Observed;
@@ -20,6 +21,7 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
 
   private final OpenBankAccountRepository openBankAccountRepository;
   private final IbanGenerator ibanGenerator;
+  private final DomainEventPublisher domainEventPublisher;
   private final Clock clock;
 
   @Override
@@ -51,10 +53,14 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
       ZonedDateTime.now(clock)
     );
 
-    openBankAccountRepository.save(bankAccount);
+    openBankAccountRepository.create(bankAccount);
+
+    bankAccount
+      .pullDomainEvents()
+      .forEach(domainEventPublisher::publish);
 
     log.info(
-      "Bank account opened successfully [bankAccountId={}]", bankAccount.getBankAccountId()
+      "Bank account opened successfully [bankAccountId={}]", bankAccount.getBankAccountId().value()
     );
   }
 }

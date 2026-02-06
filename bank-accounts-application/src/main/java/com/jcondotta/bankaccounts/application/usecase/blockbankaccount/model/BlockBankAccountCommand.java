@@ -9,8 +9,4 @@ public record BlockBankAccountCommand(BankAccountId bankAccountId) {
   public BlockBankAccountCommand {
     Objects.requireNonNull(bankAccountId, "bankAccountId must not be null");
   }
-
-  public static BlockBankAccountCommand of(BankAccountId bankAccountId) {
-    return new BlockBankAccountCommand(bankAccountId);
-  }
 }

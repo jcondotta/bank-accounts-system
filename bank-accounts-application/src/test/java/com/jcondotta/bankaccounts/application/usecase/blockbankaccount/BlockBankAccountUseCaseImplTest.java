@@ -1,17 +1,22 @@
 package com.jcondotta.bankaccounts.application.usecase.blockbankaccount;
 
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
-import com.jcondotta.bankaccounts.application.ports.output.repository.lookupbankaccount.BankAccountLookupRepository;
-import com.jcondotta.bankaccounts.application.ports.output.repository.updatebankaccount.BankAccountUpdateRepository;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.lookupbankaccount.BankAccountLookupRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.updatebankaccount.BankAccountUpdateRepository;
 import com.jcondotta.bankaccounts.application.usecase.blockbankaccount.model.BlockBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
+import com.jcondotta.bankaccounts.domain.events.BankAccountBlockedEvent;
+import com.jcondotta.bankaccounts.domain.events.DomainEvent;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import com.jcondotta.bankaccounts.domain.value_objects.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,6 +25,7 @@ import java.time.Month;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -41,11 +47,21 @@ class BlockBankAccountUseCaseImplTest {
   @Mock
   private BankAccountUpdateRepository bankAccountUpdateRepository;
 
+  @Mock
+  private DomainEventPublisher domainEventPublisher;
+
+  @Captor
+  private ArgumentCaptor<DomainEvent> eventArgumentCaptor;
+
   private BlockBankAccountUseCase useCase;
 
   @BeforeEach
   void setUp() {
-    useCase = new BlockBankAccountUseCaseImpl(bankAccountLookupRepository, bankAccountUpdateRepository);
+    useCase = new BlockBankAccountUseCaseImpl(
+      bankAccountLookupRepository,
+      bankAccountUpdateRepository,
+      domainEventPublisher
+    );
   }
 
   @Test
@@ -60,30 +76,41 @@ class BlockBankAccountUseCaseImplTest {
       CREATED_AT);
 
     bankAccount.activate();
+    bankAccount.pullDomainEvents();
 
     bankAccount.block();
 
     when(bankAccountLookupRepository.byId(BANK_ACCOUNT_ID))
       .thenReturn(Optional.of(bankAccount));
 
-    var command = BlockBankAccountCommand.of(BANK_ACCOUNT_ID);
+    var command = new BlockBankAccountCommand(BANK_ACCOUNT_ID);
     useCase.execute(command);
 
     verify(bankAccountUpdateRepository).save(bankAccount);
+    verify(domainEventPublisher).publish(eventArgumentCaptor.capture());
     verifyNoMoreInteractions(bankAccountLookupRepository, bankAccountUpdateRepository);
+
+    assertThat(eventArgumentCaptor.getAllValues())
+      .hasSize(1)
+      .singleElement()
+      .isInstanceOfSatisfying(BankAccountBlockedEvent.class, event -> {
+          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
+          assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
+        }
+      );
   }
 
   @Test
   void shouldThrowAccountRecipientNotFoundException_whenRecipientDoesNotExist() {
     when(bankAccountLookupRepository.byId(BANK_ACCOUNT_ID)).thenReturn(Optional.empty());
 
-    var command = BlockBankAccountCommand.of(BANK_ACCOUNT_ID);
+    var command = new BlockBankAccountCommand(BANK_ACCOUNT_ID);
 
     assertThatThrownBy(() -> useCase.execute(command))
       .isInstanceOf(BankAccountNotFoundException.class);
 
     verify(bankAccountLookupRepository).byId(BANK_ACCOUNT_ID);
-    verifyNoInteractions(bankAccountUpdateRepository);
+    verifyNoInteractions(bankAccountUpdateRepository, domainEventPublisher);
     verifyNoMoreInteractions(bankAccountLookupRepository);
   }
 
@@ -93,6 +120,6 @@ class BlockBankAccountUseCaseImplTest {
       .isInstanceOf(NullPointerException.class)
       .hasMessage("command must not be null");
 
-    verifyNoInteractions(bankAccountLookupRepository, bankAccountUpdateRepository);
+    verifyNoInteractions(bankAccountLookupRepository, bankAccountUpdateRepository, domainEventPublisher);
   }
 }

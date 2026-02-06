@@ -118,7 +118,7 @@ public class BankingEntity {
     }
 
     @DynamoDbAttribute("createdAtZone")
-    public ZoneId getCreatedAtZoneId() {
+    public ZoneId getCreatedAtZone() {
         return createdAtZone;
     }
 

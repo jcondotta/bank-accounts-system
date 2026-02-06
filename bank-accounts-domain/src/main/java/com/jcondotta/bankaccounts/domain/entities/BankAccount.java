@@ -1,8 +1,10 @@
 package com.jcondotta.bankaccounts.domain.entities;
 
+import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
+import com.jcondotta.bankaccounts.domain.events.*;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotActiveException;
 import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountStateTransitionException;
 import com.jcondotta.bankaccounts.domain.exceptions.MaxJointAccountHoldersExceededException;
@@ -28,6 +30,8 @@ public final class BankAccount {
   private final Iban iban;
   private final ZonedDateTime createdAt;
   private final List<AccountHolder> accountHolders;
+
+  private final List<DomainEvent> domainEvents = new ArrayList<>();
 
   private AccountStatus status;
 
@@ -60,7 +64,7 @@ public final class BankAccount {
   ) {
     var primaryHolder = AccountHolder.createPrimary(name, passportNumber, dateOfBirth, createdAt);
 
-    return new BankAccount(
+    var bankAccount = new BankAccount(
       BankAccountId.newId(),
       accountType,
       currency,
@@ -69,6 +73,51 @@ public final class BankAccount {
       createdAt,
       List.of(primaryHolder)
     );
+
+    bankAccount.registerEvent(
+      new BankAccountOpenedEvent(
+        bankAccount.getBankAccountId(),
+        bankAccount.getAccountType(),
+        bankAccount.getCurrency(),
+        bankAccount.getIban(),
+        bankAccount.getStatus(),
+        primaryHolder.getAccountHolderId(),
+        createdAt
+      )
+    );
+
+    return bankAccount;
+  }
+
+  public static BankAccount restore(
+    BankAccountId bankAccountId,
+    AccountType accountType,
+    Currency currency,
+    Iban iban,
+    AccountStatus status,
+    ZonedDateTime createdAt,
+    List<AccountHolder> accountHolders
+  ) {
+    return new BankAccount(
+      bankAccountId,
+      accountType,
+      currency,
+      iban,
+      status,
+      createdAt,
+      accountHolders
+    );
+  }
+
+  public static AccountHolder restoreAccountHolder(
+    AccountHolderId accountHolderId,
+    AccountHolderName accountHolderName,
+    PassportNumber passportNumber,
+    DateOfBirth dateOfBirth,
+    AccountHolderType accountHolderType,
+    ZonedDateTime createdAt
+  ) {
+    return AccountHolder.restore(accountHolderId, accountHolderName, passportNumber, dateOfBirth, accountHolderType, createdAt);
   }
 
   public void activate() {
@@ -81,6 +130,7 @@ public final class BankAccount {
     }
 
     this.status = AccountStatus.ACTIVE;
+    registerEvent(new BankAccountActivatedEvent(this.getBankAccountId(), createdAt));
   }
 
   public void block() {
@@ -96,6 +146,7 @@ public final class BankAccount {
     }
 
     this.status = AccountStatus.BLOCKED;
+    registerEvent(new BankAccountBlockedEvent(this.getBankAccountId(), createdAt));
   }
 
   public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, ZonedDateTime createdAt) {
@@ -113,6 +164,17 @@ public final class BankAccount {
 
     var accountHolder = AccountHolder.createJoint(name, passportNumber, dateOfBirth, createdAt);
     accountHolders.add(accountHolder);
+
+    this.registerEvent(
+      new JointAccountHolderAddedEvent(
+        this.getBankAccountId(),
+        accountHolder.getAccountHolderId(),
+        accountHolder.getAccountHolderName(),
+        accountHolder.getPassportNumber(),
+        accountHolder.getDateOfBirth(),
+        accountHolder.getCreatedAt()
+      )
+    );
   }
 
   public Optional<AccountHolder> findAccountHolder(AccountHolderId accountHolderId) {
@@ -132,6 +194,16 @@ public final class BankAccount {
     return accountHolders.stream()
       .filter(AccountHolder::isJointAccountHolder)
       .toList();
+  }
+
+  public void registerEvent(DomainEvent event) {
+    domainEvents.add(event);
+  }
+
+  public List<DomainEvent> pullDomainEvents() {
+    var events = List.copyOf(domainEvents);
+    domainEvents.clear();
+    return events;
   }
 
   public BankAccountId getBankAccountId() {

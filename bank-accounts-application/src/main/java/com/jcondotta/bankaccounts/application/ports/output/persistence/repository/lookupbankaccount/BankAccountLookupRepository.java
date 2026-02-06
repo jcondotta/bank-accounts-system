@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.application.ports.output.repository.lookupbankaccount;
+package com.jcondotta.bankaccounts.application.ports.output.persistence.repository.lookupbankaccount;
 
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;

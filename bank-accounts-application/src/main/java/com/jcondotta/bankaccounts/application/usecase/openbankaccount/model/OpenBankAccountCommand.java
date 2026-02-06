@@ -23,13 +23,4 @@ public record OpenBankAccountCommand(
     requireNonNull(accountType, "accountType must not be null");
     requireNonNull(currency, "currency must not be null");
   }
-
-  public static OpenBankAccountCommand of(
-    AccountHolderName accountHolderName,
-    PassportNumber passportNumber,
-    DateOfBirth dateOfBirth,
-    AccountType accountType,
-    Currency currency) {
-    return new OpenBankAccountCommand(accountHolderName, passportNumber, dateOfBirth, accountType, currency);
-  }
 }

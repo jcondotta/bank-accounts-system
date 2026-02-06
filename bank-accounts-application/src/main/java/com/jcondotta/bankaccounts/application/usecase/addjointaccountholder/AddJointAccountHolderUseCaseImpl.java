@@ -1,7 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.addjointaccountholder;
 
-import com.jcondotta.bankaccounts.application.ports.output.repository.lookupbankaccount.BankAccountLookupRepository;
-import com.jcondotta.bankaccounts.application.ports.output.repository.updatebankaccount.BankAccountUpdateRepository;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.lookupbankaccount.BankAccountLookupRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.updatebankaccount.BankAccountUpdateRepository;
 import com.jcondotta.bankaccounts.application.usecase.addjointaccountholder.model.AddJointAccountHolderCommand;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import io.micrometer.observation.annotation.Observed;
@@ -20,6 +21,7 @@ public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUs
 
   private final BankAccountLookupRepository bankAccountLookupRepository;
   private final BankAccountUpdateRepository bankAccountUpdateRepository;
+  private final DomainEventPublisher domainEventPublisher;
   private final Clock clock;
 
   @Override
@@ -52,6 +54,10 @@ public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUs
     );
 
     bankAccountUpdateRepository.save(bankAccount);
+
+    bankAccount
+      .pullDomainEvents()
+      .forEach(domainEventPublisher::publish);
 
     log.info(
       "Joint account holder added successfully [bankAccountId={}]", bankAccount.getBankAccountId()

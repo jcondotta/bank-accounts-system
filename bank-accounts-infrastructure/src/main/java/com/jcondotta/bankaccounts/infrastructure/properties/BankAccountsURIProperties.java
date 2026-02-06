@@ -12,7 +12,7 @@ import java.util.UUID;
 public record BankAccountsURIProperties(@NotBlank String rootPath, @NotBlank String bankAccountIdPath) {
 
   public URI bankAccountURI(UUID bankAccountId) {
-    var expanded = rootPath.replace("{bank-account-id}", bankAccountId.toString());
+    var expanded = bankAccountIdPath.replace("{bank-account-id}", bankAccountId.toString());
     return URI.create(expanded);
   }
 }

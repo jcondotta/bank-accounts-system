@@ -9,7 +9,7 @@ cloud:
       access-key-id: ${AWS_ACCESS_KEY_ID:test}
       secret-key: ${AWS_SECRET_ACCESS_KEY:test}
     dynamodb:
-      endpoint: ${AWS_DYNAMODB_ENDPOINT:http://127.0.0.1:4576}
+      endpoint: ${AWS_DYNAMODB_ENDPOINT:http://127.0.0.1:4567}
       tables:
         banking-entities:
           table-name: ${AWS_DYNAMODB_BANKING_ENTITIES_TABLE_NAME:banking-entities}

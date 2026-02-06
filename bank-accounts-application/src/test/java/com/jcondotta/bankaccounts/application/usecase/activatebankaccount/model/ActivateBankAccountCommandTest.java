@@ -12,7 +12,7 @@ class ActivateBankAccountCommandTest {
   void shouldCreateCommand_whenBankAccountIdIsProvided() {
     var bankAccountId = BankAccountId.newId();
 
-    var command = ActivateBankAccountCommand.of(bankAccountId);
+    var command = new ActivateBankAccountCommand(bankAccountId);
 
     assertThat(command.bankAccountId())
       .isEqualTo(bankAccountId);

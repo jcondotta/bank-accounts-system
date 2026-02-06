@@ -1,7 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.blockbankaccount;
 
-import com.jcondotta.bankaccounts.application.ports.output.repository.lookupbankaccount.BankAccountLookupRepository;
-import com.jcondotta.bankaccounts.application.ports.output.repository.updatebankaccount.BankAccountUpdateRepository;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.lookupbankaccount.BankAccountLookupRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.updatebankaccount.BankAccountUpdateRepository;
 import com.jcondotta.bankaccounts.application.usecase.blockbankaccount.model.BlockBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import io.micrometer.observation.annotation.Observed;
@@ -18,6 +19,7 @@ public class BlockBankAccountUseCaseImpl implements BlockBankAccountUseCase {
 
   private final BankAccountLookupRepository bankAccountLookupRepository;
   private final BankAccountUpdateRepository bankAccountUpdateRepository;
+  private final DomainEventPublisher domainEventPublisher;
 
   @Override
   @Observed(
@@ -42,6 +44,10 @@ public class BlockBankAccountUseCaseImpl implements BlockBankAccountUseCase {
     bankAccount.block();
 
     bankAccountUpdateRepository.save(bankAccount);
+
+    bankAccount
+      .pullDomainEvents()
+      .forEach(domainEventPublisher::publish);
 
     log.info(
       "Bank account blocked successfully [bankAccountId={}]", bankAccount.getBankAccountId().value()

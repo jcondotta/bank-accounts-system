@@ -12,7 +12,7 @@ class BlockBankAccountCommandTest {
   void shouldCreateCommand_whenBankAccountIdIsProvided() {
     var bankAccountId = BankAccountId.newId();
 
-    var command = BlockBankAccountCommand.of(bankAccountId);
+    var command = new BlockBankAccountCommand(bankAccountId);
 
     assertThat(command.bankAccountId())
       .isEqualTo(bankAccountId);

@@ -1,9 +1,14 @@
 package com.jcondotta.bankaccounts.domain.entities;
 
 import com.jcondotta.bankaccounts.domain.arguments_provider.AccountTypeAndCurrencyArgumentsProvider;
+import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
+import com.jcondotta.bankaccounts.domain.events.BankAccountActivatedEvent;
+import com.jcondotta.bankaccounts.domain.events.BankAccountBlockedEvent;
+import com.jcondotta.bankaccounts.domain.events.BankAccountOpenedEvent;
+import com.jcondotta.bankaccounts.domain.events.JointAccountHolderAddedEvent;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotActiveException;
 import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountStateTransitionException;
 import com.jcondotta.bankaccounts.domain.exceptions.MaxJointAccountHoldersExceededException;
@@ -17,6 +22,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -58,29 +64,145 @@ class BankAccountTest {
             assertThat(accountHolder.isPrimaryAccountHolder()).isTrue();
             assertThat(accountHolder.getCreatedAt()).isEqualTo(CREATED_AT);
           });
+
+       var events = bankAccount.pullDomainEvents();
+
+        assertThat(events)
+          .hasSize(1)
+          .singleElement()
+          .isInstanceOfSatisfying(BankAccountOpenedEvent.class, event -> {
+              assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
+              assertThat(event.accountType()).isEqualTo(accountType);
+              assertThat(event.currency()).isEqualTo(currency);
+              assertThat(event.iban()).isEqualTo(VALID_IBAN);
+              assertThat(event.status()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
+              assertThat(event.primaryAccountHolderId()).isNotNull();
+              assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
+            }
+          );
     });
   }
 
   @ParameterizedTest
   @ArgumentsSource(AccountTypeAndCurrencyArgumentsProvider.class)
   void shouldAddJointAccountHolder_whenBankAccountIsActive(AccountType accountType, Currency currency) {
-    var bankAccount = openValidBankAccount(accountType, currency);
-    bankAccount.activate();
+    var bankAccount = givenActiveAccount(accountType, currency);
 
     bankAccount.addJointAccountHolder(JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH, CREATED_AT);
 
-    assertThat(bankAccount)
-      .satisfies(account -> assertThat(account.getAccountHolders())
-        .hasSize(2)
-        .filteredOn(AccountHolder::isJointAccountHolder)
-        .hasSize(1)
-        .singleElement()
-        .satisfies(holder -> {
-          assertThat(holder.getAccountHolderName()).isEqualTo(JOINT_ACCOUNT_HOLDER_NAME);
-          assertThat(holder.getPassportNumber()).isEqualTo(JOINT_PASSPORT_NUMBER);
-          assertThat(holder.getDateOfBirth()).isEqualTo(JOINT_DATE_OF_BIRTH);
-          assertThat(holder.isJointAccountHolder()).isTrue();
-        }));
+    assertThat(bankAccount.getAccountHolders())
+      .hasSize(2)
+      .filteredOn(AccountHolder::isJointAccountHolder)
+      .hasSize(1)
+      .singleElement()
+      .satisfies(holder -> {
+        assertThat(holder.getAccountHolderId()).isNotNull();
+        assertThat(holder.getAccountHolderName()).isEqualTo(JOINT_ACCOUNT_HOLDER_NAME);
+        assertThat(holder.getPassportNumber()).isEqualTo(JOINT_PASSPORT_NUMBER);
+        assertThat(holder.getDateOfBirth()).isEqualTo(JOINT_DATE_OF_BIRTH);
+        assertThat(holder.isJointAccountHolder()).isTrue();
+        assertThat(holder.getCreatedAt()).isEqualTo(CREATED_AT);
+      });
+
+    var events = bankAccount.pullDomainEvents();
+
+    assertThat(events)
+      .hasSize(1)
+      .singleElement()
+      .isInstanceOfSatisfying(JointAccountHolderAddedEvent.class, event -> {
+          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
+          assertThat(event.accountHolderId()).isNotNull();
+          assertThat(event.name()).isEqualTo(JOINT_ACCOUNT_HOLDER_NAME);
+          assertThat(event.passportNumber()).isEqualTo(JOINT_PASSPORT_NUMBER);
+          assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
+        }
+      );
+  }
+
+  @ParameterizedTest
+  @ArgumentsSource(AccountTypeAndCurrencyArgumentsProvider.class)
+  void shouldRestoreBankAccountWithPrimaryAccountHolder_whenValidDataProvided(AccountType accountType, Currency currency) {
+    var primaryAccountHolderId = AccountHolderId.newId();
+    var primaryAccountHolder = BankAccount.restoreAccountHolder(
+      primaryAccountHolderId,
+      PRIMARY_ACCOUNT_HOLDER_NAME,
+      PRIMARY_PASSPORT_NUMBER,
+      PRIMARY_DATE_OF_BIRTH,
+      AccountHolderType.PRIMARY,
+      CREATED_AT
+    );
+
+    var bankAccountId = BankAccountId.newId();
+    var bankAccount = BankAccount.restore(
+      bankAccountId,
+      accountType,
+      currency,
+      VALID_IBAN,
+      AccountStatus.ACTIVE,
+      CREATED_AT,
+      List.of(primaryAccountHolder)
+    );
+
+    assertThat(bankAccount).isNotNull();
+    assertThat(bankAccount.getBankAccountId()).isEqualTo(bankAccountId);
+    assertThat(bankAccount.getAccountType()).isEqualTo(accountType);
+    assertThat(bankAccount.getCurrency()).isEqualTo(currency);
+    assertThat(bankAccount.getIban()).isEqualTo(VALID_IBAN);
+    assertThat(bankAccount.getStatus().isActive()).isTrue();
+    assertThat(bankAccount.getCreatedAt()).isEqualTo(CREATED_AT);
+    assertThat(bankAccount.pullDomainEvents()).isEmpty();
+
+    assertThat(bankAccount.getAccountHolders())
+      .hasSize(1)
+      .containsExactlyInAnyOrder(primaryAccountHolder);
+  }
+
+  @ParameterizedTest
+  @ArgumentsSource(AccountTypeAndCurrencyArgumentsProvider.class)
+  void shouldRestoreBankAccountWithPrimaryAndJointAccountHolders_whenValidDataProvided(AccountType accountType, Currency currency) {
+    var primaryAccountHolderId = AccountHolderId.newId();
+    var primaryAccountHolder = BankAccount.restoreAccountHolder(
+      primaryAccountHolderId,
+      PRIMARY_ACCOUNT_HOLDER_NAME,
+      PRIMARY_PASSPORT_NUMBER,
+      PRIMARY_DATE_OF_BIRTH,
+      AccountHolderType.PRIMARY,
+      CREATED_AT
+    );
+
+    var jointAccountHolderId = AccountHolderId.newId();
+    var jointAccountHolder = BankAccount.restoreAccountHolder(
+      jointAccountHolderId,
+      JOINT_ACCOUNT_HOLDER_NAME,
+      JOINT_PASSPORT_NUMBER,
+      JOINT_DATE_OF_BIRTH,
+      AccountHolderType.JOINT,
+      CREATED_AT
+    );
+
+    var bankAccountId = BankAccountId.newId();
+    var bankAccount = BankAccount.restore(
+      bankAccountId,
+      accountType,
+      currency,
+      VALID_IBAN,
+      AccountStatus.ACTIVE,
+      CREATED_AT,
+      List.of(primaryAccountHolder, jointAccountHolder)
+    );
+
+    assertThat(bankAccount).isNotNull();
+    assertThat(bankAccount.getBankAccountId()).isEqualTo(bankAccountId);
+    assertThat(bankAccount.getAccountType()).isEqualTo(accountType);
+    assertThat(bankAccount.getCurrency()).isEqualTo(currency);
+    assertThat(bankAccount.getIban()).isEqualTo(VALID_IBAN);
+    assertThat(bankAccount.getStatus().isActive()).isTrue();
+    assertThat(bankAccount.getCreatedAt()).isEqualTo(CREATED_AT);
+    assertThat(bankAccount.pullDomainEvents()).isEmpty();
+
+    assertThat(bankAccount.getAccountHolders())
+      .hasSize(2)
+      .containsExactlyInAnyOrder(primaryAccountHolder, jointAccountHolder);
   }
 
   @Test
@@ -93,8 +215,7 @@ class BankAccountTest {
 
   @Test
   void shouldThrowMaxJointAccountHoldersExceededException_whenJointAccountHoldersLimitIsReached() {
-    var bankAccount = openValidBankAccount(AccountType.CHECKING, Currency.USD);
-    bankAccount.activate();
+    var bankAccount = givenActiveAccount(AccountType.CHECKING, Currency.USD);
 
     addValidJointAccountHolder(bankAccount);
 
@@ -105,10 +226,22 @@ class BankAccountTest {
   @Test
   void shouldActivateBankAccount_whenStatusIsPending() {
     var bankAccount = openValidBankAccount(AccountType.CHECKING, Currency.USD);
+    bankAccount.pullDomainEvents();
 
     bankAccount.activate();
 
     assertThat(bankAccount.getStatus()).isEqualTo(AccountStatus.ACTIVE);
+
+    var events = bankAccount.pullDomainEvents();
+
+    assertThat(events)
+      .hasSize(1)
+      .singleElement()
+      .isInstanceOfSatisfying(BankAccountActivatedEvent.class, event -> {
+          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
+          assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
+        }
+      );
   }
 
   @Test
@@ -133,17 +266,26 @@ class BankAccountTest {
 
   @Test
   void shouldBlockBankAccount_whenStatusIsActive() {
-    var bankAccount = openValidBankAccount(AccountType.CHECKING, Currency.USD);
-    bankAccount.activate();
+    var bankAccount = givenActiveAccount(AccountType.CHECKING, Currency.USD);
 
     bankAccount.block();
     assertThat(bankAccount.getStatus().isBlocked()).isTrue();
+
+    var events = bankAccount.pullDomainEvents();
+
+    assertThat(events)
+      .hasSize(1)
+      .singleElement()
+      .isInstanceOfSatisfying(BankAccountBlockedEvent.class, event -> {
+          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
+          assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
+        }
+      );
   }
 
   @Test
   void shouldNotThrowAnyException_whenBlockIsCalledTwice() {
-    var bankAccount = openValidBankAccount(AccountType.CHECKING, Currency.USD);
-    bankAccount.activate();
+    var bankAccount = givenActiveAccount(AccountType.CHECKING, Currency.USD);
 
     bankAccount.block();
     bankAccount.block();
@@ -209,6 +351,13 @@ class BankAccountTest {
       VALID_IBAN,
       CREATED_AT
     );
+  }
+
+  private BankAccount givenActiveAccount(AccountType type, Currency currency) {
+    var account = openValidBankAccount(type, currency);
+    account.activate();
+    account.pullDomainEvents();
+    return account;
   }
 
   private void addValidJointAccountHolder(BankAccount bankAccount) {

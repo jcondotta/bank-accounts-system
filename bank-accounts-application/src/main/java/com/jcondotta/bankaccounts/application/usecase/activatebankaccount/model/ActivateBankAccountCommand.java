@@ -9,8 +9,4 @@ public record ActivateBankAccountCommand(BankAccountId bankAccountId) {
   public ActivateBankAccountCommand {
     Objects.requireNonNull(bankAccountId, "bankAccountId must not be null");
   }
-
-  public static ActivateBankAccountCommand of(BankAccountId bankAccountId) {
-    return new ActivateBankAccountCommand(bankAccountId);
-  }
 }

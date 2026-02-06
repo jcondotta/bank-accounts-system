@@ -1,7 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.activatebankaccount;
 
-import com.jcondotta.bankaccounts.application.ports.output.repository.lookupbankaccount.BankAccountLookupRepository;
-import com.jcondotta.bankaccounts.application.ports.output.repository.updatebankaccount.BankAccountUpdateRepository;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.lookupbankaccount.BankAccountLookupRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.updatebankaccount.BankAccountUpdateRepository;
 import com.jcondotta.bankaccounts.application.usecase.activatebankaccount.model.ActivateBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import io.micrometer.observation.annotation.Observed;
@@ -18,6 +19,7 @@ public class ActivateBankAccountUseCaseImpl implements ActivateBankAccountUseCas
 
   private final BankAccountLookupRepository bankAccountLookupRepository;
   private final BankAccountUpdateRepository bankAccountUpdateRepository;
+  private final DomainEventPublisher domainEventPublisher;
 
   @Override
   @Observed(
@@ -39,6 +41,10 @@ public class ActivateBankAccountUseCaseImpl implements ActivateBankAccountUseCas
 
     bankAccount.activate();
     bankAccountUpdateRepository.save(bankAccount);
+
+    bankAccount
+      .pullDomainEvents()
+      .forEach(domainEventPublisher::publish);
 
     log.info(
       "Bank account activated successfully [bankAccountId={}]", bankAccount.getBankAccountId().value()

@@ -43,8 +43,25 @@ public final class AccountHolder {
     return create(accountHolderName, passportNumber, dateOfBirth, AccountHolderType.JOINT, createdAt);
   }
 
-  private static AccountHolder create(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, AccountHolderType accountHolderType, ZonedDateTime createdAt) {
+  private static AccountHolder create(
+    AccountHolderName accountHolderName,
+    PassportNumber passportNumber,
+    DateOfBirth dateOfBirth,
+    AccountHolderType accountHolderType,
+    ZonedDateTime createdAt) {
+
     return new AccountHolder(AccountHolderId.newId(), accountHolderName, passportNumber, dateOfBirth, accountHolderType, createdAt);
+  }
+
+  static AccountHolder restore(
+    AccountHolderId accountHolderId,
+    AccountHolderName accountHolderName,
+    PassportNumber passportNumber,
+    DateOfBirth dateOfBirth,
+    AccountHolderType accountHolderType,
+    ZonedDateTime createdAt) {
+
+    return new AccountHolder(accountHolderId, accountHolderName, passportNumber, dateOfBirth, accountHolderType, createdAt);
   }
 
   public boolean isPrimaryAccountHolder() {

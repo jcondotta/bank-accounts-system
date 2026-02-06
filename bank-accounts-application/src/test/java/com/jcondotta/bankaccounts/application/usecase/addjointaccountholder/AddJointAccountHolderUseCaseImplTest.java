@@ -2,17 +2,23 @@ package com.jcondotta.bankaccounts.application.usecase.addjointaccountholder;
 
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
-import com.jcondotta.bankaccounts.application.ports.output.repository.lookupbankaccount.BankAccountLookupRepository;
-import com.jcondotta.bankaccounts.application.ports.output.repository.updatebankaccount.BankAccountUpdateRepository;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.lookupbankaccount.BankAccountLookupRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.updatebankaccount.BankAccountUpdateRepository;
 import com.jcondotta.bankaccounts.application.usecase.addjointaccountholder.model.AddJointAccountHolderCommand;
+import com.jcondotta.bankaccounts.domain.entities.AccountHolder;
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
+import com.jcondotta.bankaccounts.domain.events.DomainEvent;
+import com.jcondotta.bankaccounts.domain.events.JointAccountHolderAddedEvent;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import com.jcondotta.bankaccounts.domain.value_objects.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,6 +26,7 @@ import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -47,11 +54,22 @@ class AddJointAccountHolderUseCaseImplTest {
   @Mock
   private BankAccountUpdateRepository bankAccountUpdateRepository;
 
+  @Mock
+  private DomainEventPublisher domainEventPublisher;
+
+  @Captor
+  private ArgumentCaptor<DomainEvent> eventArgumentCaptor;
+
   private AddJointAccountHolderUseCase useCase;
 
   @BeforeEach
   void setUp() {
-    useCase = new AddJointAccountHolderUseCaseImpl(bankAccountLookupRepository, bankAccountUpdateRepository, FIXED_CLOCK);
+    useCase = new AddJointAccountHolderUseCaseImpl(
+      bankAccountLookupRepository,
+      bankAccountUpdateRepository,
+      domainEventPublisher,
+      FIXED_CLOCK
+    );
   }
 
   @Test
@@ -67,17 +85,33 @@ class AddJointAccountHolderUseCaseImplTest {
         CREATED_AT);
 
     bankAccount.activate();
+    bankAccount.pullDomainEvents();
 
     when(bankAccountLookupRepository.byId(BANK_ACCOUNT_ID))
       .thenReturn(Optional.of(bankAccount));
 
-    var command = AddJointAccountHolderCommand.of(BANK_ACCOUNT_ID, JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH);
+    var command = new AddJointAccountHolderCommand(BANK_ACCOUNT_ID, JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH);
 
     useCase.execute(command);
-
     verify(bankAccountLookupRepository).byId(BANK_ACCOUNT_ID);
     verify(bankAccountUpdateRepository).save(bankAccount);
+    verify(domainEventPublisher).publish(eventArgumentCaptor.capture());
     verifyNoMoreInteractions(bankAccountLookupRepository, bankAccountUpdateRepository);
+
+    AccountHolder accountType = bankAccount.jointAccountHolders().getFirst();
+
+    assertThat(eventArgumentCaptor.getAllValues())
+      .hasSize(1)
+      .singleElement()
+      .isInstanceOfSatisfying(JointAccountHolderAddedEvent.class, event -> {
+          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
+          assertThat(event.accountHolderId()).isEqualTo(accountType.getAccountHolderId());
+          assertThat(event.name()).isEqualTo(accountType.getAccountHolderName());
+          assertThat(event.passportNumber()).isEqualTo(accountType.getPassportNumber());
+          assertThat(event.dateOfBirth()).isEqualTo(accountType.getDateOfBirth());
+          assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
+        }
+      );
   }
 
   @Test
@@ -85,7 +119,7 @@ class AddJointAccountHolderUseCaseImplTest {
     when(bankAccountLookupRepository.byId(BANK_ACCOUNT_ID))
       .thenReturn(Optional.empty());
 
-    var command = AddJointAccountHolderCommand.of(BANK_ACCOUNT_ID, JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH);
+    var command = new AddJointAccountHolderCommand(BANK_ACCOUNT_ID, JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH);
 
     assertThatThrownBy(() -> useCase.execute(command))
       .isInstanceOf(BankAccountNotFoundException.class);

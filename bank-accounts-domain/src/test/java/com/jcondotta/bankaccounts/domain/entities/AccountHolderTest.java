@@ -3,6 +3,7 @@ package com.jcondotta.bankaccounts.domain.entities;
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
+import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
 import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
 import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
@@ -64,6 +65,28 @@ class AccountHolderTest {
       assertThat(holder.isJointAccountHolder()).isTrue();
       assertThat(holder.isPrimaryAccountHolder()).isFalse();
     });
+  }
+
+  @ParameterizedTest
+  @EnumSource(AccountHolderType.class)
+  void shouldRestoreAccountHolderWithAllAttributes(AccountHolderType accountHolderType) {
+    var accountHolderId = AccountHolderId.newId();
+
+    var accountHolder = AccountHolder.restore(
+      accountHolderId,
+      VALID_ACCOUNT_HOLDER_NAME,
+      VALID_PASSPORT_NUMBER,
+      VALID_DATE_OF_BIRTH,
+      accountHolderType,
+      CREATED_AT
+    );
+
+    assertThat(accountHolder.getAccountHolderId()).isEqualTo(accountHolderId);
+    assertThat(accountHolder.getAccountHolderName()).isEqualTo(VALID_ACCOUNT_HOLDER_NAME);
+    assertThat(accountHolder.getPassportNumber()).isEqualTo(VALID_PASSPORT_NUMBER);
+    assertThat(accountHolder.getDateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH);
+    assertThat(accountHolder.getAccountHolderType()).isEqualTo(accountHolderType);
+    assertThat(accountHolder.getCreatedAt()).isEqualTo(CREATED_AT);
   }
 
   @ParameterizedTest
