@@ -8,6 +8,8 @@ import com.jcondotta.bankaccounts.domain.events.*;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotActiveException;
 import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountStateTransitionException;
 import com.jcondotta.bankaccounts.domain.exceptions.MaxJointAccountHoldersExceededException;
+import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
+import com.jcondotta.bankaccounts.domain.validation.DomainValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.*;
 
 import java.time.ZonedDateTime;
@@ -44,13 +46,13 @@ public final class BankAccount {
     ZonedDateTime createdAt,
     List<AccountHolder> accountHolders
   ) {
-    this.bankAccountId = requireNonNull(bankAccountId, "bankAccountId must not be null");
-    this.accountType = requireNonNull(accountType, "accountType must not be null");
-    this.currency = requireNonNull(currency, "currency must not be null");
-    this.iban = requireNonNull(iban, "iban must not be null");
-    this.status = requireNonNull(status, "status must not be null");
-    this.createdAt = requireNonNull(createdAt, "createdAt must not be null");
-    this.accountHolders = new ArrayList<>(requireNonNull(accountHolders, "accountHolders must not be null"));
+    this.bankAccountId = requireNonNull(bankAccountId, BankAccountValidationErrors.ID_NOT_NULL);
+    this.accountType = requireNonNull(accountType, BankAccountValidationErrors.ACCOUNT_TYPE_NOT_NULL);
+    this.currency = requireNonNull(currency, BankAccountValidationErrors.CURRENCY_NOT_NULL);
+    this.iban = requireNonNull(iban, BankAccountValidationErrors.IBAN_NOT_NULL);
+    this.status = requireNonNull(status, BankAccountValidationErrors.STATUS_NOT_NULL);
+    this.createdAt = requireNonNull(createdAt, DomainValidationErrors.CREATED_AT_NOT_NULL);
+    this.accountHolders = new ArrayList<>(requireNonNull(accountHolders, BankAccountValidationErrors.ACCOUNT_HOLDERS_NOT_NULL));
   }
 
   public static BankAccount open(
@@ -76,12 +78,12 @@ public final class BankAccount {
 
     bankAccount.registerEvent(
       new BankAccountOpenedEvent(
+        EventId.newId(),
         bankAccount.getBankAccountId(),
         bankAccount.getAccountType(),
         bankAccount.getCurrency(),
         bankAccount.getIban(),
         bankAccount.getStatus(),
-        primaryHolder.getAccountHolderId(),
         createdAt
       )
     );
@@ -130,7 +132,7 @@ public final class BankAccount {
     }
 
     this.status = AccountStatus.ACTIVE;
-    registerEvent(new BankAccountActivatedEvent(this.getBankAccountId(), createdAt));
+    registerEvent(new BankAccountActivatedEvent(EventId.newId(), this.getBankAccountId(), createdAt));
   }
 
   public void block() {
@@ -146,7 +148,11 @@ public final class BankAccount {
     }
 
     this.status = AccountStatus.BLOCKED;
-    registerEvent(new BankAccountBlockedEvent(this.getBankAccountId(), createdAt));
+    registerEvent(new BankAccountBlockedEvent(
+      EventId.newId(),
+      this.getBankAccountId(),
+      createdAt)
+    );
   }
 
   public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, ZonedDateTime createdAt) {
@@ -167,6 +173,7 @@ public final class BankAccount {
 
     this.registerEvent(
       new JointAccountHolderAddedEvent(
+        EventId.newId(),
         this.getBankAccountId(),
         accountHolder.getAccountHolderId(),
         accountHolder.getAccountHolderName(),

@@ -1,6 +1,7 @@
 package com.jcondotta.bankaccounts.domain.entities;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
+import com.jcondotta.bankaccounts.domain.validation.AccountHolderValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
 import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
@@ -27,12 +28,12 @@ public final class AccountHolder {
     AccountHolderType accountHolderType,
     ZonedDateTime createdAt
   ) {
-    this.accountHolderId = requireNonNull(accountHolderId, "accountHolderId must not be null");
-    this.accountHolderName = requireNonNull(accountHolderName, "accountHolderName must not be null");
-    this.passportNumber = requireNonNull(passportNumber, "passportNumber must not be null");
-    this.dateOfBirth = requireNonNull(dateOfBirth, "dateOfBirth must not be null");
-    this.accountHolderType = requireNonNull(accountHolderType, "accountHolderType must not be null");
-    this.createdAt = requireNonNull(createdAt, "createdAt must not be null");
+    this.accountHolderId = requireNonNull(accountHolderId, AccountHolderValidationErrors.ID_NOT_NULL);
+    this.accountHolderName = requireNonNull(accountHolderName, AccountHolderValidationErrors.NAME_NOT_NULL);
+    this.passportNumber = requireNonNull(passportNumber, AccountHolderValidationErrors.PASSPORT_NUMBER_NOT_NULL);
+    this.dateOfBirth = requireNonNull(dateOfBirth, AccountHolderValidationErrors.DATE_OF_BIRTH_NOT_NULL);
+    this.accountHolderType = requireNonNull(accountHolderType, AccountHolderValidationErrors.ACCOUNT_HOLDER_TYPE);
+    this.createdAt = requireNonNull(createdAt, AccountHolderValidationErrors.CREATED_AT_NOT_NULL);
   }
 
   static AccountHolder createPrimary(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, ZonedDateTime createdAt) {

@@ -27,18 +27,18 @@ public record AccountHolderDetailsResponse(
         requiredMode = RequiredMode.REQUIRED)
     String accountHolderName,
 
+    @NotBlank
+    @Schema(description = "Passport number of the account holder.",
+      example = "FH254787",
+      requiredMode = RequiredMode.REQUIRED)
+    String passportNumber,
+
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Schema(description = "Date of birth of the account holder.",
         example = "1988-02-01",
         requiredMode = RequiredMode.REQUIRED)
     LocalDate dateOfBirth,
-
-    @NotBlank
-    @Schema(description = "Passport number of the account holder.",
-        example = "FH254787",
-        requiredMode = RequiredMode.REQUIRED)
-    String passportNumber,
 
     @NotNull
     @Schema(description = "Type of the account holder.",
@@ -52,6 +52,5 @@ public record AccountHolderDetailsResponse(
         example = "2023-08-23T14:55:00+02:00",
         requiredMode = RequiredMode.REQUIRED)
     ZonedDateTime createdAt
-
 ) {
 }

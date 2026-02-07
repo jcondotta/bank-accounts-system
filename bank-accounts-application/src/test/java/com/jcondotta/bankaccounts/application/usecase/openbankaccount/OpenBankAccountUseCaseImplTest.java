@@ -3,9 +3,9 @@ package com.jcondotta.bankaccounts.application.usecase.openbankaccount;
 import com.jcondotta.bankaccounts.application.argument_provider.AccountTypeAndCurrencyArgumentsProvider;
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
-import com.jcondotta.bankaccounts.application.ports.output.IbanGenerator;
+import com.jcondotta.bankaccounts.application.ports.output.facade.IbanGeneratorFacade;
 import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.openbankaccount.OpenBankAccountRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.OpenBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.OpenBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
@@ -49,7 +49,7 @@ class OpenBankAccountUseCaseImplTest {
   private OpenBankAccountRepository openBankAccountRepository;
 
   @Mock
-  private IbanGenerator ibanGenerator;
+  private IbanGeneratorFacade ibanGeneratorFacade;
 
   @Mock
   private DomainEventPublisher domainEventPublisher;
@@ -66,7 +66,7 @@ class OpenBankAccountUseCaseImplTest {
   void setUp() {
     useCase = new OpenBankAccountUseCaseImpl(
       openBankAccountRepository,
-      ibanGenerator,
+      ibanGeneratorFacade,
       domainEventPublisher,
       FIXED_CLOCK
     );
@@ -75,17 +75,16 @@ class OpenBankAccountUseCaseImplTest {
   @ParameterizedTest
   @ArgumentsSource(AccountTypeAndCurrencyArgumentsProvider.class)
   void shouldOpenBankAccount_whenCommandIsValid(AccountType accountType, Currency currency) {
-    when(ibanGenerator.generate(accountType, currency))
-      .thenReturn(GENERATED_IBAN);
+    when(ibanGeneratorFacade.generate()).thenReturn(GENERATED_IBAN);
 
     var command = new OpenBankAccountCommand(ACCOUNT_HOLDER_NAME, PASSPORT_NUMBER, DATE_OF_BIRTH, accountType, currency);
 
     useCase.execute(command);
 
-    verify(ibanGenerator).generate(accountType, currency);
+    verify(ibanGeneratorFacade).generate();
     verify(openBankAccountRepository).create(bankAccountCaptor.capture());
     verify(domainEventPublisher).publish(eventArgumentCaptor.capture());
-    verifyNoMoreInteractions(ibanGenerator, openBankAccountRepository, domainEventPublisher);
+    verifyNoMoreInteractions(ibanGeneratorFacade, openBankAccountRepository, domainEventPublisher);
 
     assertThat(bankAccountCaptor.getValue())
       .satisfies(bankAccount -> {
@@ -129,6 +128,6 @@ class OpenBankAccountUseCaseImplTest {
       .isInstanceOf(NullPointerException.class)
       .hasMessage("command must not be null");
 
-    verifyNoInteractions(openBankAccountRepository, ibanGenerator, domainEventPublisher);
+    verifyNoInteractions(openBankAccountRepository, ibanGeneratorFacade, domainEventPublisher);
   }
 }

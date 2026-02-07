@@ -13,7 +13,7 @@ class BankAccountNotFoundExceptionTest {
     var exception = new BankAccountNotFoundException(bankAccountId);
 
     assertThat(exception)
-      .isInstanceOf(DomainObjectNotFoundException.class)
+      .isInstanceOf(DomainNotFoundException.class)
       .hasMessage("Bank account not found with id: " + bankAccountId.value());
   }
 }

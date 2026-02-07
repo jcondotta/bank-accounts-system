@@ -29,6 +29,8 @@ public class OpenBankAccountControllerImpl implements OpenBankAccountController 
     var command = mapper.toCommand(request);
     useCase.execute(command);
 
-    return ResponseEntity.created(uriProperties.bankAccountURI(BankAccountId.newId().value())).build();
+    return ResponseEntity
+      .created(uriProperties.bankAccountURI(BankAccountId.newId().value()))
+      .build();
   }
 }

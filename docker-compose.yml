@@ -21,11 +21,185 @@ services:
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
       - ./localstack:/etc/localstack/init/ready.d
-      - bank_accounts_localstack:/var/lib/localstack
+      - bank_accounts_localstack-volume:/var/lib/localstack
+
+  kafka-1:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: bank-accounts-kafka-1
+    hostname: kafka-1
+    networks:
+      - bank_accounts_network
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_PROCESS_ROLES: broker,controller
+
+      KAFKA_CONTROLLER_QUORUM_VOTERS: >
+        1@kafka-1:9093,
+        2@kafka-2:9093,
+        3@kafka-3:9093
+
+      KAFKA_LISTENERS: >
+        PLAINTEXT://kafka-1:29092,
+        PLAINTEXT_HOST://0.0.0.0:9092,
+        CONTROLLER://kafka-1:9093
+
+      KAFKA_ADVERTISED_LISTENERS: >
+        PLAINTEXT://kafka-1:29092,
+        PLAINTEXT_HOST://localhost:9092
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: >
+        PLAINTEXT:PLAINTEXT,
+        PLAINTEXT_HOST:PLAINTEXT,
+        CONTROLLER:PLAINTEXT
+
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+
+    volumes:
+      - bank_accounts_kafka_1_volume:/var/lib/kafka/data
+
+  kafka-2:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: bank-accounts-kafka-2
+    hostname: kafka-2
+    networks:
+      - bank_accounts_network
+    ports:
+      - "9094:9094"
+    environment:
+      KAFKA_NODE_ID: 2
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_PROCESS_ROLES: broker,controller
+
+      KAFKA_CONTROLLER_QUORUM_VOTERS: >
+        1@kafka-1:9093,
+        2@kafka-2:9093,
+        3@kafka-3:9093
+
+      KAFKA_LISTENERS: >
+        PLAINTEXT://kafka-2:29092,
+        PLAINTEXT_HOST://0.0.0.0:9094,
+        CONTROLLER://kafka-2:9093
+
+      KAFKA_ADVERTISED_LISTENERS: >
+        PLAINTEXT://kafka-2:29092,
+        PLAINTEXT_HOST://localhost:9094
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: >
+        PLAINTEXT:PLAINTEXT,
+        PLAINTEXT_HOST:PLAINTEXT,
+        CONTROLLER:PLAINTEXT
+
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+
+    volumes:
+      - bank_accounts_kafka_2_volume:/var/lib/kafka/data
+
+  kafka-3:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: bank-accounts-kafka-3
+    hostname: kafka-3
+    networks:
+      - bank_accounts_network
+    ports:
+      - "9096:9096"
+    environment:
+      KAFKA_NODE_ID: 3
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_PROCESS_ROLES: broker,controller
+
+      KAFKA_CONTROLLER_QUORUM_VOTERS: >
+        1@kafka-1:9093,
+        2@kafka-2:9093,
+        3@kafka-3:9093
+
+      KAFKA_LISTENERS: >
+        PLAINTEXT://kafka-3:29092,
+        PLAINTEXT_HOST://0.0.0.0:9096,
+        CONTROLLER://kafka-3:9093
+
+      KAFKA_ADVERTISED_LISTENERS: >
+        PLAINTEXT://kafka-3:29092,
+        PLAINTEXT_HOST://localhost:9096
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: >
+        PLAINTEXT:PLAINTEXT,
+        PLAINTEXT_HOST:PLAINTEXT,
+        CONTROLLER:PLAINTEXT
+
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+
+    volumes:
+      - bank_accounts_kafka_3_volume:/var/lib/kafka/data
+
+  kafka-init:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: bank-accounts-kafka-init
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    networks:
+      - bank_accounts_network
+    volumes:
+      - ./kafka:/kafka
+    entrypoint: [ "/bin/bash", "-c" ]
+    command: |
+      echo "Waiting for Kafka..." &&
+      sleep 25 &&
+      /kafka/01-create-topics.sh
+
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: bank-accounts-kafka-ui
+    ports:
+      - "8085:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: >
+        kafka-1:29092,
+        kafka-2:29092,
+        kafka-3:29092
+    networks:
+      - bank_accounts_network
 
 volumes:
-  bank_accounts_localstack:
+  bank_accounts_localstack-volume:
     name: bank-accounts-localstack-data
+  bank_accounts_kafka_1_volume:
+    name: bank-accounts-kafka-1-data
+  bank_accounts_kafka_2_volume:
+    name: bank-accounts-kafka-2-data
+  bank_accounts_kafka_3_volume:
+    name: bank-accounts-kafka-3-data
+
 networks:
   bank_accounts_network:
     name: bank-accounts-network

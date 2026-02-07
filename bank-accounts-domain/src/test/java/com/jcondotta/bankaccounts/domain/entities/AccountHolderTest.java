@@ -3,6 +3,7 @@ package com.jcondotta.bankaccounts.domain.entities;
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
+import com.jcondotta.bankaccounts.domain.validation.AccountHolderValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
 import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
@@ -93,33 +94,37 @@ class AccountHolderTest {
   @EnumSource(AccountHolderType.class)
   void shouldThrowNullPointerException_whenAccountHolderNameIsNull(AccountHolderType accountHolderType) {
     assertThatThrownBy(() -> createAccountHolder(null, VALID_PASSPORT_NUMBER, VALID_DATE_OF_BIRTH, accountHolderType, CREATED_AT))
-      .isInstanceOf(NullPointerException.class);
+      .isInstanceOf(NullPointerException.class)
+      .hasMessage(AccountHolderValidationErrors.NAME_NOT_NULL);
   }
 
   @ParameterizedTest
   @EnumSource(AccountHolderType.class)
   void shouldThrowNullPointerException_whenPassportNumberIsNull(AccountHolderType accountHolderType) {
     assertThatThrownBy(() -> createAccountHolder(VALID_ACCOUNT_HOLDER_NAME, null, VALID_DATE_OF_BIRTH, accountHolderType, CREATED_AT))
-      .isInstanceOf(NullPointerException.class);
+      .isInstanceOf(NullPointerException.class)
+      .hasMessage(AccountHolderValidationErrors.PASSPORT_NUMBER_NOT_NULL);
   }
 
   @ParameterizedTest
   @EnumSource(AccountHolderType.class)
   void shouldThrowNullPointerException_whenDateOfBirthIsNull(AccountHolderType accountHolderType) {
     assertThatThrownBy(() -> createAccountHolder(VALID_ACCOUNT_HOLDER_NAME, VALID_PASSPORT_NUMBER, null, accountHolderType, CREATED_AT))
-      .isInstanceOf(NullPointerException.class);
+      .isInstanceOf(NullPointerException.class)
+      .hasMessage(AccountHolderValidationErrors.DATE_OF_BIRTH_NOT_NULL);
   }
 
   @ParameterizedTest
   @EnumSource(AccountHolderType.class)
   void shouldThrowNullPointerException_whenCreatedAtIsNull(AccountHolderType accountHolderType) {
     assertThatThrownBy(() -> createAccountHolder(VALID_ACCOUNT_HOLDER_NAME, VALID_PASSPORT_NUMBER, VALID_DATE_OF_BIRTH, accountHolderType, null))
-      .isInstanceOf(NullPointerException.class);
+      .isInstanceOf(NullPointerException.class)
+      .hasMessage(AccountHolderValidationErrors.CREATED_AT_NOT_NULL);
   }
 
   @SuppressWarnings("all")
   private AccountHolder createAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, AccountHolderType type, ZonedDateTime createdAt) {
-    Objects.requireNonNull(type, "accountHolderType must not be null");
+    Objects.requireNonNull(type, AccountHolderValidationErrors.ACCOUNT_HOLDER_TYPE);
 
     if (type.isPrimary()) {
       return AccountHolder.createPrimary(name, passportNumber, dateOfBirth, createdAt);

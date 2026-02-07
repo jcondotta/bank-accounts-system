@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.activatebankaccount;
 
-import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.lookupbankaccount.BankAccountLookupRepository;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.updatebankaccount.BankAccountUpdateRepository;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountActivatedEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.activatebankaccount.model.ActivateBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import io.micrometer.observation.annotation.Observed;
@@ -17,9 +17,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ActivateBankAccountUseCaseImpl implements ActivateBankAccountUseCase {
 
-  private final BankAccountLookupRepository bankAccountLookupRepository;
-  private final BankAccountUpdateRepository bankAccountUpdateRepository;
-  private final DomainEventPublisher domainEventPublisher;
+  private final LookupBankAccountRepository lookupBankAccountRepository;
+  private final UpdateBankAccountRepository updateBankAccountRepository;
+  private final BankAccountActivatedEventPublisher bankAccountActivatedEventPublisher;
 
   @Override
   @Observed(
@@ -36,15 +36,15 @@ public class ActivateBankAccountUseCaseImpl implements ActivateBankAccountUseCas
 
     log.info("Activating bank account [bankAccountId={}]", command.bankAccountId().value());
 
-    var bankAccount = bankAccountLookupRepository.byId(command.bankAccountId())
+    var bankAccount = lookupBankAccountRepository.byId(command.bankAccountId())
       .orElseThrow(() -> new BankAccountNotFoundException(command.bankAccountId()));
 
     bankAccount.activate();
-    bankAccountUpdateRepository.save(bankAccount);
+    updateBankAccountRepository.update(bankAccount);
 
     bankAccount
       .pullDomainEvents()
-      .forEach(domainEventPublisher::publish);
+      .forEach(bankAccountActivatedEventPublisher::publish);
 
     log.info(
       "Bank account activated successfully [bankAccountId={}]", bankAccount.getBankAccountId().value()

@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.addjointaccountholder;
 
-import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.lookupbankaccount.BankAccountLookupRepository;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.updatebankaccount.BankAccountUpdateRepository;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.JointAccountHolderAddedEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.addjointaccountholder.model.AddJointAccountHolderCommand;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import io.micrometer.observation.annotation.Observed;
@@ -19,9 +19,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUseCase {
 
-  private final BankAccountLookupRepository bankAccountLookupRepository;
-  private final BankAccountUpdateRepository bankAccountUpdateRepository;
-  private final DomainEventPublisher domainEventPublisher;
+  private final LookupBankAccountRepository lookupBankAccountRepository;
+  private final UpdateBankAccountRepository updateBankAccountRepository;
+  private final JointAccountHolderAddedEventPublisher jointAccountHolderAddedEventPublisher;
   private final Clock clock;
 
   @Override
@@ -41,10 +41,8 @@ public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUs
       "Adding new joint account holder [bankAccountId={}]", command.bankAccountId()
     );
 
-    var bankAccount = bankAccountLookupRepository.byId(command.bankAccountId())
-      .orElseThrow(() ->
-        new BankAccountNotFoundException(command.bankAccountId())
-      );
+    var bankAccount = lookupBankAccountRepository.byId(command.bankAccountId())
+      .orElseThrow(() -> new BankAccountNotFoundException(command.bankAccountId()));
 
     bankAccount.addJointAccountHolder(
       command.accountHolderName(),
@@ -53,11 +51,11 @@ public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUs
       ZonedDateTime.now(clock)
     );
 
-    bankAccountUpdateRepository.save(bankAccount);
+    updateBankAccountRepository.update(bankAccount);
 
     bankAccount
       .pullDomainEvents()
-      .forEach(domainEventPublisher::publish);
+      .forEach(jointAccountHolderAddedEventPublisher::publish);
 
     log.info(
       "Joint account holder added successfully [bankAccountId={}]", bankAccount.getBankAccountId()

@@ -3,8 +3,8 @@ package com.jcondotta.bankaccounts.application.usecase.addjointaccountholder;
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.lookupbankaccount.BankAccountLookupRepository;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.updatebankaccount.BankAccountUpdateRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.addjointaccountholder.model.AddJointAccountHolderCommand;
 import com.jcondotta.bankaccounts.domain.entities.AccountHolder;
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
@@ -49,10 +49,10 @@ class AddJointAccountHolderUseCaseImplTest {
   private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
 
   @Mock
-  private BankAccountLookupRepository bankAccountLookupRepository;
+  private LookupBankAccountRepository lookupBankAccountRepository;
 
   @Mock
-  private BankAccountUpdateRepository bankAccountUpdateRepository;
+  private UpdateBankAccountRepository updateBankAccountRepository;
 
   @Mock
   private DomainEventPublisher domainEventPublisher;
@@ -65,8 +65,8 @@ class AddJointAccountHolderUseCaseImplTest {
   @BeforeEach
   void setUp() {
     useCase = new AddJointAccountHolderUseCaseImpl(
-      bankAccountLookupRepository,
-      bankAccountUpdateRepository,
+      lookupBankAccountRepository,
+      updateBankAccountRepository,
       domainEventPublisher,
       FIXED_CLOCK
     );
@@ -87,16 +87,16 @@ class AddJointAccountHolderUseCaseImplTest {
     bankAccount.activate();
     bankAccount.pullDomainEvents();
 
-    when(bankAccountLookupRepository.byId(BANK_ACCOUNT_ID))
+    when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
       .thenReturn(Optional.of(bankAccount));
 
     var command = new AddJointAccountHolderCommand(BANK_ACCOUNT_ID, JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH);
 
     useCase.execute(command);
-    verify(bankAccountLookupRepository).byId(BANK_ACCOUNT_ID);
-    verify(bankAccountUpdateRepository).save(bankAccount);
+    verify(lookupBankAccountRepository).byId(BANK_ACCOUNT_ID);
+    verify(updateBankAccountRepository).update(bankAccount);
     verify(domainEventPublisher).publish(eventArgumentCaptor.capture());
-    verifyNoMoreInteractions(bankAccountLookupRepository, bankAccountUpdateRepository);
+    verifyNoMoreInteractions(lookupBankAccountRepository, updateBankAccountRepository);
 
     AccountHolder accountType = bankAccount.jointAccountHolders().getFirst();
 
@@ -116,7 +116,7 @@ class AddJointAccountHolderUseCaseImplTest {
 
   @Test
   void shouldThrowBankAccountNotFoundException_whenBankAccountDoesNotExist() {
-    when(bankAccountLookupRepository.byId(BANK_ACCOUNT_ID))
+    when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
       .thenReturn(Optional.empty());
 
     var command = new AddJointAccountHolderCommand(BANK_ACCOUNT_ID, JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH);
@@ -124,9 +124,9 @@ class AddJointAccountHolderUseCaseImplTest {
     assertThatThrownBy(() -> useCase.execute(command))
       .isInstanceOf(BankAccountNotFoundException.class);
 
-    verify(bankAccountLookupRepository).byId(BANK_ACCOUNT_ID);
-    verifyNoInteractions(bankAccountUpdateRepository);
-    verifyNoMoreInteractions(bankAccountLookupRepository);
+    verify(lookupBankAccountRepository).byId(BANK_ACCOUNT_ID);
+    verifyNoInteractions(updateBankAccountRepository);
+    verifyNoMoreInteractions(lookupBankAccountRepository);
   }
 
   @Test
@@ -135,6 +135,6 @@ class AddJointAccountHolderUseCaseImplTest {
       .isInstanceOf(NullPointerException.class)
       .hasMessage("command must not be null");
 
-    verifyNoInteractions(bankAccountLookupRepository, bankAccountUpdateRepository);
+    verifyNoInteractions(lookupBankAccountRepository, updateBankAccountRepository);
   }
 }

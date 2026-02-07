@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.blockbankaccount;
 
-import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.lookupbankaccount.BankAccountLookupRepository;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.updatebankaccount.BankAccountUpdateRepository;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountBlockedEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.blockbankaccount.model.BlockBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import io.micrometer.observation.annotation.Observed;
@@ -17,9 +17,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class BlockBankAccountUseCaseImpl implements BlockBankAccountUseCase {
 
-  private final BankAccountLookupRepository bankAccountLookupRepository;
-  private final BankAccountUpdateRepository bankAccountUpdateRepository;
-  private final DomainEventPublisher domainEventPublisher;
+  private final LookupBankAccountRepository lookupBankAccountRepository;
+  private final UpdateBankAccountRepository updateBankAccountRepository;
+  private final BankAccountBlockedEventPublisher bankAccountBlockedEventPublisher;
 
   @Override
   @Observed(
@@ -38,16 +38,16 @@ public class BlockBankAccountUseCaseImpl implements BlockBankAccountUseCase {
       "Blocking bank account [bankAccountId={}]", command.bankAccountId().value()
     );
 
-    var bankAccount = bankAccountLookupRepository.byId(command.bankAccountId())
+    var bankAccount = lookupBankAccountRepository.byId(command.bankAccountId())
         .orElseThrow(() -> new BankAccountNotFoundException(command.bankAccountId()));
 
     bankAccount.block();
 
-    bankAccountUpdateRepository.save(bankAccount);
+    updateBankAccountRepository.update(bankAccount);
 
     bankAccount
       .pullDomainEvents()
-      .forEach(domainEventPublisher::publish);
+      .forEach(bankAccountBlockedEventPublisher::publish);
 
     log.info(
       "Bank account blocked successfully [bankAccountId={}]", bankAccount.getBankAccountId().value()

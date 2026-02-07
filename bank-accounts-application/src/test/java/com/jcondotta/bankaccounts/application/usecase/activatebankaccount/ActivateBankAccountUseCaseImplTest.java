@@ -2,8 +2,8 @@ package com.jcondotta.bankaccounts.application.usecase.activatebankaccount;
 
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.lookupbankaccount.BankAccountLookupRepository;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.updatebankaccount.BankAccountUpdateRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
+import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.activatebankaccount.model.ActivateBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
@@ -42,10 +42,10 @@ class ActivateBankAccountUseCaseImplTest {
   private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(ClockTestFactory.FIXED_CLOCK);
 
   @Mock
-  private BankAccountLookupRepository bankAccountLookupRepository;
+  private LookupBankAccountRepository lookupBankAccountRepository;
 
   @Mock
-  private BankAccountUpdateRepository bankAccountUpdateRepository;
+  private UpdateBankAccountRepository updateBankAccountRepository;
 
   @Mock
   private DomainEventPublisher domainEventPublisher;
@@ -58,8 +58,8 @@ class ActivateBankAccountUseCaseImplTest {
   @BeforeEach
   void setUp() {
     useCase = new ActivateBankAccountUseCaseImpl(
-      bankAccountLookupRepository,
-      bankAccountUpdateRepository,
+      lookupBankAccountRepository,
+      updateBankAccountRepository,
       domainEventPublisher
     );
   }
@@ -79,15 +79,15 @@ class ActivateBankAccountUseCaseImplTest {
 
     bankAccount.activate();
 
-    when(bankAccountLookupRepository.byId(BANK_ACCOUNT_ID))
+    when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
       .thenReturn(Optional.of(bankAccount));
 
     var command = new ActivateBankAccountCommand(BANK_ACCOUNT_ID);
     useCase.execute(command);
 
-    verify(bankAccountUpdateRepository).save(bankAccount);
+    verify(updateBankAccountRepository).update(bankAccount);
     verify(domainEventPublisher).publish(eventArgumentCaptor.capture());
-    verifyNoMoreInteractions(bankAccountLookupRepository, bankAccountUpdateRepository);
+    verifyNoMoreInteractions(lookupBankAccountRepository, updateBankAccountRepository);
 
     assertThat(eventArgumentCaptor.getAllValues())
       .hasSize(1)
@@ -101,16 +101,16 @@ class ActivateBankAccountUseCaseImplTest {
 
   @Test
   void shouldThrowAccountRecipientNotFoundException_whenRecipientDoesNotExist() {
-    when(bankAccountLookupRepository.byId(BANK_ACCOUNT_ID)).thenReturn(Optional.empty());
+    when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID)).thenReturn(Optional.empty());
 
     var command = new ActivateBankAccountCommand(BANK_ACCOUNT_ID);
 
     assertThatThrownBy(() -> useCase.execute(command))
       .isInstanceOf(BankAccountNotFoundException.class);
 
-    verify(bankAccountLookupRepository).byId(BANK_ACCOUNT_ID);
-    verifyNoInteractions(bankAccountUpdateRepository);
-    verifyNoMoreInteractions(bankAccountLookupRepository);
+    verify(lookupBankAccountRepository).byId(BANK_ACCOUNT_ID);
+    verifyNoInteractions(updateBankAccountRepository);
+    verifyNoMoreInteractions(lookupBankAccountRepository);
   }
 
   @Test
@@ -119,6 +119,6 @@ class ActivateBankAccountUseCaseImplTest {
       .isInstanceOf(NullPointerException.class)
       .hasMessage("command must not be null");
 
-    verifyNoInteractions(bankAccountLookupRepository, bankAccountUpdateRepository);
+    verifyNoInteractions(lookupBankAccountRepository, updateBankAccountRepository);
   }
 }
