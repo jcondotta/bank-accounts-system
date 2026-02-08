@@ -66,7 +66,8 @@ class BankAccountTest {
             assertThat(accountHolder.getCreatedAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
           });
 
-       var events = bankAccount.pullDomainEvents();
+        var events = bankAccount.pullDomainEvents();
+        var primaryAccountHolder = account.primaryAccountHolder();
 
         assertThat(events)
           .hasSize(1)
@@ -76,11 +77,11 @@ class BankAccountTest {
               assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
               assertThat(event.accountType()).isEqualTo(accountType);
               assertThat(event.currency()).isEqualTo(currency);
-              assertThat(event.primaryAccountHolderId()).isNotNull();
+              assertThat(event.primaryAccountHolderId()).isEqualTo(primaryAccountHolder.getAccountHolderId());
               assertThat(event.occurredAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
             }
           );
-    });
+      });
   }
 
   @ParameterizedTest
@@ -105,6 +106,7 @@ class BankAccountTest {
       });
 
     var events = bankAccount.pullDomainEvents();
+    var jointAccountHolder = bankAccount.jointAccountHolders().getFirst();
 
     assertThat(events)
       .hasSize(1)
@@ -112,7 +114,7 @@ class BankAccountTest {
       .isInstanceOfSatisfying(JointAccountHolderAddedEvent.class, event -> {
           assertThat(event.eventId()).isNotNull();
           assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-          assertThat(event.accountHolderId()).isNotNull();
+          assertThat(event.accountHolderId()).isEqualTo(jointAccountHolder.getAccountHolderId());
           assertThat(event.occurredAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
         }
       );
@@ -258,7 +260,7 @@ class BankAccountTest {
   }
 
   @ParameterizedTest
-  @EnumSource(value = AccountStatus.class, names = { "PENDING", "ACTIVE" }, mode = EnumSource.Mode.EXCLUDE)
+  @EnumSource(value = AccountStatus.class, names = {"PENDING", "ACTIVE"}, mode = EnumSource.Mode.EXCLUDE)
   void shouldThrowInvalidBankAccountStateTransitionException_whenActivatingFromInvalidState(AccountStatus status) {
     var bankAccount = BankAccountTestFixture.openPendingAccount(PRIMARY_ACCOUNT_HOLDER);
     ReflectionTestUtils.setField(bankAccount, "status", status);
@@ -297,7 +299,7 @@ class BankAccountTest {
   }
 
   @ParameterizedTest
-  @EnumSource(value = AccountStatus.class, names = { "BLOCKED", "ACTIVE" }, mode = EnumSource.Mode.EXCLUDE)
+  @EnumSource(value = AccountStatus.class, names = {"BLOCKED", "ACTIVE"}, mode = EnumSource.Mode.EXCLUDE)
   void shouldThrowInvalidBankAccountStateTransitionException_whenBlockingFromInvalidState(AccountStatus status) {
     var bankAccount = BankAccountTestFixture.openPendingAccount(PRIMARY_ACCOUNT_HOLDER);
     ReflectionTestUtils.setField(bankAccount, "status", status);
