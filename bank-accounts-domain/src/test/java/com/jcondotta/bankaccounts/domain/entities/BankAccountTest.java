@@ -72,11 +72,10 @@ class BankAccountTest {
           .hasSize(1)
           .singleElement()
           .isInstanceOfSatisfying(BankAccountOpenedEvent.class, event -> {
+              assertThat(event.eventId()).isNotNull();
               assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
               assertThat(event.accountType()).isEqualTo(accountType);
               assertThat(event.currency()).isEqualTo(currency);
-              assertThat(event.iban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
-              assertThat(event.status()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
               assertThat(event.primaryAccountHolderId()).isNotNull();
               assertThat(event.occurredAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
             }
@@ -111,10 +110,9 @@ class BankAccountTest {
       .hasSize(1)
       .singleElement()
       .isInstanceOfSatisfying(JointAccountHolderAddedEvent.class, event -> {
+          assertThat(event.eventId()).isNotNull();
           assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
           assertThat(event.accountHolderId()).isNotNull();
-          assertThat(event.name()).isEqualTo(JOINT_ACCOUNT_HOLDER_NAME);
-          assertThat(event.passportNumber()).isEqualTo(JOINT_PASSPORT_NUMBER);
           assertThat(event.occurredAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
         }
       );

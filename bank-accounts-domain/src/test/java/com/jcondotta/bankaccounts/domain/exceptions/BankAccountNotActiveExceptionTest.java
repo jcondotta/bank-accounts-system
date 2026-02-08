@@ -14,7 +14,7 @@ class BankAccountNotActiveExceptionTest {
     var exception = new BankAccountNotActiveException(accountStatus);
 
     assertThat(exception)
-      .isInstanceOf(DomainException.class)
+      .isInstanceOf(DomainRuleValidationException.class)
       .hasMessage("Bank account must be ACTIVE to perform this operation. Current status: " + accountStatus);
   }
 }

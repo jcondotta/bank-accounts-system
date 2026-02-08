@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.domain.value_objects;
 
 import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
-import com.jcondotta.bankaccounts.domain.validation.DomainValidationErrors;
+import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
 
 import java.util.UUID;
 
@@ -9,7 +9,7 @@ public record EventId(UUID value) {
 
   public EventId {
     if (value == null) {
-      throw new DomainValidationException(DomainValidationErrors.DomainEvent.EVENT_ID_NOT_NULL);
+      throw new DomainValidationException(DomainEventValidationErrors.EVENT_ID_NOT_NULL);
     }
   }
 

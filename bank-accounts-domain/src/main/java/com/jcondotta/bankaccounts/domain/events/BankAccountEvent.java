@@ -1,10 +1,10 @@
 package com.jcondotta.bankaccounts.domain.events;
 
-import java.time.ZonedDateTime;
-
+/**
+ * Sealed interface representing all events related to bank accounts.
+ * This allows for a closed set of event types, ensuring that only specific events can be emitted.
+ */
 public sealed interface BankAccountEvent
   extends DomainEvent
   permits BankAccountOpenedEvent, BankAccountActivatedEvent, BankAccountBlockedEvent, JointAccountHolderAddedEvent {
-
-  ZonedDateTime occurredAt();
 }

@@ -82,8 +82,7 @@ public final class BankAccount {
         bankAccount.getBankAccountId(),
         bankAccount.getAccountType(),
         bankAccount.getCurrency(),
-        bankAccount.getIban(),
-        bankAccount.getStatus(),
+        primaryHolder.getAccountHolderId(),
         createdAt
       )
     );
@@ -176,9 +175,6 @@ public final class BankAccount {
         EventId.newId(),
         this.getBankAccountId(),
         accountHolder.getAccountHolderId(),
-        accountHolder.getAccountHolderName(),
-        accountHolder.getPassportNumber(),
-        accountHolder.getDateOfBirth(),
         accountHolder.getCreatedAt()
       )
     );

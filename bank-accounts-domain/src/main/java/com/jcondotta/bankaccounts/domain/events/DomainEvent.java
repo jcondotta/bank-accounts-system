@@ -1,10 +1,16 @@
 package com.jcondotta.bankaccounts.domain.events;
 
+import com.jcondotta.bankaccounts.domain.events.types.DomainEventType;
 import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 
 import java.time.ZonedDateTime;
 
-public interface DomainEvent {
+/**
+ * Marker interface for domain events.
+ * Represents a fact that has occurred in the domain.
+ */
+public sealed interface DomainEvent permits BankAccountEvent {
   EventId eventId();
+  DomainEventType eventType();
   ZonedDateTime occurredAt();
 }
