@@ -29,6 +29,6 @@ jobs:
           mvn -B verify \
             org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.token=$SONAR_TOKEN \
-            -Dsonar.projectKey=jcondotta_account-recipients-system \
+            -Dsonar.projectKey=jcondotta_bank-accounts-system \
             -Dsonar.organization=jcondotta \
             -Dsonar.host.url=https://sonarcloud.io
