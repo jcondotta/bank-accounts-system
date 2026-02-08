@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookup;
+package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
@@ -37,7 +37,7 @@ public record BankAccountDetailsResponse(
   @Schema(description = "Date and time when the bank account was opened.",
     example = "2023-08-23T14:55:00+02:00",
     requiredMode = RequiredMode.REQUIRED)
-  ZonedDateTime dateOfOpening,
+  ZonedDateTime openingDate,
 
   @Schema(description = "Current accountStatus of the bank account",
     allowableValues = {"PENDING", "ACTIVE", "BLOCKED", "CLOSED"},

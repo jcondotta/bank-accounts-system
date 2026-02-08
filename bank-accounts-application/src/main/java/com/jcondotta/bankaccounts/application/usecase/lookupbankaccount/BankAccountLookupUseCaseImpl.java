@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.lookupbankaccount;
 
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
-import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.mapper.BankAccountLookupResultMapper;
-import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.model.BankAccountLookupResult;
+import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.mapper.BankAccountDetailsMapper;
+import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.model.BankAccountDetails;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import lombok.AllArgsConstructor;
@@ -13,12 +13,13 @@ import org.springframework.stereotype.Component;
 public class BankAccountLookupUseCaseImpl implements BankAccountLookupUseCase {
 
     private final LookupBankAccountRepository lookupBankAccountRepository;
-    private final BankAccountLookupResultMapper lookupResultMapper;
+    private final BankAccountDetailsMapper bankAccountDetailsMapper;
 
     @Override
-    public BankAccountLookupResult lookup(BankAccountId bankAccountId) {
-        return lookupBankAccountRepository.byId(bankAccountId)
-          .map(lookupResultMapper::toResult)
+    public BankAccountDetails lookup(BankAccountId bankAccountId) {
+        var bankAccount = lookupBankAccountRepository.byId(bankAccountId)
           .orElseThrow(() -> new BankAccountNotFoundException(bankAccountId));
+
+        return bankAccountDetailsMapper.toDetails(bankAccount);
     }
 }

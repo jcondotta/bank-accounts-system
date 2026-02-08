@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.application.usecase.activatebankaccount;
 
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
-import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountActivatedEventPublisher;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.activatebankaccount.model.ActivateBankAccountCommand;
@@ -48,7 +48,7 @@ class ActivateBankAccountUseCaseImplTest {
   private UpdateBankAccountRepository updateBankAccountRepository;
 
   @Mock
-  private DomainEventPublisher domainEventPublisher;
+  private BankAccountActivatedEventPublisher domainEventPublisher;
 
   @Captor
   private ArgumentCaptor<DomainEvent> eventArgumentCaptor;

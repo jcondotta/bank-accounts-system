@@ -1,9 +1,9 @@
-package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookup;
+package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount;
 
 import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.BankAccountLookupUseCase;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookup.mapper.BankAccountLookupResponseControllerMapper;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookup.model.BankAccountLookupResponse;
+import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.mapper.BankAccountLookupResponseControllerMapper;
+import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model.BankAccountLookupResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

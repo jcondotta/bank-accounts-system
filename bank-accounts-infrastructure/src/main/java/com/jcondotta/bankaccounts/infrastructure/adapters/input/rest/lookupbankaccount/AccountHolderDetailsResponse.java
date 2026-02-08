@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookup;
+package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;

@@ -15,7 +15,7 @@ public record BankAccountDetails (
     Currency currency,
     Iban iban,
     AccountStatus accountStatus,
-    ZonedDateTime dateOfOpening,
+    ZonedDateTime openingDate,
     List<AccountHolderDetails> accountHolders
 ) {
 }

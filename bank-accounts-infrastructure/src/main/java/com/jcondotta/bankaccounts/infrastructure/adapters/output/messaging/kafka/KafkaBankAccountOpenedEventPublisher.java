@@ -1,8 +1,11 @@
-package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging;
+package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.kafka;
 
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountOpenedEventPublisher;
 import com.jcondotta.bankaccounts.domain.events.BankAccountOpenedEvent;
 import com.jcondotta.bankaccounts.domain.events.DomainEvent;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountOpenedMessage;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.BankAccountOpenedMessageMapper;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventEnvelope;
 import com.jcondotta.bankaccounts.infrastructure.properties.BankAccountOpenedTopicProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,14 +13,14 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class KafkaBankAccountOpenedEventPublisher implements BankAccountOpenedEventPublisher {
 
-  private static final String IDEMPOTENCY_KEY_HEADER = "idempotency-key";
-
-  private final KafkaTemplate<String, BankAccountOpenedMessage> kafkaTemplate;
+  private final KafkaTemplate<String, EventEnvelope<BankAccountOpenedMessage>> kafkaTemplate;
   private final BankAccountOpenedMessageMapper messageMapper;
   private final BankAccountOpenedTopicProperties topicProperties;
 
@@ -34,7 +37,7 @@ public class KafkaBankAccountOpenedEventPublisher implements BankAccountOpenedEv
       var producerRecord = new ProducerRecord<>(
         topicProperties.topicName(),
         bankAccountOpenedEvent.bankAccountId().value().toString(),
-        messageMapper.toMessage(bankAccountOpenedEvent)
+        messageMapper.toEnvelope(bankAccountOpenedEvent, UUID.randomUUID().toString())
       );
 
       kafkaTemplate.send(producerRecord);

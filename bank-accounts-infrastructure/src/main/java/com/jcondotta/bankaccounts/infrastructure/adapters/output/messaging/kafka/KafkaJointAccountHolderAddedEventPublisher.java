@@ -1,8 +1,11 @@
-package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging;
+package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.kafka;
 
 import com.jcondotta.bankaccounts.application.ports.output.messaging.JointAccountHolderAddedEventPublisher;
 import com.jcondotta.bankaccounts.domain.events.DomainEvent;
 import com.jcondotta.bankaccounts.domain.events.JointAccountHolderAddedEvent;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventEnvelope;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.JointAccountHolderAddedMessage;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.JointAccountHolderAddedMessageMapper;
 import com.jcondotta.bankaccounts.infrastructure.properties.JointAccountHolderAddedTopicProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class KafkaJointAccountHolderAddedEventPublisher implements JointAccountHolderAddedEventPublisher {
 
-  private static final String IDEMPOTENCY_KEY_HEADER = "idempotency-key";
-
-  private final KafkaTemplate<String, JointAccountHolderAddedMessage> kafkaTemplate;
+  private final KafkaTemplate<String, EventEnvelope<JointAccountHolderAddedMessage>> kafkaTemplate;
   private final JointAccountHolderAddedMessageMapper messageMapper;
   private final JointAccountHolderAddedTopicProperties topicProperties;
 

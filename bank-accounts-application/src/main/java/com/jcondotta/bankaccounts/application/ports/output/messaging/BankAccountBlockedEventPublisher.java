@@ -1,5 +1,5 @@
 package com.jcondotta.bankaccounts.application.ports.output.messaging;
 
-public interface BankAccountBlockedEventPublisher extends DomainEventPublisher{
+public interface BankAccountBlockedEventPublisher extends DomainEventDispatcher {
 
 }

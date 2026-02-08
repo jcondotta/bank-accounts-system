@@ -4,6 +4,7 @@ import com.jcondotta.bankaccounts.application.ports.output.facade.IbanGeneratorF
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountOpenedEventPublisher;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.OpenBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.OpenBankAccountCommand;
+import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.OpenBankAccountResult;
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
       "operation", "create"
     }
   )
-  public void execute(OpenBankAccountCommand command) {
+  public OpenBankAccountResult execute(OpenBankAccountCommand command) {
     Objects.requireNonNull(command, "command must not be null");
 
     log.info(
@@ -62,5 +63,7 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
     log.info(
       "Bank account opened successfully [bankAccountId={}]", bankAccount.getBankAccountId().value()
     );
+
+    return new OpenBankAccountResult(bankAccount.getBankAccountId(), bankAccount.getCreatedAt());
   }
 }

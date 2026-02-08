@@ -1,9 +1,8 @@
-package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookup.mapper;
+package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.mapper;
 
-import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.model.BankAccountLookupResult;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookup.AccountHolderDetailsResponse;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookup.BankAccountDetailsResponse;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookup.model.BankAccountLookupResponse;
+import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.AccountHolderDetailsResponse;
+import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.BankAccountDetailsResponse;
+import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model.BankAccountLookupResponse;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -15,7 +14,7 @@ public interface BankAccountLookupResponseControllerMapper {
             result.bankAccountDetails().accountType(),
             result.bankAccountDetails().currency(),
             result.bankAccountDetails().iban().value(),
-            result.bankAccountDetails().dateOfOpening(),
+            result.bankAccountDetails().openingDate(),
             result.bankAccountDetails().accountStatus(),
             result.bankAccountDetails().accountHolders()
               .stream()

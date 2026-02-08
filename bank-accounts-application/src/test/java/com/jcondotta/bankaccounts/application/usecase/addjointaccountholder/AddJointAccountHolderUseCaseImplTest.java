@@ -2,7 +2,7 @@ package com.jcondotta.bankaccounts.application.usecase.addjointaccountholder;
 
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
-import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.JointAccountHolderAddedEventPublisher;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.addjointaccountholder.model.AddJointAccountHolderCommand;
@@ -55,7 +55,7 @@ class AddJointAccountHolderUseCaseImplTest {
   private UpdateBankAccountRepository updateBankAccountRepository;
 
   @Mock
-  private DomainEventPublisher domainEventPublisher;
+  private JointAccountHolderAddedEventPublisher domainEventPublisher;
 
   @Captor
   private ArgumentCaptor<DomainEvent> eventArgumentCaptor;
@@ -98,17 +98,15 @@ class AddJointAccountHolderUseCaseImplTest {
     verify(domainEventPublisher).publish(eventArgumentCaptor.capture());
     verifyNoMoreInteractions(lookupBankAccountRepository, updateBankAccountRepository);
 
-    AccountHolder accountType = bankAccount.jointAccountHolders().getFirst();
+    AccountHolder jointAccountHolder = bankAccount.jointAccountHolders().getFirst();
 
     assertThat(eventArgumentCaptor.getAllValues())
       .hasSize(1)
       .singleElement()
       .isInstanceOfSatisfying(JointAccountHolderAddedEvent.class, event -> {
+          assertThat(event.eventId()).isNotNull();
           assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-          assertThat(event.accountHolderId()).isEqualTo(accountType.getAccountHolderId());
-          assertThat(event.name()).isEqualTo(accountType.getAccountHolderName());
-          assertThat(event.passportNumber()).isEqualTo(accountType.getPassportNumber());
-          assertThat(event.dateOfBirth()).isEqualTo(accountType.getDateOfBirth());
+          assertThat(event.accountHolderId()).isEqualTo(jointAccountHolder.getAccountHolderId());
           assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
         }
       );

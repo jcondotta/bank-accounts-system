@@ -4,7 +4,7 @@ import com.jcondotta.bankaccounts.application.argument_provider.AccountTypeAndCu
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.ports.output.facade.IbanGeneratorFacade;
-import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountOpenedEventPublisher;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.OpenBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.OpenBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
@@ -52,7 +52,7 @@ class OpenBankAccountUseCaseImplTest {
   private IbanGeneratorFacade ibanGeneratorFacade;
 
   @Mock
-  private DomainEventPublisher domainEventPublisher;
+  private BankAccountOpenedEventPublisher domainEventPublisher;
 
   @Captor
   private ArgumentCaptor<DomainEvent> eventArgumentCaptor;
@@ -113,8 +113,6 @@ class OpenBankAccountUseCaseImplTest {
               assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
               assertThat(event.accountType()).isEqualTo(accountType);
               assertThat(event.currency()).isEqualTo(currency);
-              assertThat(event.iban()).isEqualTo(GENERATED_IBAN);
-              assertThat(event.status()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
               assertThat(event.primaryAccountHolderId()).isNotNull();
               assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
             }

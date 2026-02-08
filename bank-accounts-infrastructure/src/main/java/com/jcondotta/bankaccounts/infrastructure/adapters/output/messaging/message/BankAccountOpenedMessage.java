@@ -1,14 +1,12 @@
-package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging;
+package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message;
 
 import java.util.UUID;
 
 public record BankAccountOpenedMessage(
-  UUID eventId,
   UUID bankAccountId,
   String accountType,
   String currency,
-  String iban,
-  String status,
+  UUID primaryAccountHolderId,
   String occurredAt
 ) {
 }

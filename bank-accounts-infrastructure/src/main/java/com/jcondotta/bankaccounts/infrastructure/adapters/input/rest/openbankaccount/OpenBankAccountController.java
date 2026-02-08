@@ -28,5 +28,5 @@ public interface OpenBankAccountController {
     )
   )
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<String> openBankAccount(@Valid @RequestBody OpenBankAccountRequest openBankAccountRequest);
+  ResponseEntity<Void> openBankAccount(@Valid @RequestBody OpenBankAccountRequest openBankAccountRequest);
 }

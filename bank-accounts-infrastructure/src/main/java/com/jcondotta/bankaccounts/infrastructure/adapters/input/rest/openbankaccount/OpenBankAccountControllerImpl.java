@@ -1,6 +1,7 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount;
 
 import com.jcondotta.bankaccounts.application.usecase.openbankaccount.OpenBankAccountUseCase;
+import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.OpenBankAccountResult;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.mapper.OpenBankAccountRequestControllerMapper;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.OpenBankAccountRequest;
@@ -25,12 +26,12 @@ public class OpenBankAccountControllerImpl implements OpenBankAccountController 
       value = "bankAccounts.open.time",
       description = "bank account opening time measurement",
       percentiles = {0.5, 0.95, 0.99})
-  public ResponseEntity<String> openBankAccount(OpenBankAccountRequest request) {
+  public ResponseEntity<Void> openBankAccount(OpenBankAccountRequest request) {
     var command = mapper.toCommand(request);
-    useCase.execute(command);
+    var openBankAccountResult = useCase.execute(command);
 
     return ResponseEntity
-      .created(uriProperties.bankAccountURI(BankAccountId.newId().value()))
+      .created(uriProperties.bankAccountURI(openBankAccountResult.bankAccountId().value()))
       .build();
   }
 }

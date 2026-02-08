@@ -87,7 +87,7 @@ public class BankingEntity {
     return status;
   }
 
-  @DynamoDbAttribute("accountHolderId")
+  @DynamoDbAttribute("primaryAccountHolderId")
   public UUID getAccountHolderId() {
     return accountHolderId;
   }

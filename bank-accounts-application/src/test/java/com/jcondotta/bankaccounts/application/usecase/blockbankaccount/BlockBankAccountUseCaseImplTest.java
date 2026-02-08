@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.application.usecase.blockbankaccount;
 
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
-import com.jcondotta.bankaccounts.application.ports.output.messaging.DomainEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountBlockedEventPublisher;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.blockbankaccount.model.BlockBankAccountCommand;
@@ -48,7 +48,7 @@ class BlockBankAccountUseCaseImplTest {
   private UpdateBankAccountRepository updateBankAccountRepository;
 
   @Mock
-  private DomainEventPublisher domainEventPublisher;
+  private BankAccountBlockedEventPublisher bankAccountBlockedEventPublisher;
 
   @Captor
   private ArgumentCaptor<DomainEvent> eventArgumentCaptor;
@@ -60,7 +60,7 @@ class BlockBankAccountUseCaseImplTest {
     useCase = new BlockBankAccountUseCaseImpl(
       lookupBankAccountRepository,
       updateBankAccountRepository,
-      domainEventPublisher
+      bankAccountBlockedEventPublisher
     );
   }
 
@@ -87,7 +87,7 @@ class BlockBankAccountUseCaseImplTest {
     useCase.execute(command);
 
     verify(updateBankAccountRepository).update(bankAccount);
-    verify(domainEventPublisher).publish(eventArgumentCaptor.capture());
+    verify(bankAccountBlockedEventPublisher).publish(eventArgumentCaptor.capture());
     verifyNoMoreInteractions(lookupBankAccountRepository, updateBankAccountRepository);
 
     assertThat(eventArgumentCaptor.getAllValues())
@@ -110,7 +110,7 @@ class BlockBankAccountUseCaseImplTest {
       .isInstanceOf(BankAccountNotFoundException.class);
 
     verify(lookupBankAccountRepository).byId(BANK_ACCOUNT_ID);
-    verifyNoInteractions(updateBankAccountRepository, domainEventPublisher);
+    verifyNoInteractions(updateBankAccountRepository, bankAccountBlockedEventPublisher);
     verifyNoMoreInteractions(lookupBankAccountRepository);
   }
 
@@ -120,6 +120,6 @@ class BlockBankAccountUseCaseImplTest {
       .isInstanceOf(NullPointerException.class)
       .hasMessage("command must not be null");
 
-    verifyNoInteractions(lookupBankAccountRepository, updateBankAccountRepository, domainEventPublisher);
+    verifyNoInteractions(lookupBankAccountRepository, updateBankAccountRepository, bankAccountBlockedEventPublisher);
   }
 }

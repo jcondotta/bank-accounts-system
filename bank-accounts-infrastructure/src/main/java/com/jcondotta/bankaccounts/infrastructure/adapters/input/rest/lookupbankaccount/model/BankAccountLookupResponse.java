@@ -1,6 +1,6 @@
-package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookup.model;
+package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model;
 
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookup.BankAccountDetailsResponse;
+import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.BankAccountDetailsResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
