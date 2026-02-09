@@ -92,7 +92,7 @@ class OpenBankAccountUseCaseImplTest {
         assertThat(bankAccount.getAccountType()).isEqualTo(accountType);
         assertThat(bankAccount.getCurrency()).isEqualTo(currency);
         assertThat(bankAccount.getIban()).isEqualTo(GENERATED_IBAN);
-        assertThat(bankAccount.getStatus()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
+        assertThat(bankAccount.getAccountStatus()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
         assertThat(bankAccount.getCreatedAt()).isEqualTo(CREATED_AT);
         assertThat(bankAccount.getAccountHolders())
           .hasSize(1)

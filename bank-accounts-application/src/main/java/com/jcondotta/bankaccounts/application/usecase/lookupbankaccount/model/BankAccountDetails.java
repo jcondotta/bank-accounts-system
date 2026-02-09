@@ -9,13 +9,24 @@ import com.jcondotta.bankaccounts.domain.value_objects.Iban;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-public record BankAccountDetails (
-    BankAccountId bankAccountId,
-    AccountType accountType,
-    Currency currency,
-    Iban iban,
-    AccountStatus accountStatus,
-    ZonedDateTime openingDate,
-    List<AccountHolderDetails> accountHolders
+import static java.util.Objects.requireNonNull;
+
+public record BankAccountDetails(
+  BankAccountId bankAccountId,
+  AccountType accountType,
+  Currency currency,
+  Iban iban,
+  AccountStatus accountStatus,
+  ZonedDateTime openingDate,
+  List<AccountHolderDetails> accountHolders
 ) {
+  public BankAccountDetails {
+    requireNonNull(bankAccountId, "bankAccountId");
+    requireNonNull(accountType, "accountType");
+    requireNonNull(currency, "currency");
+    requireNonNull(iban, "iban");
+    requireNonNull(accountStatus, "accountStatus");
+    requireNonNull(openingDate, "openingDate");
+    requireNonNull(accountHolders, "accountHolders");
+  }
 }

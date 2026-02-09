@@ -3,6 +3,7 @@ package com.jcondotta.bankaccounts.application.usecase.lookupbankaccount;
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
+import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.mapper.AccountHolderDetailsMapperImpl;
 import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.mapper.BankAccountDetailsMapper;
 import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.mapper.BankAccountDetailsMapperImpl;
 import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.model.BankAccountDetails;
@@ -63,7 +64,7 @@ class BankAccountLookupUseCaseImplTest {
       VALID_IBAN,
       CREATED_AT
     );
-    BankAccountDetails bankAccountDetails = new BankAccountDetailsMapperImpl().toDetails(bankAccount);
+    BankAccountDetails bankAccountDetails = new BankAccountDetailsMapperImpl(new AccountHolderDetailsMapperImpl()).toDetails(bankAccount);
 
     when(lookupBankAccountRepository.byId(bankAccountId)).thenReturn(Optional.of(bankAccount));
 

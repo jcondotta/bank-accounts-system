@@ -35,14 +35,14 @@ public final class BankAccount {
 
   private final List<DomainEvent> domainEvents = new ArrayList<>();
 
-  private AccountStatus status;
+  private AccountStatus accountStatus;
 
   private BankAccount(
     BankAccountId bankAccountId,
     AccountType accountType,
     Currency currency,
     Iban iban,
-    AccountStatus status,
+    AccountStatus accountStatus,
     ZonedDateTime createdAt,
     List<AccountHolder> accountHolders
   ) {
@@ -50,7 +50,7 @@ public final class BankAccount {
     this.accountType = requireNonNull(accountType, BankAccountValidationErrors.ACCOUNT_TYPE_NOT_NULL);
     this.currency = requireNonNull(currency, BankAccountValidationErrors.CURRENCY_NOT_NULL);
     this.iban = requireNonNull(iban, BankAccountValidationErrors.IBAN_NOT_NULL);
-    this.status = requireNonNull(status, BankAccountValidationErrors.STATUS_NOT_NULL);
+    this.accountStatus = requireNonNull(accountStatus, BankAccountValidationErrors.ACCOUNT_STATUS_NOT_NULL);
     this.createdAt = requireNonNull(createdAt, DomainValidationErrors.CREATED_AT_NOT_NULL);
     this.accountHolders = new ArrayList<>(requireNonNull(accountHolders, BankAccountValidationErrors.ACCOUNT_HOLDERS_NOT_NULL));
   }
@@ -95,7 +95,7 @@ public final class BankAccount {
     AccountType accountType,
     Currency currency,
     Iban iban,
-    AccountStatus status,
+    AccountStatus accountStatus,
     ZonedDateTime createdAt,
     List<AccountHolder> accountHolders
   ) {
@@ -104,7 +104,7 @@ public final class BankAccount {
       accountType,
       currency,
       iban,
-      status,
+      accountStatus,
       createdAt,
       accountHolders
     );
@@ -122,31 +122,31 @@ public final class BankAccount {
   }
 
   public void activate() {
-    if (status == AccountStatus.ACTIVE) {
+    if (accountStatus == AccountStatus.ACTIVE) {
       return;
     }
 
-    if (status != AccountStatus.PENDING) {
-      throw new InvalidBankAccountStateTransitionException(status, AccountStatus.ACTIVE);
+    if (accountStatus != AccountStatus.PENDING) {
+      throw new InvalidBankAccountStateTransitionException(accountStatus, AccountStatus.ACTIVE);
     }
 
-    this.status = AccountStatus.ACTIVE;
+    this.accountStatus = AccountStatus.ACTIVE;
     registerEvent(new BankAccountActivatedEvent(EventId.newId(), this.getBankAccountId(), createdAt));
   }
 
   public void block() {
-    if (status == AccountStatus.BLOCKED) {
+    if (accountStatus == AccountStatus.BLOCKED) {
       return;
     }
 
-    if (status != AccountStatus.ACTIVE) {
+    if (accountStatus != AccountStatus.ACTIVE) {
       throw new InvalidBankAccountStateTransitionException(
-        status,
+        accountStatus,
         AccountStatus.BLOCKED
       );
     }
 
-    this.status = AccountStatus.BLOCKED;
+    this.accountStatus = AccountStatus.BLOCKED;
     registerEvent(new BankAccountBlockedEvent(
       EventId.newId(),
       this.getBankAccountId(),
@@ -155,8 +155,8 @@ public final class BankAccount {
   }
 
   public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, ZonedDateTime createdAt) {
-    if (!status.isActive()) {
-      throw new BankAccountNotActiveException(status);
+    if (!accountStatus.isActive()) {
+      throw new BankAccountNotActiveException(accountStatus);
     }
 
     var jointAccountHoldersCount = (int) accountHolders.stream()
@@ -225,8 +225,8 @@ public final class BankAccount {
     return iban;
   }
 
-  public AccountStatus getStatus() {
-    return status;
+  public AccountStatus getAccountStatus() {
+    return accountStatus;
   }
 
   public ZonedDateTime getCreatedAt() {

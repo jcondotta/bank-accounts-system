@@ -43,7 +43,7 @@ public class BankAccountEntityMapperImpl implements BankAccountEntityMapper {
       .accountType(bankAccount.getAccountType())
       .currency(bankAccount.getCurrency())
       .iban(bankAccount.getIban().value())
-      .status(bankAccount.getStatus())
+      .status(bankAccount.getAccountStatus())
       .createdAt(bankAccount.getCreatedAt().toInstant())
       .createdAtZone(bankAccount.getCreatedAt().getZone())
       .build();

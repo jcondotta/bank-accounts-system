@@ -52,7 +52,7 @@ class BankAccountTest {
         assertThat(account.getAccountType()).isEqualTo(accountType);
         assertThat(account.getCurrency()).isEqualTo(currency);
         assertThat(account.getIban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
-        assertThat(account.getStatus()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
+        assertThat(account.getAccountStatus()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
         assertThat(account.getCreatedAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
         assertThat(account.getAccountHolders())
           .hasSize(1)
@@ -149,7 +149,7 @@ class BankAccountTest {
     assertThat(bankAccount.getAccountType()).isEqualTo(accountType);
     assertThat(bankAccount.getCurrency()).isEqualTo(currency);
     assertThat(bankAccount.getIban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
-    assertThat(bankAccount.getStatus().isActive()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
     assertThat(bankAccount.getCreatedAt()).isEqualTo(CREATED_AT);
     assertThat(bankAccount.pullDomainEvents()).isEmpty();
 
@@ -197,7 +197,7 @@ class BankAccountTest {
     assertThat(bankAccount.getAccountType()).isEqualTo(accountType);
     assertThat(bankAccount.getCurrency()).isEqualTo(currency);
     assertThat(bankAccount.getIban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
-    assertThat(bankAccount.getStatus().isActive()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
     assertThat(bankAccount.getCreatedAt()).isEqualTo(CREATED_AT);
     assertThat(bankAccount.pullDomainEvents()).isEmpty();
 
@@ -230,7 +230,7 @@ class BankAccountTest {
     bankAccount.pullDomainEvents();
 
     bankAccount.activate();
-    assertThat(bankAccount.getStatus()).isEqualTo(AccountStatus.ACTIVE);
+    assertThat(bankAccount.getAccountStatus()).isEqualTo(AccountStatus.ACTIVE);
 
     var events = bankAccount.pullDomainEvents();
 
@@ -256,14 +256,14 @@ class BankAccountTest {
     bankAccount.activate();
     bankAccount.activate();
 
-    assertThat(bankAccount.getStatus().isActive()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
   }
 
   @ParameterizedTest
   @EnumSource(value = AccountStatus.class, names = {"PENDING", "ACTIVE"}, mode = EnumSource.Mode.EXCLUDE)
   void shouldThrowInvalidBankAccountStateTransitionException_whenActivatingFromInvalidState(AccountStatus status) {
     var bankAccount = BankAccountTestFixture.openPendingAccount(PRIMARY_ACCOUNT_HOLDER);
-    ReflectionTestUtils.setField(bankAccount, "status", status);
+    ReflectionTestUtils.setField(bankAccount, "accountStatus", status);
 
     assertThatThrownBy(bankAccount::activate)
       .isInstanceOf(InvalidBankAccountStateTransitionException.class);
@@ -274,7 +274,7 @@ class BankAccountTest {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
 
     bankAccount.block();
-    assertThat(bankAccount.getStatus().isBlocked()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isBlocked()).isTrue();
 
     var events = bankAccount.pullDomainEvents();
 
@@ -295,14 +295,14 @@ class BankAccountTest {
     bankAccount.block();
     bankAccount.block();
 
-    assertThat(bankAccount.getStatus().isBlocked()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isBlocked()).isTrue();
   }
 
   @ParameterizedTest
   @EnumSource(value = AccountStatus.class, names = {"BLOCKED", "ACTIVE"}, mode = EnumSource.Mode.EXCLUDE)
   void shouldThrowInvalidBankAccountStateTransitionException_whenBlockingFromInvalidState(AccountStatus status) {
     var bankAccount = BankAccountTestFixture.openPendingAccount(PRIMARY_ACCOUNT_HOLDER);
-    ReflectionTestUtils.setField(bankAccount, "status", status);
+    ReflectionTestUtils.setField(bankAccount, "accountStatus", status);
 
     assertThatThrownBy(bankAccount::block)
       .isInstanceOf(InvalidBankAccountStateTransitionException.class);
