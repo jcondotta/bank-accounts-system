@@ -1,56 +1,55 @@
-package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.mapper;
+package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.mapper;
 
-import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.OpenBankAccountCommand;
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
+import com.jcondotta.bankaccounts.application.usecase.addjointaccountholder.model.AddJointAccountHolderCommand;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
+import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
 import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.OpenBankAccountRequest;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.PrimaryAccountHolderRequest;
-import com.jcondotta.bankaccounts.infrastructure.arguments_provider.AccountTypeAndCurrencyArgumentsProvider;
+import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.model.AddJointAccountHolderRequest;
 import com.jcondotta.bankaccounts.infrastructure.fixtures.AccountHolderFixtures;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class OpenBankAccountRequestControllerMapperTest {
+class AddJointAccountHolderRequestControllerMapperTest {
+
+  private static final UUID BANK_ACCOUNT_UUID = BankAccountId.newId().value();
 
   private static final String VALID_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName().value();
   private static final String VALID_PASSPORT = AccountHolderFixtures.JEFFERSON.getPassportNumber().value();
   private static final LocalDate VALID_DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth().value();
 
-  private final OpenBankAccountRequestControllerMapper mapper = Mappers.getMapper(OpenBankAccountRequestControllerMapper.class);
+  private final AddJointAccountHolderRequestControllerMapper mapper =
+    Mappers.getMapper(AddJointAccountHolderRequestControllerMapper.class);
 
-  @ParameterizedTest
-  @ArgumentsSource(AccountTypeAndCurrencyArgumentsProvider.class)
-  void shouldMapOpenBankAccountRequestToCommand_whenValueAreValid(AccountType accountType, Currency currency) {
-    var accountHolderRequest = new PrimaryAccountHolderRequest(
+  @Test
+  void shouldMapAddJointAccountHolderRequestToCommand_whenValuesAreValid() {
+    AddJointAccountHolderRequest request =
+      new AddJointAccountHolderRequest(
         VALID_NAME,
-        VALID_PASSPORT,
-        VALID_DATE_OF_BIRTH
+        VALID_DATE_OF_BIRTH,
+        VALID_PASSPORT
       );
 
-    OpenBankAccountRequest request = new OpenBankAccountRequest(
-        accountType,
-        currency,
-        accountHolderRequest
-      );
-
-    OpenBankAccountCommand command = mapper.toCommand(request);
+    AddJointAccountHolderCommand command =
+      mapper.toCommand(BANK_ACCOUNT_UUID, request);
 
     assertThat(command).isNotNull();
+    assertThat(command.bankAccountId().value()).isEqualTo(BANK_ACCOUNT_UUID);
     assertThat(command.accountHolderName().value()).isEqualTo(VALID_NAME);
     assertThat(command.passportNumber().value()).isEqualTo(VALID_PASSPORT);
     assertThat(command.dateOfBirth().value()).isEqualTo(VALID_DATE_OF_BIRTH);
+  }
 
-    assertThat(command.accountType()).isEqualTo(accountType);
-    assertThat(command.currency()).isEqualTo(currency);
+  @Test
+  void shouldConvertUuidToBankAccountId_whenValueIsValid() {
+    BankAccountId bankAccountId = mapper.toBankAccountId(BANK_ACCOUNT_UUID);
+
+    assertThat(bankAccountId.value()).isEqualTo(BANK_ACCOUNT_UUID);
   }
 
   @Test
@@ -72,11 +71,5 @@ class OpenBankAccountRequestControllerMapperTest {
     DateOfBirth dateOfBirth = mapper.toDateOfBirth(VALID_DATE_OF_BIRTH);
 
     assertThat(dateOfBirth.value()).isEqualTo(VALID_DATE_OF_BIRTH);
-  }
-
-  @Test
-  void shouldReturn_whenMappedRequestIsNull() {
-    OpenBankAccountCommand command = mapper.toCommand(null);
-    assertThat(command).isNull();
   }
 }
