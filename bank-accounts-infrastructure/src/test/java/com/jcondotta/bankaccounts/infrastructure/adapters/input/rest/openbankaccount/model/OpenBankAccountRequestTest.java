@@ -20,8 +20,8 @@ class OpenBankAccountRequestTest {
   private static final PrimaryAccountHolderRequest VALID_ACCOUNT_HOLDER =
     new PrimaryAccountHolderRequest(
       AccountHolderFixtures.JEFFERSON.getAccountHolderName().value(),
-      AccountHolderFixtures.JEFFERSON.getDateOfBirth().value(),
-      AccountHolderFixtures.JEFFERSON.getPassportNumber().value()
+      AccountHolderFixtures.JEFFERSON.getPassportNumber().value(),
+      AccountHolderFixtures.JEFFERSON.getDateOfBirth().value()
     );
 
   @ParameterizedTest

@@ -26,8 +26,8 @@ class PrimaryAccountHolderRequestTest {
   void shouldNotDetectConstraintViolation_whenRequestIsValid() {
     var request = new PrimaryAccountHolderRequest(
       VALID_NAME,
-      VALID_DATE_OF_BIRTH,
-      VALID_PASSPORT
+      VALID_PASSPORT,
+      VALID_DATE_OF_BIRTH
     );
 
     assertThat(VALIDATOR.validate(request)).isEmpty();
@@ -38,8 +38,8 @@ class PrimaryAccountHolderRequestTest {
   void shouldDetectConstraintViolation_whenAccountHolderNameIsBlank(String blankName) {
     var request = new PrimaryAccountHolderRequest(
       blankName,
-      VALID_DATE_OF_BIRTH,
-      VALID_PASSPORT
+      VALID_PASSPORT,
+      VALID_DATE_OF_BIRTH
     );
 
     assertThat(VALIDATOR.validate(request))
@@ -56,8 +56,8 @@ class PrimaryAccountHolderRequestTest {
 
     var request = new PrimaryAccountHolderRequest(
       longName,
-      VALID_DATE_OF_BIRTH,
-      VALID_PASSPORT
+      VALID_PASSPORT,
+      VALID_DATE_OF_BIRTH
     );
 
     assertThat(VALIDATOR.validate(request))
@@ -72,8 +72,8 @@ class PrimaryAccountHolderRequestTest {
   void shouldDetectConstraintViolation_whenDateOfBirthIsNull() {
     var request = new PrimaryAccountHolderRequest(
       VALID_NAME,
-      null,
-      VALID_PASSPORT
+      VALID_PASSPORT,
+      null
     );
 
     assertThat(VALIDATOR.validate(request))
@@ -90,8 +90,8 @@ class PrimaryAccountHolderRequestTest {
 
     var request = new PrimaryAccountHolderRequest(
       VALID_NAME,
-      futureDate,
-      VALID_PASSPORT
+      VALID_PASSPORT,
+      futureDate
     );
 
     assertThat(VALIDATOR.validate(request))
@@ -106,8 +106,8 @@ class PrimaryAccountHolderRequestTest {
   void shouldDetectConstraintViolation_whenPassportNumberIsNull() {
     var request = new PrimaryAccountHolderRequest(
       VALID_NAME,
-      VALID_DATE_OF_BIRTH,
-      null
+      null,
+      VALID_DATE_OF_BIRTH
     );
 
     assertThat(VALIDATOR.validate(request))
@@ -124,8 +124,8 @@ class PrimaryAccountHolderRequestTest {
 
     var request = new PrimaryAccountHolderRequest(
       VALID_NAME,
-      VALID_DATE_OF_BIRTH,
-      invalidPassport
+      invalidPassport,
+      VALID_DATE_OF_BIRTH
     );
 
     assertThat(VALIDATOR.validate(request))

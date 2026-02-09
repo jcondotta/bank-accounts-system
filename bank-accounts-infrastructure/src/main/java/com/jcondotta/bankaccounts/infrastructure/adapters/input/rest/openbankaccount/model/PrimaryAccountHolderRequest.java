@@ -20,14 +20,14 @@ public record PrimaryAccountHolderRequest(
   @Size(max = AccountHolderName.MAX_LENGTH,  message = "must not exceed {max} characters")
   String accountHolderName,
 
-  @Schema(description = "Date of birth of the account holder", example = "1990-11-23", pattern = "yyyy-MM-dd", requiredMode = RequiredMode.REQUIRED)
-  @Past
-  @NotNull
-  LocalDate dateOfBirth,
-
   @Schema(description = "Passport number of the account holder", example = "FH254787", requiredMode = RequiredMode.REQUIRED)
   @Size(min = PassportNumber.LENGTH, max = PassportNumber.LENGTH, message = "must have exactly {max} characters")
   @NotNull
-  String passportNumber
+  String passportNumber,
+
+  @Schema(description = "Date of birth of the account holder", example = "1990-11-23", pattern = "yyyy-MM-dd", requiredMode = RequiredMode.REQUIRED)
+  @Past
+  @NotNull
+  LocalDate dateOfBirth
 ) {
 }
