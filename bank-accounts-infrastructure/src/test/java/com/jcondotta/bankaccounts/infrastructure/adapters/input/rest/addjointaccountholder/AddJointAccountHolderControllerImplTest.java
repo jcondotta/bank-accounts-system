@@ -49,8 +49,7 @@ class AddJointAccountHolderControllerImplTest {
     when(requestMapper.toCommand(BANK_ACCOUNT_UUID, restRequest))
       .thenReturn(command);
 
-    ResponseEntity<String> response =
-      controller.createJointAccountHolder(BANK_ACCOUNT_UUID, restRequest);
+    ResponseEntity<Void> response = controller.createJointAccountHolder(BANK_ACCOUNT_UUID, restRequest);
 
     verify(requestMapper).toCommand(BANK_ACCOUNT_UUID, restRequest);
     verify(useCase).execute(commandCaptor.capture());

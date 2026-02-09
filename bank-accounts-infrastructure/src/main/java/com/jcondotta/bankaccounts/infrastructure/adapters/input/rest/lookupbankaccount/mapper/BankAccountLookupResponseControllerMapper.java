@@ -1,34 +1,25 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.mapper;
 
 import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.model.BankAccountDetails;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.AccountHolderDetailsResponse;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.BankAccountDetailsResponse;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model.BankAccountLookupResponse;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+  componentModel = MappingConstants.ComponentModel.SPRING,
+  injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+  uses = AccountHolderDetailsResponseMapper.class
+)
 public interface BankAccountLookupResponseControllerMapper {
 
-    default BankAccountLookupResponse toResponse(BankAccountDetails bankAccountDetails){
-        BankAccountDetailsResponse bankAccountDetailsResponse = new BankAccountDetailsResponse(
-            bankAccountDetails.bankAccountId().value(),
-            bankAccountDetails.accountType(),
-            bankAccountDetails.currency(),
-            bankAccountDetails.iban().value(),
-            bankAccountDetails.openingDate(),
-            bankAccountDetails.accountStatus(),
-            bankAccountDetails.accountHolders()
-              .stream()
-              .map(accountHolderDetails -> new AccountHolderDetailsResponse(
-                  accountHolderDetails.accountHolderId().value(),
-                  accountHolderDetails.accountHolderName().value(),
-                  accountHolderDetails.passportNumber().value(),
-                  accountHolderDetails.dateOfBirth().value(),
-                  accountHolderDetails.accountHolderType(),
-                  accountHolderDetails.createdAt()
-              )).toList()
-        );
+    @Mapping(target = "bankAccount", source = "bankAccountDetails")
+    BankAccountLookupResponse toResponse(BankAccountDetails bankAccountDetails);
 
-        return new BankAccountLookupResponse(bankAccountDetailsResponse);
-    }
+    @Mapping(target = "bankAccountId", source = "bankAccountId.value")
+    @Mapping(target = "iban", source = "iban.value")
+    BankAccountDetailsResponse toBankAccountDetailsResponse(BankAccountDetails bankAccountDetails);
+
 }

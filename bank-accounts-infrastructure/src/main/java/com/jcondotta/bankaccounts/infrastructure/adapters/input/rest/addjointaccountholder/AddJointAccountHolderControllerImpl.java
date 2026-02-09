@@ -23,7 +23,7 @@ public class AddJointAccountHolderControllerImpl implements AddJointAccountHolde
     private final AddJointAccountHolderRequestControllerMapper requestMapper;
 
     @Override
-    public ResponseEntity<String> createJointAccountHolder(UUID bankAccountId, AddJointAccountHolderRequest restRequest) {
+    public ResponseEntity<Void> createJointAccountHolder(UUID bankAccountId, AddJointAccountHolderRequest restRequest) {
         LOGGER.atInfo()
                 .setMessage("Received request to create a joint account holder for Bank Account ID")
                 .addKeyValue("bankAccountId", bankAccountId)
