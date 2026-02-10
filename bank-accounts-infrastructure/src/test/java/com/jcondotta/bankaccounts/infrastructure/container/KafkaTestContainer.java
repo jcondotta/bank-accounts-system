@@ -14,11 +14,12 @@ import java.util.Map;
 @Slf4j
 public class KafkaTestContainer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-  private static final String KAFKA_IMAGE_NAME = "confluentinc/cp-kafka:7.6.0";
+  private static final String KAFKA_IMAGE_NAME = "apache/kafka:3.7.0";
   private static final DockerImageName KAFKA_IMAGE = DockerImageName.parse(KAFKA_IMAGE_NAME);
 
   @SuppressWarnings("all")
-  private static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer(KAFKA_IMAGE);
+  private static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer(KAFKA_IMAGE)
+    .withReuse(true);
 
   private static void startContainer() {
     try {
@@ -32,7 +33,13 @@ public class KafkaTestContainer implements ApplicationContextInitializer<Configu
   }
 
   private static Map<String, String> getContainerProperties() {
-    return Map.of("${KAFKA_BOOTSTRAP_SERVERS}", KAFKA_CONTAINER.getBootstrapServers());
+    return Map.of(
+      "KAFKA_BOOTSTRAP_SERVERS", KAFKA_CONTAINER.getBootstrapServers(),
+      "KAFKA_BANK_ACCOUNT_OPENED_TOPIC_NAME", "bank-account-opened",
+      "KAFKA_BANK_ACCOUNT_ACTIVATED_TOPIC_NAME", "bank-account-activated",
+      "KAFKA_BANK_ACCOUNT_BLOCKED_TOPIC_NAME", "bank-account-blocked",
+      "KAFKA_JOINT_ACCOUNT_HOLDER_ADDED_TOPIC_NAME", "joint-account-holder-added"
+      );
   }
 
   @Override

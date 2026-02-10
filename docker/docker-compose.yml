@@ -10,7 +10,7 @@ services:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
       AWS_DEFAULT_REGION: us-east-1
-      LS_LOG: ${LS_LOG:-debug}v
+      LS_LOG: ${LS_LOG:-debug}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:4566/_localstack/health" ]
       interval: 10s
@@ -157,24 +157,6 @@ services:
 
     volumes:
       - bank_accounts_kafka_3_volume:/var/lib/kafka/data
-
-  kafka-init:
-    image: confluentinc/cp-kafka:7.6.0
-    container_name: bank-accounts-kafka-init
-    depends_on:
-      - kafka-1
-      - kafka-2
-      - kafka-3
-    networks:
-      - bank_accounts_network
-    volumes:
-      - ./kafka:/kafka
-    entrypoint: [ "/bin/bash", "-c" ]
-    command: |
-      echo "Waiting for Kafka..." &&
-      sleep 25 &&
-      /kafka/01-create-topics.sh
-
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
