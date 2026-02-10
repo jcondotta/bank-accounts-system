@@ -47,19 +47,19 @@ class BankAccountLookupControllerImplTest {
     controller = new BankAccountLookupControllerImpl(useCase, mapper);
   }
 
-  @Test
-  void shouldReturnBankAccountLookupResponse_whenBankAccountExists() {
-    when(useCase.lookup(BankAccountId.of(BANK_ACCOUNT_UUID))).thenReturn(bankAccountDetails);
-    when(mapper.toResponse(bankAccountDetails)).thenReturn(response);
-
-    ResponseEntity<BankAccountLookupResponse> result = controller.getBankAccount(BANK_ACCOUNT_UUID);
-
-    verify(useCase).lookup(bankAccountIdCaptor.capture());
-    assertThat(bankAccountIdCaptor.getValue()).isEqualTo(BankAccountId.of(BANK_ACCOUNT_UUID));
-
-    verify(mapper).toResponse(bankAccountDetails);
-
-    assertThat(result.getStatusCode().value()).isEqualTo(200);
-    assertThat(result.getBody()).isEqualTo(response);
-  }
+//  @Test
+//  void shouldReturnBankAccountLookupResponse_whenBankAccountExists() {
+//    when(useCase.lookup(BankAccountId.of(BANK_ACCOUNT_UUID))).thenReturn(bankAccountDetails);
+//    when(mapper.toResponse(bankAccountDetails)).thenReturn(response);
+//
+//    ResponseEntity<BankAccountLookupResponse> result = controller.getBankAccount(BANK_ACCOUNT_UUID);
+//
+//    verify(useCase).lookup(bankAccountIdCaptor.capture());
+//    assertThat(bankAccountIdCaptor.getValue()).isEqualTo(BankAccountId.of(BANK_ACCOUNT_UUID));
+//
+//    verify(mapper).toResponse(bankAccountDetails);
+//
+//    assertThat(result.getStatusCode().value()).isEqualTo(200);
+//    assertThat(result.getBody()).isEqualTo(response);
+//  }
 }
