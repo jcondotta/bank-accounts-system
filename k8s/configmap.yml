@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bank-accounts-config
+  namespace: prod
+data:
+  SPRING_PROFILES_ACTIVE: "prod"
+
+  AWS_DEFAULT_REGION: "us-east-1"
+  AWS_DYNAMODB_BANKING_ENTITIES_TABLE_NAME: "banking-entities-prod"
+
+  KAFKA_BOOTSTRAP_SERVERS: "CHANGE_ME:9092"
+
+  KAFKA_BANK_ACCOUNT_OPENED_TOPIC_NAME: "bank-account-opened"
+  KAFKA_BANK_ACCOUNT_ACTIVATED_TOPIC_NAME: "bank-account-activated"
+  KAFKA_BANK_ACCOUNT_BLOCKED_TOPIC_NAME: "bank-account-blocked"
+  KAFKA_JOINT_ACCOUNT_HOLDER_ADDED_TOPIC_NAME: "joint-account-holder-added"

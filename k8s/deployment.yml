@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-accounts
+  namespace: prod
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: bank-accounts
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: bank-accounts
+    spec:
+      terminationGracePeriodSeconds: 60
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: bank-accounts
+          image: jcondotta/bank-accounts-system:1.0.0
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - containerPort: 8080
+
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 5
+
+          resources:
+            requests:
+              cpu: 200m
+              memory: 400Mi
+            limits:
+              cpu: 400m
+              memory: 800Mi
+
+          envFrom:
+            - configMapRef:
+                name: bank-accounts-config
+            - secretRef:
+                name: bank-accounts-kafka-credentials-secret
+            - secretRef:
+                name: bank-accounts-aws-credentials-secret
+
+#          livenessProbe:
+#            httpGet:
+#              path: "/actuator/health/liveness"
+#              port: 8080
+#            initialDelaySeconds: 10
+#            periodSeconds: 10
+#
+#          readinessProbe:
+#            httpGet:
+#              path: "/actuator/health/readiness"
+#              port: 8080
+#            initialDelaySeconds: 30
+#            periodSeconds: 10
+#            failureThreshold: 10
