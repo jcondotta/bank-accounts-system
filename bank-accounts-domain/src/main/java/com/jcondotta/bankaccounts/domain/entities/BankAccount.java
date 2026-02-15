@@ -134,7 +134,7 @@ public final class BankAccount {
     registerEvent(new BankAccountActivatedEvent(EventId.newId(), this.getBankAccountId(), createdAt));
   }
 
-  public void block() {
+  public void block(ZonedDateTime occurredAt) {
     if (accountStatus == AccountStatus.BLOCKED) {
       return;
     }
@@ -147,11 +147,20 @@ public final class BankAccount {
     }
 
     this.accountStatus = AccountStatus.BLOCKED;
-    registerEvent(new BankAccountBlockedEvent(
-      EventId.newId(),
-      this.getBankAccountId(),
-      createdAt)
-    );
+    registerEvent(new BankAccountBlockedEvent(EventId.newId(), this.getBankAccountId(), occurredAt));
+  }
+
+  public void unblock(ZonedDateTime occurredAt) {
+    if (accountStatus == AccountStatus.ACTIVE) {
+      return;
+    }
+
+    if (accountStatus != AccountStatus.BLOCKED) {
+      throw new InvalidBankAccountStateTransitionException(accountStatus, AccountStatus.ACTIVE);
+    }
+
+    this.accountStatus = AccountStatus.ACTIVE;
+    registerEvent(new BankAccountUnblockedEvent(EventId.newId(), this.getBankAccountId(), occurredAt));
   }
 
   public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, ZonedDateTime createdAt) {
@@ -170,14 +179,21 @@ public final class BankAccount {
     var accountHolder = AccountHolder.createJoint(name, passportNumber, dateOfBirth, createdAt);
     accountHolders.add(accountHolder);
 
-    this.registerEvent(
-      new JointAccountHolderAddedEvent(
-        EventId.newId(),
-        this.getBankAccountId(),
-        accountHolder.getAccountHolderId(),
-        accountHolder.getCreatedAt()
-      )
-    );
+    this.registerEvent(new JointAccountHolderAddedEvent(EventId.newId(), this.getBankAccountId(), accountHolder.getAccountHolderId(), accountHolder.getCreatedAt()));
+  }
+
+  public void close(ZonedDateTime occurredAt) {
+    if (accountStatus == AccountStatus.CLOSED) {
+      return;
+    }
+
+    if (accountStatus == AccountStatus.PENDING) {
+      throw new InvalidBankAccountStateTransitionException(accountStatus, AccountStatus.CLOSED);
+    }
+
+    this.accountStatus = AccountStatus.CLOSED;
+
+    registerEvent(new BankAccountClosedEvent(EventId.newId(), this.getBankAccountId(), occurredAt));
   }
 
   public Optional<AccountHolder> findAccountHolder(AccountHolderId accountHolderId) {
