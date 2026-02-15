@@ -121,7 +121,7 @@ public final class BankAccount {
     return AccountHolder.restore(accountHolderId, accountHolderName, passportNumber, dateOfBirth, accountHolderType, createdAt);
   }
 
-  public void activate() {
+  public void activate(ZonedDateTime occurredAt) {
     if (accountStatus == AccountStatus.ACTIVE) {
       return;
     }
@@ -131,7 +131,7 @@ public final class BankAccount {
     }
 
     this.accountStatus = AccountStatus.ACTIVE;
-    registerEvent(new BankAccountActivatedEvent(EventId.newId(), this.getBankAccountId(), createdAt));
+    registerEvent(new BankAccountActivatedEvent(EventId.newId(), this.getBankAccountId(), occurredAt));
   }
 
   public void block(ZonedDateTime occurredAt) {

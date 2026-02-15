@@ -227,7 +227,7 @@ class BankAccountTest {
     var bankAccount = BankAccountTestFixture.openPendingAccount(PRIMARY_ACCOUNT_HOLDER);
     bankAccount.pullDomainEvents();
 
-    bankAccount.activate();
+    bankAccount.activate(OCCURRED_AT);
     assertThat(bankAccount.getAccountStatus()).isEqualTo(AccountStatus.ACTIVE);
 
     var events = bankAccount.pullDomainEvents();
@@ -237,7 +237,7 @@ class BankAccountTest {
       .singleElement()
       .isInstanceOfSatisfying(BankAccountActivatedEvent.class, event -> {
           assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-          assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
+          assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
         }
       );
   }
@@ -251,8 +251,8 @@ class BankAccountTest {
       FIXED_CLOCK
     );
 
-    bankAccount.activate();
-    bankAccount.activate();
+    bankAccount.activate(OCCURRED_AT);
+    bankAccount.activate(OCCURRED_AT);
 
     assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
   }
@@ -263,7 +263,7 @@ class BankAccountTest {
     var bankAccount = BankAccountTestFixture.openPendingAccount(PRIMARY_ACCOUNT_HOLDER);
     ReflectionTestUtils.setField(bankAccount, "accountStatus", status);
 
-    assertThatThrownBy(bankAccount::activate)
+    assertThatThrownBy(() -> bankAccount.activate(OCCURRED_AT))
       .isInstanceOf(InvalidBankAccountStateTransitionException.class);
   }
 

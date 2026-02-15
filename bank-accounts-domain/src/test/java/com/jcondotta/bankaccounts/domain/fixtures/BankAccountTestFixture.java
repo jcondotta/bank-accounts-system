@@ -54,7 +54,7 @@ public final class BankAccountTestFixture {
 
   public static BankAccount openActiveAccount(AccountHolderFixtures holder, AccountType accountType, Currency currency, Clock clock) {
     var account = openPendingAccount(holder, accountType, currency, clock);
-    account.activate();
+    account.activate(ZonedDateTime.now(clock));
     account.pullDomainEvents();
 
     return account;
