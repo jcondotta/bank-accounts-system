@@ -11,6 +11,10 @@ app:
         topic-name: ${KAFKA_BANK_ACCOUNT_ACTIVATED_TOPIC_NAME:bank-account-activated}
       bank-account-blocked:
         topic-name: ${KAFKA_BANK_ACCOUNT_BLOCKED_TOPIC_NAME:bank-account-blocked}
+      bank-account-unblocked:
+        topic-name: ${KAFKA_BANK_ACCOUNT_UNBLOCKED_TOPIC_NAME:bank-account-unblocked}
+      bank-account-closed:
+        topic-name: ${KAFKA_BANK_ACCOUNT_CLOSED_TOPIC_NAME:bank-account-closed}
       joint-account-holder-added:
         topic-name: ${KAFKA_JOINT_ACCOUNT_HOLDER_ADDED_TOPIC_NAME:joint-account-holder-added}
 
@@ -22,7 +26,7 @@ cloud:
       access-key-id: ${AWS_ACCESS_KEY_ID:test}
       secret-key: ${AWS_SECRET_ACCESS_KEY:test}
     dynamodb:
-      endpoint: ${AWS_DYNAMODB_ENDPOINT:http://127.0.0.1:4567}
+      endpoint: ${AWS_DYNAMODB_ENDPOINT:http://127.0.0.1:4566}
       tables:
         banking-entities:
           table-name: ${AWS_DYNAMODB_BANKING_ENTITIES_TABLE_NAME:banking-entities}

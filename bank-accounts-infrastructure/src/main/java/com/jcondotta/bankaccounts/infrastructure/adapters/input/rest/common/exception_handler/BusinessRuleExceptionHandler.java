@@ -20,6 +20,13 @@ public class BusinessRuleExceptionHandler {
 
   @ExceptionHandler(DomainRuleValidationException.class)
   public ResponseEntity<ProblemDetail> handleBusinessRuleViolation(DomainRuleValidationException ex, HttpServletRequest request) {
+    log.warn(
+      "Business rule violation at [{}]: {}",
+      request.getRequestURI(),
+      ex.getMessage(),
+      ex
+    );
+
     var problemDetail = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_ENTITY);
     problemDetail.setType(ProblemTypes.BUSINESS_RULE_VIOLATION);
     problemDetail.setTitle("Operation not allowed");

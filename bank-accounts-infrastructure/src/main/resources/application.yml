@@ -33,6 +33,10 @@ app:
         topic-name: ${KAFKA_BANK_ACCOUNT_ACTIVATED_TOPIC_NAME}
       bank-account-blocked:
         topic-name: ${KAFKA_BANK_ACCOUNT_BLOCKED_TOPIC_NAME}
+      bank-account-unblocked:
+        topic-name: ${KAFKA_BANK_ACCOUNT_UNBLOCKED_TOPIC_NAME}
+      bank-account-closed:
+        topic-name: ${KAFKA_BANK_ACCOUNT_CLOSED_TOPIC_NAME}
       joint-account-holder-added:
         topic-name: ${KAFKA_JOINT_ACCOUNT_HOLDER_ADDED_TOPIC_NAME}
 
