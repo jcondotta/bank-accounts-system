@@ -1,14 +1,14 @@
-package com.jcondotta.bankaccounts.application.usecase.blockbankaccount;
+package com.jcondotta.bankaccounts.application.usecase.closebankaccount;
 
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
-import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountBlockedEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountClosedEventPublisher;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
-import com.jcondotta.bankaccounts.application.usecase.blockbankaccount.model.BlockBankAccountCommand;
+import com.jcondotta.bankaccounts.application.usecase.closebankaccount.model.CloseBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.events.BankAccountBlockedEvent;
+import com.jcondotta.bankaccounts.domain.events.BankAccountClosedEvent;
 import com.jcondotta.bankaccounts.domain.events.DomainEvent;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import com.jcondotta.bankaccounts.domain.value_objects.*;
@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class BlockBankAccountUseCaseImplTest {
+class CloseBankAccountUseCaseImplTest {
 
   private static final BankAccountId BANK_ACCOUNT_ID = BankAccountId.newId();
   private static final Iban VALID_IBAN = Iban.of("ES3801283316232166447417");
@@ -45,7 +45,7 @@ class BlockBankAccountUseCaseImplTest {
   private static final Clock USE_CASE_CLOCK =
     Clock.fixed(CREATED_AT.toInstant().plusSeconds(7200), CREATED_AT.getZone());
 
-  private static final ZonedDateTime BLOCKED_AT = ZonedDateTime.now(USE_CASE_CLOCK);
+  private static final ZonedDateTime CLOSED_AT = ZonedDateTime.now(USE_CASE_CLOCK);
 
   @Mock
   private LookupBankAccountRepository lookupBankAccountRepository;
@@ -54,25 +54,26 @@ class BlockBankAccountUseCaseImplTest {
   private UpdateBankAccountRepository updateBankAccountRepository;
 
   @Mock
-  private BankAccountBlockedEventPublisher bankAccountBlockedEventPublisher;
+  private BankAccountClosedEventPublisher bankAccountClosedEventPublisher;
 
   @Captor
   private ArgumentCaptor<DomainEvent> eventArgumentCaptor;
 
-  private BlockBankAccountUseCase useCase;
+  private CloseBankAccountUseCase useCase;
 
   @BeforeEach
   void setUp() {
-    useCase = new BlockBankAccountUseCaseImpl(
+    useCase = new CloseBankAccountUseCaseImpl(
       lookupBankAccountRepository,
       updateBankAccountRepository,
-      bankAccountBlockedEventPublisher,
+      bankAccountClosedEventPublisher,
       USE_CASE_CLOCK
     );
   }
 
   @Test
-  void shouldBlockBankAccount_whenCommandIsValid() {
+  void shouldCloseBankAccount_whenCommandIsValid() {
+
     BankAccount bankAccount = BankAccount.open(
       ACCOUNT_HOLDER_NAME,
       PASSPORT_NUMBER,
@@ -86,45 +87,51 @@ class BlockBankAccountUseCaseImplTest {
     bankAccount.activate(CREATED_AT);
     bankAccount.pullDomainEvents();
 
-    when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID)).thenReturn(Optional.of(bankAccount));
+    when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
+      .thenReturn(Optional.of(bankAccount));
 
-    var command = new BlockBankAccountCommand(BANK_ACCOUNT_ID);
+    var command = new CloseBankAccountCommand(BANK_ACCOUNT_ID);
+
     useCase.execute(command);
 
     verify(updateBankAccountRepository).update(bankAccount);
-    verify(bankAccountBlockedEventPublisher).publish(eventArgumentCaptor.capture());
+    verify(bankAccountClosedEventPublisher).publish(eventArgumentCaptor.capture());
     verifyNoMoreInteractions(lookupBankAccountRepository, updateBankAccountRepository);
 
-    assertThat(eventArgumentCaptor.getAllValues())
-      .hasSize(1)
-      .singleElement()
-      .isInstanceOfSatisfying(BankAccountBlockedEvent.class, event -> {
-          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-          assertThat(event.occurredAt()).isEqualTo(BLOCKED_AT);
-        }
-      );
+    assertThat(eventArgumentCaptor.getValue())
+      .isInstanceOfSatisfying(BankAccountClosedEvent.class, event -> {
+        assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
+        assertThat(event.occurredAt()).isEqualTo(CLOSED_AT);
+      });
   }
 
   @Test
-  void shouldThrowAccountRecipientNotFoundException_whenRecipientDoesNotExist() {
-    when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID)).thenReturn(Optional.empty());
+  void shouldThrowBankAccountNotFoundException_whenBankAccountDoesNotExist() {
 
-    var command = new BlockBankAccountCommand(BANK_ACCOUNT_ID);
+    when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
+      .thenReturn(Optional.empty());
+
+    var command = new CloseBankAccountCommand(BANK_ACCOUNT_ID);
 
     assertThatThrownBy(() -> useCase.execute(command))
       .isInstanceOf(BankAccountNotFoundException.class);
 
     verify(lookupBankAccountRepository).byId(BANK_ACCOUNT_ID);
-    verifyNoInteractions(updateBankAccountRepository, bankAccountBlockedEventPublisher);
+    verifyNoInteractions(updateBankAccountRepository, bankAccountClosedEventPublisher);
     verifyNoMoreInteractions(lookupBankAccountRepository);
   }
 
   @Test
   void shouldThrowNullPointerException_whenCommandIsNull() {
+
     assertThatThrownBy(() -> useCase.execute(null))
       .isInstanceOf(NullPointerException.class)
       .hasMessage("command must not be null");
 
-    verifyNoInteractions(lookupBankAccountRepository, updateBankAccountRepository, bankAccountBlockedEventPublisher);
+    verifyNoInteractions(
+      lookupBankAccountRepository,
+      updateBankAccountRepository,
+      bankAccountClosedEventPublisher
+    );
   }
 }

@@ -1,9 +1,9 @@
-package com.jcondotta.bankaccounts.application.usecase.blockbankaccount;
+package com.jcondotta.bankaccounts.application.usecase.closebankaccount;
 
-import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountBlockedEventPublisher;
+import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountClosedEventPublisher;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
-import com.jcondotta.bankaccounts.application.usecase.blockbankaccount.model.BlockBankAccountCommand;
+import com.jcondotta.bankaccounts.application.usecase.closebankaccount.model.CloseBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
@@ -17,43 +17,46 @@ import java.util.Objects;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BlockBankAccountUseCaseImpl implements BlockBankAccountUseCase {
+public class CloseBankAccountUseCaseImpl implements CloseBankAccountUseCase {
 
   private final LookupBankAccountRepository lookupBankAccountRepository;
   private final UpdateBankAccountRepository updateBankAccountRepository;
-  private final BankAccountBlockedEventPublisher bankAccountBlockedEventPublisher;
+  private final BankAccountClosedEventPublisher bankAccountClosedEventPublisher;
   private final Clock clock;
 
   @Override
   @Observed(
-    name = "bankAccounts.block",
-    contextualName = "blockBankAccount",
+    name = "bankAccounts.close",
+    contextualName = "closeBankAccount",
     lowCardinalityKeyValues = {
       "boundedContext", "bank-accounts",
-      "useCase", "block-bank-account",
+      "useCase", "close-bank-account",
       "operation", "update"
     }
   )
-  public void execute(BlockBankAccountCommand command) {
+  public void execute(CloseBankAccountCommand command) {
+
     Objects.requireNonNull(command, "command must not be null");
 
     log.info(
-      "Blocking bank account [bankAccountId={}]", command.bankAccountId().value()
+      "Closing bank account [bankAccountId={}]",
+      command.bankAccountId().value()
     );
 
     var bankAccount = lookupBankAccountRepository.byId(command.bankAccountId())
-        .orElseThrow(() -> new BankAccountNotFoundException(command.bankAccountId()));
+      .orElseThrow(() -> new BankAccountNotFoundException(command.bankAccountId()));
 
-    bankAccount.block(ZonedDateTime.now(clock));
+    bankAccount.close(ZonedDateTime.now(clock));
 
     updateBankAccountRepository.update(bankAccount);
 
     bankAccount
       .pullDomainEvents()
-      .forEach(bankAccountBlockedEventPublisher::publish);
+      .forEach(bankAccountClosedEventPublisher::publish);
 
     log.info(
-      "Bank account blocked successfully [bankAccountId={}]", bankAccount.getBankAccountId().value()
+      "Bank account closed successfully [bankAccountId={}]",
+      bankAccount.getBankAccountId().value()
     );
   }
 }

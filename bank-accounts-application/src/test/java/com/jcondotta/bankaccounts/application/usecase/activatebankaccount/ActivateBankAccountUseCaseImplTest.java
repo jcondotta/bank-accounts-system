@@ -20,6 +20,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZonedDateTime;
@@ -41,6 +42,12 @@ class ActivateBankAccountUseCaseImplTest {
 
   private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(ClockTestFactory.FIXED_CLOCK);
 
+  private static final Clock USE_CASE_CLOCK =
+    Clock.fixed(CREATED_AT.toInstant().plusSeconds(7200), CREATED_AT.getZone());
+
+  private static final ZonedDateTime ACTIVATED_AT = ZonedDateTime.now(USE_CASE_CLOCK);
+
+
   @Mock
   private LookupBankAccountRepository lookupBankAccountRepository;
 
@@ -60,7 +67,8 @@ class ActivateBankAccountUseCaseImplTest {
     useCase = new ActivateBankAccountUseCaseImpl(
       lookupBankAccountRepository,
       updateBankAccountRepository,
-      domainEventPublisher
+      domainEventPublisher,
+      USE_CASE_CLOCK
     );
   }
 
@@ -77,8 +85,6 @@ class ActivateBankAccountUseCaseImplTest {
 
     bankAccount.pullDomainEvents();
 
-    bankAccount.activate();
-
     when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
       .thenReturn(Optional.of(bankAccount));
 
@@ -94,7 +100,7 @@ class ActivateBankAccountUseCaseImplTest {
       .singleElement()
       .isInstanceOfSatisfying(BankAccountActivatedEvent.class, event -> {
           assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-          assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
+          assertThat(event.occurredAt()).isEqualTo(ACTIVATED_AT);
         }
       );
   }

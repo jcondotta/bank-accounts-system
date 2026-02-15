@@ -84,7 +84,7 @@ class AddJointAccountHolderUseCaseImplTest {
         VALID_IBAN,
         CREATED_AT);
 
-    bankAccount.activate();
+    bankAccount.activate(CREATED_AT);
     bankAccount.pullDomainEvents();
 
     when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))

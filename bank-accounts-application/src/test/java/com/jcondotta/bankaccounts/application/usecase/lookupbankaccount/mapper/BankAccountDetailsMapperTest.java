@@ -56,7 +56,7 @@ class BankAccountDetailsMapperTest {
       CREATED_AT
     );
 
-    bankAccount.activate();
+    bankAccount.activate(CREATED_AT);
 
     bankAccount.addJointAccountHolder(
       JOINT_ACCOUNT_HOLDER_NAME,
