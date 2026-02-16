@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder;
 
-import com.jcondotta.bankaccounts.application.usecase.addjointaccountholder.AddJointAccountHolderUseCase;
+import com.jcondotta.bankaccounts.application.usecase.addholder.AddJointAccountHolderUseCase;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.mapper.AddJointAccountHolderRequestControllerMapper;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.model.AddJointAccountHolderRequest;
 import lombok.AllArgsConstructor;

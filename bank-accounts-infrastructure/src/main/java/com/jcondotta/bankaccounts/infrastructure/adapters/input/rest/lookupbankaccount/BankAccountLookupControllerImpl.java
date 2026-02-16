@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount;
 
-import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.BankAccountLookupUseCase;
+import com.jcondotta.bankaccounts.application.usecase.lookup.BankAccountLookupUseCase;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.mapper.BankAccountLookupResponseControllerMapper;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model.BankAccountLookupResponse;

@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.mapper;
 
-import com.jcondotta.bankaccounts.application.usecase.addjointaccountholder.model.AddJointAccountHolderCommand;
+import com.jcondotta.bankaccounts.application.usecase.addholder.model.AddJointAccountHolderCommand;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;

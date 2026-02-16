@@ -28,15 +28,14 @@ public class KafkaBankAccountOpenedEventPublisher implements BankAccountOpenedEv
   public void publish(DomainEvent event) {
     if (event instanceof BankAccountOpenedEvent bankAccountOpenedEvent) {
 
+      var bankAccountId = bankAccountOpenedEvent.bankAccountId().value();
       log.info(
-        "Publishing BankAccountOpenedEvent to Kafka [topic={}, key={}]",
-        topicProperties.topicName(),
-        bankAccountOpenedEvent.bankAccountId()
+        "Publishing BankAccountOpenedEvent to Kafka [topic={}, key={}]", topicProperties.topicName(), bankAccountId
       );
 
       var producerRecord = new ProducerRecord<>(
         topicProperties.topicName(),
-        bankAccountOpenedEvent.bankAccountId().value().toString(),
+        bankAccountId.toString(),
         messageMapper.toEnvelope(bankAccountOpenedEvent, UUID.randomUUID().toString())
       );
 

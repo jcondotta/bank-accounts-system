@@ -1,26 +1,22 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder;
 
-import com.jcondotta.bankaccounts.application.usecase.addjointaccountholder.AddJointAccountHolderUseCase;
-import com.jcondotta.bankaccounts.application.usecase.addjointaccountholder.model.AddJointAccountHolderCommand;
+import com.jcondotta.bankaccounts.application.usecase.addholder.AddJointAccountHolderUseCase;
+import com.jcondotta.bankaccounts.application.usecase.addholder.model.AddJointAccountHolderCommand;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.mapper.AddJointAccountHolderRequestControllerMapper;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.model.AddJointAccountHolderRequest;
 import com.jcondotta.bankaccounts.infrastructure.fixtures.AccountHolderFixtures;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AddJointAccountHolderControllerImplTest {

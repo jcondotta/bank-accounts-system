@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.activatebankaccount;
 
-import com.jcondotta.bankaccounts.application.usecase.activatebankaccount.ActivateBankAccountUseCase;
-import com.jcondotta.bankaccounts.application.usecase.activatebankaccount.model.ActivateBankAccountCommand;
+import com.jcondotta.bankaccounts.application.usecase.activate.ActivateBankAccountUseCase;
+import com.jcondotta.bankaccounts.application.usecase.activate.model.ActivateBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

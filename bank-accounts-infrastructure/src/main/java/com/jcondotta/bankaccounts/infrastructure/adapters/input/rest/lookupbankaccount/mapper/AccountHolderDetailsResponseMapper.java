@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.mapper;
 
-import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.model.AccountHolderDetails;
+import com.jcondotta.bankaccounts.application.usecase.lookup.model.AccountHolderDetails;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.AccountHolderDetailsResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,33 +1,20 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount;
 
-import com.jcondotta.bankaccounts.application.usecase.openbankaccount.OpenBankAccountUseCase;
-import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.OpenBankAccountCommand;
-import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.OpenBankAccountResult;
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.bankaccounts.application.usecase.open.OpenBankAccountUseCase;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.mapper.OpenBankAccountRequestControllerMapper;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.OpenBankAccountRequest;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.PrimaryAccountHolderRequest;
-import com.jcondotta.bankaccounts.infrastructure.arguments_provider.AccountTypeAndCurrencyArgumentsProvider;
 import com.jcondotta.bankaccounts.infrastructure.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.infrastructure.properties.BankAccountsURIProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OpenBankAccountControllerImplTest {

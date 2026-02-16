@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.mapper;
 
-import com.jcondotta.bankaccounts.application.usecase.lookupbankaccount.model.BankAccountDetails;
+import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDetails;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.BankAccountDetailsResponse;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model.BankAccountLookupResponse;
 import org.mapstruct.InjectionStrategy;

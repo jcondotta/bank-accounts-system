@@ -1,8 +1,7 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.blockbankaccount;
 
-import com.jcondotta.bankaccounts.application.usecase.activatebankaccount.model.ActivateBankAccountCommand;
-import com.jcondotta.bankaccounts.application.usecase.blockbankaccount.BlockBankAccountUseCase;
-import com.jcondotta.bankaccounts.application.usecase.blockbankaccount.model.BlockBankAccountCommand;
+import com.jcondotta.bankaccounts.application.usecase.block.BlockBankAccountUseCase;
+import com.jcondotta.bankaccounts.application.usecase.block.model.BlockBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.mapper;
 
-import com.jcondotta.bankaccounts.application.usecase.openbankaccount.model.OpenBankAccountCommand;
+import com.jcondotta.bankaccounts.application.usecase.open.model.OpenBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
 import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
 import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
