@@ -38,6 +38,8 @@ public class KafkaTestContainer implements ApplicationContextInitializer<Configu
       "KAFKA_BANK_ACCOUNT_OPENED_TOPIC_NAME", "bank-account-opened",
       "KAFKA_BANK_ACCOUNT_ACTIVATED_TOPIC_NAME", "bank-account-activated",
       "KAFKA_BANK_ACCOUNT_BLOCKED_TOPIC_NAME", "bank-account-blocked",
+      "KAFKA_BANK_ACCOUNT_UNBLOCKED_TOPIC_NAME", "bank-account-unblocked",
+      "KAFKA_BANK_ACCOUNT_CLOSED_TOPIC_NAME", "bank-account-closed",
       "KAFKA_JOINT_ACCOUNT_HOLDER_ADDED_TOPIC_NAME", "joint-account-holder-added"
       );
   }

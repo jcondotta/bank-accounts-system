@@ -4,7 +4,6 @@ import com.jcondotta.bankaccounts.domain.events.BankAccountActivatedEvent;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventEnvelope;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventMetadata;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountActivatedMessage;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountOpenedMessage;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;

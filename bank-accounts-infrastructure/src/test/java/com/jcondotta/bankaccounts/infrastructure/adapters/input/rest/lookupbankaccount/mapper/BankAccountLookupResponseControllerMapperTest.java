@@ -33,10 +33,10 @@ class BankAccountLookupResponseControllerMapperTest {
   private static final AccountHolderName VALID_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName();
   private static final PassportNumber VALID_PASSPORT = AccountHolderFixtures.JEFFERSON.getPassportNumber();
   private static final DateOfBirth VALID_DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
+  private static final Email VALID_EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
 
-  private static final Clock FIXED_CLOCK = ClockTestFactory.TEST_CLOCK_FIXED;
+  private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
   private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(FIXED_CLOCK);
-
 
   public static final Iban VALID_IBAN = Iban.of("ES3801283316232166447417");
 
@@ -51,6 +51,7 @@ class BankAccountLookupResponseControllerMapperTest {
       VALID_NAME,
       VALID_PASSPORT,
       VALID_DATE_OF_BIRTH,
+      VALID_EMAIL,
       accountHolderType,
       CREATED_AT
     );
@@ -83,6 +84,7 @@ class BankAccountLookupResponseControllerMapperTest {
     assertThat(holder.accountHolderName()).isEqualTo(VALID_NAME.value());
     assertThat(holder.passportNumber()).isEqualTo(VALID_PASSPORT.value());
     assertThat(holder.dateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH.value());
+    assertThat(holder.email()).isEqualTo(VALID_EMAIL.value());
     assertThat(holder.accountHolderType()).isEqualTo(accountHolderType);
     assertThat(holder.createdAt()).isEqualTo(CREATED_AT);
   }

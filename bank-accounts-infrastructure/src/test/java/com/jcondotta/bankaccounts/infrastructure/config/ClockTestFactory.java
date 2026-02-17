@@ -11,11 +11,11 @@ import java.time.ZoneOffset;
 @Configuration
 public class ClockTestFactory {
 
-  public static final Clock TEST_CLOCK_FIXED = Clock.fixed(Instant.parse("2022-06-24T12:45:01Z"), ZoneOffset.UTC);
+  public static final Clock FIXED_CLOCK = Clock.fixed(Instant.parse("2022-06-24T12:45:01Z"), ZoneOffset.UTC);
 
   @Bean
   @Primary
   public Clock systemClock() {
-    return TEST_CLOCK_FIXED;
+    return FIXED_CLOCK;
   }
 }

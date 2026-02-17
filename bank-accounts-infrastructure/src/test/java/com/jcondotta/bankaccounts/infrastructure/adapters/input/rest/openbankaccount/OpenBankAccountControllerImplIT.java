@@ -4,12 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.events.types.DomainEventType;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.OpenBankAccountRequest;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.PrimaryAccountHolderRequest;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventEnvelope;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountOpenedMessage;
 import com.jcondotta.bankaccounts.infrastructure.arguments_provider.AccountTypeAndCurrencyArgumentsProvider;
+import com.jcondotta.bankaccounts.infrastructure.arguments_provider.BlankValuesArgumentProvider;
 import com.jcondotta.bankaccounts.infrastructure.container.KafkaTestContainer;
 import com.jcondotta.bankaccounts.infrastructure.container.LocalStackTestContainer;
 import com.jcondotta.bankaccounts.infrastructure.fixtures.AccountHolderFixtures;
@@ -18,8 +16,6 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,76 +27,78 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 
-//@ActiveProfiles("test")
-//@ContextConfiguration(initializers = {LocalStackTestContainer.class, KafkaTestContainer.class})
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@ContextConfiguration(initializers = { LocalStackTestContainer.class, KafkaTestContainer.class })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class OpenBankAccountControllerImplIT {
 
-//  private static final String VALID_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName().value();
-//  private static final String VALID_PASSPORT = AccountHolderFixtures.JEFFERSON.getPassportNumber().value();
-//  private static final LocalDate VALID_DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth().value();
+  private static final String VALID_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName().value();
+  private static final String VALID_PASSPORT = AccountHolderFixtures.JEFFERSON.getPassportNumber().value();
+  private static final LocalDate VALID_DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth().value();
+  private static final String VALID_EMAIL = AccountHolderFixtures.JEFFERSON.getEmail().value();
+
+  private static final Currency CURRENCY_EUR = Currency.EUR;
+  private static final AccountType ACCOUNT_TYPE_CHECKING = AccountType.CHECKING;
 //
 //  @Autowired
 //  Clock testClockUTC;
 //
-//  @Autowired
-//  ObjectMapper objectMapper;
+  @Autowired
+  ObjectMapper objectMapper;
 //
-//  @Autowired
-//  BankAccountsURIProperties uriProperties;
+  @Autowired
+  BankAccountsURIProperties uriProperties;
 //
 //  @Autowired
 //  private TestKafkaListener testKafkaListener;
 //
-//  RequestSpecification requestSpecification;
+  RequestSpecification requestSpecification;
 //
-//  @BeforeAll
-//  static void beforeAll() {
-//    RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-//  }
+  @BeforeAll
+  static void beforeAll() {
+    RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+  }
+
+  @BeforeEach
+  void beforeEach(@LocalServerPort int port) {
+    RestAssured.baseURI = "http://localhost";
+    RestAssured.port = port;
+
+    requestSpecification = new RequestSpecBuilder()
+      .setBaseUri(RestAssured.baseURI)
+      .setPort(RestAssured.port)
+      .setBasePath(uriProperties.rootPath())
+      .setContentType(ContentType.JSON)
+      .setAccept(ContentType.JSON)
+      .build();
+  }
 //
-//  @BeforeEach
-//  void beforeEach(@LocalServerPort int port) {
-//    RestAssured.baseURI = "http://localhost";
-//    RestAssured.port = port;
-//
-//    requestSpecification = new RequestSpecBuilder()
-//      .setBaseUri(RestAssured.baseURI)
-//      .setPort(RestAssured.port)
-//      .setBasePath(uriProperties.rootPath())
-//      .setContentType(ContentType.JSON)
-//      .setAccept(ContentType.JSON)
-//      .build();
-//  }
-//
-//  @ParameterizedTest
-//  @ArgumentsSource(AccountTypeAndCurrencyArgumentsProvider.class)
-//  void shouldReturn201CreatedWithValidLocationHeader_whenRequestIsValid(AccountType accountType, Currency currency) throws JsonProcessingException {
-//    var primaryAccountHolderRequest = new PrimaryAccountHolderRequest(VALID_NAME, VALID_PASSPORT, VALID_DATE_OF_BIRTH);
-//    var request = new OpenBankAccountRequest(accountType, currency, primaryAccountHolderRequest);
-//
-//    var response = given()
-//      .spec(requestSpecification)
-//      .body(objectMapper.writeValueAsString(request))
-//    .when()
-//      .post()
-//    .then()
-//      .statusCode(HttpStatus.CREATED.value())
-//      .extract()
-//      .response();
-//
-//    var location = response.header("location");
-//    assertThat(location).isNotBlank();
-//
+  @ParameterizedTest
+  @ArgumentsSource(AccountTypeAndCurrencyArgumentsProvider.class)
+  void shouldReturn201CreatedWithValidLocationHeader_whenRequestIsValid(AccountType accountType, Currency currency) throws JsonProcessingException {
+    var primaryAccountHolderRequest = new PrimaryAccountHolderRequest(VALID_NAME, VALID_PASSPORT, VALID_DATE_OF_BIRTH, VALID_EMAIL);
+    var request = new OpenBankAccountRequest(accountType, currency, primaryAccountHolderRequest);
+
+    var response = given()
+      .spec(requestSpecification)
+      .body(objectMapper.writeValueAsString(request))
+    .when()
+      .post()
+    .then()
+      .statusCode(HttpStatus.CREATED.value())
+      .extract()
+      .response();
+
+    var location = response.header("location");
+    assertThat(location).isNotBlank();
+
 //    UUID bankAccountId = UUID.fromString(location.substring(location.lastIndexOf('/') + 1));
 //
 //    try {
@@ -134,5 +132,28 @@ class OpenBankAccountControllerImplIT {
 //    } catch (InterruptedException e) {
 //      throw new RuntimeException(e);
 //    }
-//  }
+  }
+
+  @ParameterizedTest
+  @ArgumentsSource(BlankValuesArgumentProvider.class)
+  void shouldReturn422WithValidationProblemDetails_whenAccountHolderNameIsBlank(String blankName) throws JsonProcessingException {
+
+    var primaryAccountHolderRequest =
+      new PrimaryAccountHolderRequest(blankName, VALID_PASSPORT, VALID_DATE_OF_BIRTH, VALID_EMAIL);
+
+    var request =
+      new OpenBankAccountRequest(AccountType.CHECKING, Currency.EUR, primaryAccountHolderRequest);
+
+    given()
+      .spec(requestSpecification)
+      .body(objectMapper.writeValueAsString(request))
+    .when()
+      .post()
+    .then()
+      .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value())
+      .body("instance", equalTo(uriProperties.rootPath()))
+      .body("properties.errors", hasSize(1))
+      .body("properties.errors[0].field", equalTo("accountHolder.accountHolderName"))
+      .body("properties.errors[0].messages[0]", equalTo("must not be blank"));
+  }
 }

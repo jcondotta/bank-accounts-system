@@ -4,8 +4,8 @@ import com.jcondotta.bankaccounts.application.ports.output.messaging.JointAccoun
 import com.jcondotta.bankaccounts.domain.events.DomainEvent;
 import com.jcondotta.bankaccounts.domain.events.JointAccountHolderAddedEvent;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventEnvelope;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.JointAccountHolderAddedMessage;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.JointAccountHolderAddedMessageMapper;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.JointAccountHolderAddedMessage;
 import com.jcondotta.bankaccounts.infrastructure.properties.JointAccountHolderAddedTopicProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

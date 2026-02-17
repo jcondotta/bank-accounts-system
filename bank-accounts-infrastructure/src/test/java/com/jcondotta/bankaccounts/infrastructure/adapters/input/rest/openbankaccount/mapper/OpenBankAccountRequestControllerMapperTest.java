@@ -5,6 +5,7 @@ import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
 import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
+import com.jcondotta.bankaccounts.domain.value_objects.Email;
 import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.OpenBankAccountRequest;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.PrimaryAccountHolderRequest;
@@ -24,6 +25,7 @@ class OpenBankAccountRequestControllerMapperTest {
   private static final String VALID_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName().value();
   private static final String VALID_PASSPORT = AccountHolderFixtures.JEFFERSON.getPassportNumber().value();
   private static final LocalDate VALID_DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth().value();
+  private static final String VALID_EMAIL = AccountHolderFixtures.JEFFERSON.getEmail().value();
 
   private final OpenBankAccountRequestControllerMapper mapper = Mappers.getMapper(OpenBankAccountRequestControllerMapper.class);
 
@@ -33,7 +35,8 @@ class OpenBankAccountRequestControllerMapperTest {
     var accountHolderRequest = new PrimaryAccountHolderRequest(
         VALID_NAME,
         VALID_PASSPORT,
-        VALID_DATE_OF_BIRTH
+        VALID_DATE_OF_BIRTH,
+        VALID_EMAIL
       );
 
     OpenBankAccountRequest request = new OpenBankAccountRequest(
@@ -48,6 +51,7 @@ class OpenBankAccountRequestControllerMapperTest {
     assertThat(command.accountHolderName().value()).isEqualTo(VALID_NAME);
     assertThat(command.passportNumber().value()).isEqualTo(VALID_PASSPORT);
     assertThat(command.dateOfBirth().value()).isEqualTo(VALID_DATE_OF_BIRTH);
+    assertThat(command.email().value()).isEqualTo(VALID_EMAIL);
 
     assertThat(command.accountType()).isEqualTo(accountType);
     assertThat(command.currency()).isEqualTo(currency);
@@ -72,6 +76,13 @@ class OpenBankAccountRequestControllerMapperTest {
     DateOfBirth dateOfBirth = mapper.toDateOfBirth(VALID_DATE_OF_BIRTH);
 
     assertThat(dateOfBirth.value()).isEqualTo(VALID_DATE_OF_BIRTH);
+  }
+
+  @Test
+  void shouldConvertStringToEmail_whenValueIsValid() {
+    Email email = mapper.toEmail(VALID_EMAIL);
+
+    assertThat(email.value()).isEqualTo(VALID_EMAIL);
   }
 
   @Test

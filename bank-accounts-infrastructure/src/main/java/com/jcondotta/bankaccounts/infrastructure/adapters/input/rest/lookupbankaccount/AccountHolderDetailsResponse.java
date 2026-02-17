@@ -41,6 +41,14 @@ public record AccountHolderDetailsResponse(
     LocalDate dateOfBirth,
 
     @NotNull
+    @Schema(
+      description = "Email address of the account holder.",
+      example = "jefferson.condotta@email.com",
+      requiredMode = RequiredMode.REQUIRED
+    )
+    String email,
+
+    @NotNull
     @Schema(description = "Type of the account holder.",
         example = "PRIMARY", allowableValues = {"PRIMARY", "JOINT"},
         requiredMode = RequiredMode.REQUIRED)

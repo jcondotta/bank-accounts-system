@@ -13,5 +13,6 @@ public interface AccountHolderDetailsResponseMapper {
   @Mapping(target = "accountHolderName", source = "accountHolderName.value")
   @Mapping(target = "passportNumber", source = "passportNumber.value")
   @Mapping(target = "dateOfBirth", source = "dateOfBirth.value")
+  @Mapping(target = "email", source = "email.value")
   AccountHolderDetailsResponse toResponse(AccountHolderDetails details);
 }

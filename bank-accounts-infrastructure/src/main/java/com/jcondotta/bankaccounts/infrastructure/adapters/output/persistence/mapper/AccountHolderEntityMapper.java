@@ -23,6 +23,7 @@ public interface AccountHolderEntityMapper {
       .accountHolderName(accountHolder.getAccountHolderName().value())
       .passportNumber(accountHolder.getPassportNumber().value())
       .dateOfBirth(accountHolder.getDateOfBirth().value())
+      .email(accountHolder.getEmail().value())
       .accountHolderType(accountHolder.getAccountHolderType())
       .createdAt(accountHolder.getCreatedAt().toInstant())
       .createdAtZone(accountHolder.getCreatedAt().getZone())
@@ -35,6 +36,7 @@ public interface AccountHolderEntityMapper {
       AccountHolderName.of(accountHolderEntity.getAccountHolderName()),
       PassportNumber.of(accountHolderEntity.getPassportNumber()),
       DateOfBirth.of(accountHolderEntity.getDateOfBirth()),
+      Email.of(accountHolderEntity.getEmail()),
       accountHolderEntity.getAccountHolderType(),
       ZonedDateTime.ofInstant(accountHolderEntity.getCreatedAt(), accountHolderEntity.getCreatedAtZone())
     );

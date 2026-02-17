@@ -21,7 +21,8 @@ class OpenBankAccountRequestTest {
     new PrimaryAccountHolderRequest(
       AccountHolderFixtures.JEFFERSON.getAccountHolderName().value(),
       AccountHolderFixtures.JEFFERSON.getPassportNumber().value(),
-      AccountHolderFixtures.JEFFERSON.getDateOfBirth().value()
+      AccountHolderFixtures.JEFFERSON.getDateOfBirth().value(),
+      AccountHolderFixtures.JEFFERSON.getEmail().value()
     );
 
   @ParameterizedTest
@@ -96,6 +97,7 @@ class OpenBankAccountRequestTest {
   @Test
   void shouldDetectConstraintViolation_whenAccountHolderIsInvalid() {
     var invalidAccountHolder = new PrimaryAccountHolderRequest(
+      null,
       null,
       null,
       null

@@ -40,6 +40,7 @@ public class BankingEntity {
   private String accountHolderName;
   private String passportNumber;
   private LocalDate dateOfBirth;
+  private String email;
   private AccountHolderType accountHolderType;
 
   private Instant createdAt;
@@ -105,6 +106,11 @@ public class BankingEntity {
   @DynamoDbAttribute("dateOfBirth")
   public LocalDate getDateOfBirth() {
     return dateOfBirth;
+  }
+
+  @DynamoDbAttribute("email")
+  public String getEmail() {
+    return email;
   }
 
   @DynamoDbAttribute("accountHolderType")

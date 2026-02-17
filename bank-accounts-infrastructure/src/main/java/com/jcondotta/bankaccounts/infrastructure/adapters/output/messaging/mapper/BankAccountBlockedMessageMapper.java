@@ -3,7 +3,6 @@ package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapp
 import com.jcondotta.bankaccounts.domain.events.BankAccountBlockedEvent;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventEnvelope;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventMetadata;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountActivatedMessage;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountBlockedMessage;
 import org.springframework.stereotype.Component;
 

@@ -3,10 +3,7 @@ package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointac
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
 import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -20,14 +17,24 @@ public record AddJointAccountHolderRequest(
   @Size(max = AccountHolderName.MAX_LENGTH, message = "must not exceed {max} characters")
   String accountHolderName,
 
+  @Schema(description = "Passport number of the account holder", example = "FH254787", requiredMode = RequiredMode.REQUIRED)
+  @Size(min = PassportNumber.LENGTH, max = PassportNumber.LENGTH, message = "must have exactly {max} characters")
+  @NotNull
+  String passportNumber,
+
   @Schema(description = "Date of birth of the account holder", example = "1990-11-23", pattern = "yyyy-MM-dd", requiredMode = RequiredMode.REQUIRED)
   @Past
   @NotNull
   LocalDate dateOfBirth,
 
-  @Schema(description = "Passport number of the account holder", example = "FH254787", requiredMode = RequiredMode.REQUIRED)
-  @Size(min = PassportNumber.LENGTH, max = PassportNumber.LENGTH, message = "must have exactly {max} characters")
-  @NotNull
-  String passportNumber
+  @Schema(
+    description = "Email address of the account holder",
+    example = "jefferson.condotta@email.com",
+    requiredMode = RequiredMode.REQUIRED
+  )
+//  @Email
+  @NotBlank
+  @Size(max = com.jcondotta.bankaccounts.domain.value_objects.Email.MAX_LENGTH, message = "must not exceed {max} characters")
+  String email
 ) {
 }

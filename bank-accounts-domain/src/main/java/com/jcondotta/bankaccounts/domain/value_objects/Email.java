@@ -11,7 +11,7 @@ public record Email(String value) {
     public static final String EMAIL_INVALID_FORMAT = "Email format is invalid.";
     public static final String EMAIL_EXCEEDS_MAX_LENGTH = "Email exceeds maximum length of 254 characters.";
 
-    private static final int MAX_LENGTH = 254;
+    public static final int MAX_LENGTH = 254;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
       "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$"

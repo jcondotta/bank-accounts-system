@@ -24,8 +24,8 @@ public class LocalStackTestContainer implements ApplicationContextInitializer<Co
       new LocalStackContainer(LOCALSTACK_IMAGE)
           .withServices(Service.DYNAMODB)
           .withCopyFileToContainer(
-              MountableFile.forHostPath("../docker/localstack/init-aws.sh"),
-              "/etc/localstack/init/ready.d/init-aws.sh")
+              MountableFile.forHostPath("../docker/localstack/"),
+              "/etc/localstack/init/ready.d/")
           .withLogConsumer(outputFrame -> log.info(outputFrame.getUtf8StringWithoutLineEnding()))
           .withReuse(true);
 

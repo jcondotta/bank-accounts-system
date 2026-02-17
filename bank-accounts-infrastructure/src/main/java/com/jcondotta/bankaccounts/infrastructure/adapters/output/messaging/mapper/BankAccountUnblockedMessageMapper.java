@@ -1,10 +1,8 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper;
 
-import com.jcondotta.bankaccounts.domain.events.BankAccountBlockedEvent;
 import com.jcondotta.bankaccounts.domain.events.BankAccountUnblockedEvent;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventEnvelope;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventMetadata;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountBlockedMessage;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountUnblockedMessage;
 import org.springframework.stereotype.Component;
 

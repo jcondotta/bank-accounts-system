@@ -1,10 +1,7 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.mapper;
 
 import com.jcondotta.bankaccounts.application.usecase.addholder.model.AddJointAccountHolderCommand;
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
-import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
-import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
+import com.jcondotta.bankaccounts.domain.value_objects.*;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.model.AddJointAccountHolderRequest;
 import com.jcondotta.bankaccounts.infrastructure.fixtures.AccountHolderFixtures;
 import org.junit.jupiter.api.Test;
@@ -22,6 +19,7 @@ class AddJointAccountHolderRequestControllerMapperTest {
   private static final String VALID_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName().value();
   private static final String VALID_PASSPORT = AccountHolderFixtures.JEFFERSON.getPassportNumber().value();
   private static final LocalDate VALID_DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth().value();
+  private static final String VALID_EMAIL = AccountHolderFixtures.JEFFERSON.getEmail().value();
 
   private final AddJointAccountHolderRequestControllerMapper mapper =
     Mappers.getMapper(AddJointAccountHolderRequestControllerMapper.class);
@@ -31,8 +29,9 @@ class AddJointAccountHolderRequestControllerMapperTest {
     AddJointAccountHolderRequest request =
       new AddJointAccountHolderRequest(
         VALID_NAME,
+        VALID_PASSPORT,
         VALID_DATE_OF_BIRTH,
-        VALID_PASSPORT
+        VALID_EMAIL
       );
 
     AddJointAccountHolderCommand command =
@@ -43,6 +42,7 @@ class AddJointAccountHolderRequestControllerMapperTest {
     assertThat(command.accountHolderName().value()).isEqualTo(VALID_NAME);
     assertThat(command.passportNumber().value()).isEqualTo(VALID_PASSPORT);
     assertThat(command.dateOfBirth().value()).isEqualTo(VALID_DATE_OF_BIRTH);
+    assertThat(command.email().value()).isEqualTo(VALID_EMAIL);
   }
 
   @Test
@@ -64,6 +64,13 @@ class AddJointAccountHolderRequestControllerMapperTest {
     PassportNumber passportNumber = mapper.toPassportNumber(VALID_PASSPORT);
 
     assertThat(passportNumber.value()).isEqualTo(VALID_PASSPORT);
+  }
+
+  @Test
+  void shouldConvertStringToEmail_whenValueIsValid() {
+    Email email = mapper.toEmail(VALID_EMAIL);
+
+    assertThat(email.value()).isEqualTo(VALID_EMAIL);
   }
 
   @Test

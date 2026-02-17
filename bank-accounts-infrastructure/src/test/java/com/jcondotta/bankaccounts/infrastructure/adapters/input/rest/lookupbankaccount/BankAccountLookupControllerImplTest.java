@@ -6,16 +6,19 @@ import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.mapper.BankAccountLookupResponseControllerMapper;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model.BankAccountLookupResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BankAccountLookupControllerImplTest {
@@ -44,19 +47,19 @@ class BankAccountLookupControllerImplTest {
     controller = new BankAccountLookupControllerImpl(useCase, mapper);
   }
 
-//  @Test
-//  void shouldReturnBankAccountLookupResponse_whenBankAccountExists() {
-//    when(useCase.lookup(BankAccountId.of(BANK_ACCOUNT_UUID))).thenReturn(bankAccountDetails);
-//    when(mapper.toResponse(bankAccountDetails)).thenReturn(response);
-//
-//    ResponseEntity<BankAccountLookupResponse> result = controller.getBankAccount(BANK_ACCOUNT_UUID);
-//
-//    verify(useCase).lookup(bankAccountIdCaptor.capture());
-//    assertThat(bankAccountIdCaptor.getValue()).isEqualTo(BankAccountId.of(BANK_ACCOUNT_UUID));
-//
-//    verify(mapper).toResponse(bankAccountDetails);
-//
-//    assertThat(result.getStatusCode().value()).isEqualTo(200);
-//    assertThat(result.getBody()).isEqualTo(response);
-//  }
+  @Test
+  void shouldReturnBankAccountLookupResponse_whenBankAccountExists() {
+    when(useCase.lookup(BankAccountId.of(BANK_ACCOUNT_UUID))).thenReturn(bankAccountDetails);
+    when(mapper.toResponse(bankAccountDetails)).thenReturn(response);
+
+    ResponseEntity<BankAccountLookupResponse> result = controller.getBankAccount(BANK_ACCOUNT_UUID);
+
+    verify(useCase).lookup(bankAccountIdCaptor.capture());
+    assertThat(bankAccountIdCaptor.getValue()).isEqualTo(BankAccountId.of(BANK_ACCOUNT_UUID));
+
+    verify(mapper).toResponse(bankAccountDetails);
+
+    assertThat(result.getStatusCode().value()).isEqualTo(200);
+    assertThat(result.getBody()).isEqualTo(response);
+  }
 }

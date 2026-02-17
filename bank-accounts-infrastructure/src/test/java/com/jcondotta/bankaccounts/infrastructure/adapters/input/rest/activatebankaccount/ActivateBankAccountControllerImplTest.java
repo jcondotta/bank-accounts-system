@@ -5,11 +5,11 @@ import com.jcondotta.bankaccounts.application.usecase.activate.model.ActivateBan
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;

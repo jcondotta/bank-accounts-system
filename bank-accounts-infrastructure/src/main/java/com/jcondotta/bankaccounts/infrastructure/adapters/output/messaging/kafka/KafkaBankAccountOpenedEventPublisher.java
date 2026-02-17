@@ -3,9 +3,9 @@ package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.kafk
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountOpenedEventPublisher;
 import com.jcondotta.bankaccounts.domain.events.BankAccountOpenedEvent;
 import com.jcondotta.bankaccounts.domain.events.DomainEvent;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountOpenedMessage;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.BankAccountOpenedMessageMapper;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventEnvelope;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.BankAccountOpenedMessageMapper;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountOpenedMessage;
 import com.jcondotta.bankaccounts.infrastructure.properties.BankAccountOpenedTopicProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
