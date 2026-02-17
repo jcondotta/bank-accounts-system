@@ -2,10 +2,7 @@ package com.jcondotta.bankaccounts.domain.entities;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.validation.AccountHolderValidationErrors;
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
-import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
-import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
+import com.jcondotta.bankaccounts.domain.value_objects.*;
 
 import java.time.ZonedDateTime;
 
@@ -17,6 +14,7 @@ public final class AccountHolder {
   private final AccountHolderName accountHolderName;
   private final PassportNumber passportNumber;
   private final DateOfBirth dateOfBirth;
+  private final Email email;
   private final AccountHolderType accountHolderType;
   private final ZonedDateTime createdAt;
 
@@ -25,6 +23,7 @@ public final class AccountHolder {
     AccountHolderName accountHolderName,
     PassportNumber passportNumber,
     DateOfBirth dateOfBirth,
+    Email email,
     AccountHolderType accountHolderType,
     ZonedDateTime createdAt
   ) {
@@ -32,26 +31,28 @@ public final class AccountHolder {
     this.accountHolderName = requireNonNull(accountHolderName, AccountHolderValidationErrors.NAME_NOT_NULL);
     this.passportNumber = requireNonNull(passportNumber, AccountHolderValidationErrors.PASSPORT_NUMBER_NOT_NULL);
     this.dateOfBirth = requireNonNull(dateOfBirth, AccountHolderValidationErrors.DATE_OF_BIRTH_NOT_NULL);
+    this.email = requireNonNull(email, AccountHolderValidationErrors.EMAIL_NOT_NULL);
     this.accountHolderType = requireNonNull(accountHolderType, AccountHolderValidationErrors.ACCOUNT_HOLDER_TYPE);
     this.createdAt = requireNonNull(createdAt, AccountHolderValidationErrors.CREATED_AT_NOT_NULL);
   }
 
-  static AccountHolder createPrimary(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, ZonedDateTime createdAt) {
-    return create(accountHolderName, passportNumber, dateOfBirth, AccountHolderType.PRIMARY, createdAt);
+  static AccountHolder createPrimary(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, ZonedDateTime createdAt) {
+    return create(accountHolderName, passportNumber, dateOfBirth, email, AccountHolderType.PRIMARY, createdAt);
   }
 
-  static AccountHolder createJoint(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, ZonedDateTime createdAt) {
-    return create(accountHolderName, passportNumber, dateOfBirth, AccountHolderType.JOINT, createdAt);
+  static AccountHolder createJoint(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, ZonedDateTime createdAt) {
+    return create(accountHolderName, passportNumber, dateOfBirth, email, AccountHolderType.JOINT, createdAt);
   }
 
   private static AccountHolder create(
     AccountHolderName accountHolderName,
     PassportNumber passportNumber,
     DateOfBirth dateOfBirth,
+    Email email,
     AccountHolderType accountHolderType,
     ZonedDateTime createdAt) {
 
-    return new AccountHolder(AccountHolderId.newId(), accountHolderName, passportNumber, dateOfBirth, accountHolderType, createdAt);
+    return new AccountHolder(AccountHolderId.newId(), accountHolderName, passportNumber, dateOfBirth, email, accountHolderType, createdAt);
   }
 
   static AccountHolder restore(
@@ -59,10 +60,11 @@ public final class AccountHolder {
     AccountHolderName accountHolderName,
     PassportNumber passportNumber,
     DateOfBirth dateOfBirth,
+    Email email,
     AccountHolderType accountHolderType,
     ZonedDateTime createdAt) {
 
-    return new AccountHolder(accountHolderId, accountHolderName, passportNumber, dateOfBirth, accountHolderType, createdAt);
+    return new AccountHolder(accountHolderId, accountHolderName, passportNumber, dateOfBirth, email, accountHolderType, createdAt);
   }
 
   public boolean isPrimaryAccountHolder() {
@@ -87,6 +89,10 @@ public final class AccountHolder {
 
   public DateOfBirth getDateOfBirth() {
     return dateOfBirth;
+  }
+
+  public Email getEmail() {
+    return email;
   }
 
   public AccountHolderType getAccountHolderType() {

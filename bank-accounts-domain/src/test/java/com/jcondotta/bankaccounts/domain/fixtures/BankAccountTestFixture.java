@@ -37,6 +37,7 @@ public final class BankAccountTestFixture {
       holder.getAccountHolderName(),
       holder.getPassportNumber(),
       holder.getDateOfBirth(),
+      holder.getEmail(),
       accountType,
       currency,
       VALID_IBAN,

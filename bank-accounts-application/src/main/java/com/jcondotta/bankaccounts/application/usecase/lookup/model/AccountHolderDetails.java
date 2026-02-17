@@ -1,10 +1,7 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.model;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
-import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
-import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
+import com.jcondotta.bankaccounts.domain.value_objects.*;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -14,6 +11,7 @@ public record AccountHolderDetails(
   AccountHolderName accountHolderName,
   PassportNumber passportNumber,
   DateOfBirth dateOfBirth,
+  Email email,
   AccountHolderType accountHolderType,
   ZonedDateTime createdAt
 ) {
@@ -22,6 +20,7 @@ public record AccountHolderDetails(
     Objects.requireNonNull(accountHolderName, "accountHolderName");
     Objects.requireNonNull(passportNumber, "passportNumber");
     Objects.requireNonNull(dateOfBirth, "dateOfBirth");
+    Objects.requireNonNull(email, "email");
     Objects.requireNonNull(accountHolderType, "accountHolderType");
     Objects.requireNonNull(createdAt, "createdAt");
   }

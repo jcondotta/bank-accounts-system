@@ -8,10 +8,7 @@ import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
-import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
-import com.jcondotta.bankaccounts.domain.value_objects.Iban;
-import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
+import com.jcondotta.bankaccounts.domain.value_objects.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -33,6 +30,8 @@ class BankAccountDetailsMapperTest {
     AccountHolderFixtures.JEFFERSON.getPassportNumber();
   private static final DateOfBirth PRIMARY_DATE_OF_BIRTH =
     AccountHolderFixtures.JEFFERSON.getDateOfBirth();
+  private static final Email PRIMARY_EMAIL =
+    AccountHolderFixtures.JEFFERSON.getEmail();
 
   private static final AccountHolderName JOINT_ACCOUNT_HOLDER_NAME =
     AccountHolderFixtures.PATRIZIO.getAccountHolderName();
@@ -40,6 +39,8 @@ class BankAccountDetailsMapperTest {
     AccountHolderFixtures.PATRIZIO.getPassportNumber();
   private static final DateOfBirth JOINT_DATE_OF_BIRTH =
     AccountHolderFixtures.PATRIZIO.getDateOfBirth();
+  private static final Email JOINT_EMAIL =
+    AccountHolderFixtures.PATRIZIO.getEmail();
 
   private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
   private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(FIXED_CLOCK);
@@ -50,6 +51,7 @@ class BankAccountDetailsMapperTest {
       PRIMARY_ACCOUNT_HOLDER_NAME,
       PRIMARY_PASSPORT_NUMBER,
       PRIMARY_DATE_OF_BIRTH,
+      PRIMARY_EMAIL,
       AccountType.CHECKING,
       Currency.EUR,
       VALID_IBAN,
@@ -62,6 +64,7 @@ class BankAccountDetailsMapperTest {
       JOINT_ACCOUNT_HOLDER_NAME,
       JOINT_PASSPORT_NUMBER,
       JOINT_DATE_OF_BIRTH,
+      JOINT_EMAIL,
       CREATED_AT
     );
 
@@ -86,6 +89,7 @@ class BankAccountDetailsMapperTest {
     assertThat(primaryHolder.accountHolderName()).isEqualTo(PRIMARY_ACCOUNT_HOLDER_NAME);
     assertThat(primaryHolder.passportNumber()).isEqualTo(PRIMARY_PASSPORT_NUMBER);
     assertThat(primaryHolder.dateOfBirth()).isEqualTo(PRIMARY_DATE_OF_BIRTH);
+    assertThat(primaryHolder.email()).isEqualTo(PRIMARY_EMAIL);
     assertThat(primaryHolder.createdAt()).isEqualTo(CREATED_AT);
 
     AccountHolderDetails jointHolder =
@@ -97,6 +101,7 @@ class BankAccountDetailsMapperTest {
     assertThat(jointHolder.accountHolderName()).isEqualTo(JOINT_ACCOUNT_HOLDER_NAME);
     assertThat(jointHolder.passportNumber()).isEqualTo(JOINT_PASSPORT_NUMBER);
     assertThat(jointHolder.dateOfBirth()).isEqualTo(JOINT_DATE_OF_BIRTH);
+    assertThat(jointHolder.email()).isEqualTo(JOINT_EMAIL);
     assertThat(jointHolder.createdAt()).isEqualTo(CREATED_AT);
   }
 

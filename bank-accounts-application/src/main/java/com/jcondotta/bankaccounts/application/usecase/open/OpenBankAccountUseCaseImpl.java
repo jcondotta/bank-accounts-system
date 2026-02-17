@@ -48,6 +48,7 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
       command.accountHolderName(),
       command.passportNumber(),
       command.dateOfBirth(),
+      command.email(),
       command.accountType(),
       command.currency(),
       iban,

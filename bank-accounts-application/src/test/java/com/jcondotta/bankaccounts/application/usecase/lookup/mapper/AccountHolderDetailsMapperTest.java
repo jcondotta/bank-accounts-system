@@ -8,10 +8,7 @@ import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
-import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
-import com.jcondotta.bankaccounts.domain.value_objects.Iban;
-import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
+import com.jcondotta.bankaccounts.domain.value_objects.*;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -34,6 +31,8 @@ class AccountHolderDetailsMapperTest {
     AccountHolderFixtures.JEFFERSON.getPassportNumber();
   private static final DateOfBirth DATE_OF_BIRTH =
     AccountHolderFixtures.JEFFERSON.getDateOfBirth();
+  private static final Email EMAIL =
+    AccountHolderFixtures.JEFFERSON.getEmail();
 
   private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
   private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(FIXED_CLOCK);
@@ -44,6 +43,7 @@ class AccountHolderDetailsMapperTest {
       ACCOUNT_HOLDER_NAME,
       PASSPORT_NUMBER,
       DATE_OF_BIRTH,
+      EMAIL,
       AccountType.CHECKING,
       Currency.EUR,
       VALID_IBAN,
@@ -57,6 +57,7 @@ class AccountHolderDetailsMapperTest {
     assertThat(details.accountHolderName()).isEqualTo(accountHolder.getAccountHolderName());
     assertThat(details.passportNumber()).isEqualTo(accountHolder.getPassportNumber());
     assertThat(details.dateOfBirth()).isEqualTo(accountHolder.getDateOfBirth());
+    assertThat(details.email()).isEqualTo(accountHolder.getEmail());
     assertThat(details.accountHolderType()).isEqualTo(AccountHolderType.PRIMARY);
     assertThat(details.createdAt()).isEqualTo(CREATED_AT);
   }

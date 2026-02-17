@@ -48,6 +48,7 @@ public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUs
       command.accountHolderName(),
       command.passportNumber(),
       command.dateOfBirth(),
+      command.email(),
       ZonedDateTime.now(clock)
     );
 

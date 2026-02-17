@@ -34,6 +34,7 @@ class BankAccountTest {
   private static final AccountHolderName JOINT_ACCOUNT_HOLDER_NAME = AccountHolderFixtures.PATRIZIO.getAccountHolderName();
   private static final PassportNumber JOINT_PASSPORT_NUMBER = AccountHolderFixtures.PATRIZIO.getPassportNumber();
   private static final DateOfBirth JOINT_DATE_OF_BIRTH = AccountHolderFixtures.PATRIZIO.getDateOfBirth();
+  private static final Email JOINT_EMAIL = AccountHolderFixtures.PATRIZIO.getEmail();
 
   private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
   private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(ClockTestFactory.FIXED_CLOCK);
@@ -87,7 +88,7 @@ class BankAccountTest {
   void shouldAddJointAccountHolder_whenBankAccountIsActive(AccountType accountType, Currency currency) {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER, accountType, currency, FIXED_CLOCK);
 
-    bankAccount.addJointAccountHolder(JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH, CREATED_AT);
+    bankAccount.addJointAccountHolder(JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH, JOINT_EMAIL, CREATED_AT);
 
     assertThat(bankAccount.getAccountHolders())
       .hasSize(2)
@@ -99,6 +100,7 @@ class BankAccountTest {
         assertThat(holder.getAccountHolderName()).isEqualTo(JOINT_ACCOUNT_HOLDER_NAME);
         assertThat(holder.getPassportNumber()).isEqualTo(JOINT_PASSPORT_NUMBER);
         assertThat(holder.getDateOfBirth()).isEqualTo(JOINT_DATE_OF_BIRTH);
+        assertThat(holder.getEmail()).isEqualTo(JOINT_EMAIL);
         assertThat(holder.isJointAccountHolder()).isTrue();
         assertThat(holder.getCreatedAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
       });
@@ -127,6 +129,7 @@ class BankAccountTest {
       PRIMARY_ACCOUNT_HOLDER.getAccountHolderName(),
       PRIMARY_ACCOUNT_HOLDER.getPassportNumber(),
       PRIMARY_ACCOUNT_HOLDER.getDateOfBirth(),
+      PRIMARY_ACCOUNT_HOLDER.getEmail(),
       AccountHolderType.PRIMARY,
       CREATED_AT
     );
@@ -165,6 +168,7 @@ class BankAccountTest {
       PRIMARY_ACCOUNT_HOLDER.getAccountHolderName(),
       PRIMARY_ACCOUNT_HOLDER.getPassportNumber(),
       PRIMARY_ACCOUNT_HOLDER.getDateOfBirth(),
+      PRIMARY_ACCOUNT_HOLDER.getEmail(),
       AccountHolderType.PRIMARY,
       CREATED_AT
     );
@@ -175,6 +179,7 @@ class BankAccountTest {
       JOINT_ACCOUNT_HOLDER_NAME,
       JOINT_PASSPORT_NUMBER,
       JOINT_DATE_OF_BIRTH,
+      JOINT_EMAIL,
       AccountHolderType.JOINT,
       CREATED_AT
     );
@@ -434,6 +439,7 @@ class BankAccountTest {
       holder.getAccountHolderName(),
       holder.getPassportNumber(),
       holder.getDateOfBirth(),
+      holder.getEmail(),
       CREATED_AT
     );
   }

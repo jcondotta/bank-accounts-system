@@ -59,6 +59,7 @@ class BankAccountLookupUseCaseImplTest {
       AccountHolderFixtures.JEFFERSON.getAccountHolderName(),
       AccountHolderFixtures.JEFFERSON.getPassportNumber(),
       AccountHolderFixtures.JEFFERSON.getDateOfBirth(),
+      AccountHolderFixtures.JEFFERSON.getEmail(),
       AccountType.CHECKING,
       Currency.EUR,
       VALID_IBAN,

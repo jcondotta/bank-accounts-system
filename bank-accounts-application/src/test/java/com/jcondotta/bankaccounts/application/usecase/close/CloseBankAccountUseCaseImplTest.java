@@ -1,6 +1,7 @@
 package com.jcondotta.bankaccounts.application.usecase.close;
 
 import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
+import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountClosedEventPublisher;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
@@ -36,9 +37,10 @@ class CloseBankAccountUseCaseImplTest {
   private static final BankAccountId BANK_ACCOUNT_ID = BankAccountId.newId();
   private static final Iban VALID_IBAN = Iban.of("ES3801283316232166447417");
 
-  private static final AccountHolderName ACCOUNT_HOLDER_NAME = AccountHolderName.of("Jefferson Condotta");
-  private static final PassportNumber PASSPORT_NUMBER = PassportNumber.of("A1234567");
-  private static final DateOfBirth DATE_OF_BIRTH = DateOfBirth.of(LocalDate.of(1988, Month.JUNE, 24));
+  private static final AccountHolderName ACCOUNT_HOLDER_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName();
+  private static final PassportNumber PASSPORT_NUMBER = AccountHolderFixtures.JEFFERSON.getPassportNumber();
+  private static final DateOfBirth DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
+  private static final Email EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
 
   private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(ClockTestFactory.FIXED_CLOCK);
 
@@ -78,6 +80,7 @@ class CloseBankAccountUseCaseImplTest {
       ACCOUNT_HOLDER_NAME,
       PASSPORT_NUMBER,
       DATE_OF_BIRTH,
+      EMAIL,
       AccountType.CHECKING,
       Currency.USD,
       VALID_IBAN,

@@ -4,6 +4,7 @@ import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
 import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
+import com.jcondotta.bankaccounts.domain.value_objects.Email;
 import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
 
 import static java.util.Objects.requireNonNull;
@@ -12,6 +13,7 @@ public record OpenBankAccountCommand(
   AccountHolderName accountHolderName,
   PassportNumber passportNumber,
   DateOfBirth dateOfBirth,
+  Email email,
   AccountType accountType,
   Currency currency
 ) {
@@ -22,5 +24,6 @@ public record OpenBankAccountCommand(
     requireNonNull(dateOfBirth, "dateOfBirth must not be null");
     requireNonNull(accountType, "accountType must not be null");
     requireNonNull(currency, "currency must not be null");
+    requireNonNull(email, "email must not be null");
   }
 }

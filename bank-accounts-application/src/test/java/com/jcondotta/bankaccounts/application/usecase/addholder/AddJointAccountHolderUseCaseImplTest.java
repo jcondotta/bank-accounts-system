@@ -39,10 +39,12 @@ class AddJointAccountHolderUseCaseImplTest {
   private static final AccountHolderName PRIMARY_ACCOUNT_HOLDER_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName();
   private static final PassportNumber PRIMARY_PASSPORT_NUMBER = AccountHolderFixtures.JEFFERSON.getPassportNumber();
   private static final DateOfBirth PRIMARY_DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
+  private static final Email PRIMARY_EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
 
   private static final AccountHolderName JOINT_ACCOUNT_HOLDER_NAME = AccountHolderFixtures.PATRIZIO.getAccountHolderName();
   private static final PassportNumber JOINT_PASSPORT_NUMBER = AccountHolderFixtures.PATRIZIO.getPassportNumber();
   private static final DateOfBirth JOINT_DATE_OF_BIRTH = AccountHolderFixtures.PATRIZIO.getDateOfBirth();
+  private static final Email JOINT_EMAIL = AccountHolderFixtures.PATRIZIO.getEmail();
 
   private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(ClockTestFactory.FIXED_CLOCK);
 
@@ -79,6 +81,7 @@ class AddJointAccountHolderUseCaseImplTest {
         PRIMARY_ACCOUNT_HOLDER_NAME,
         PRIMARY_PASSPORT_NUMBER,
         PRIMARY_DATE_OF_BIRTH,
+        PRIMARY_EMAIL,
         AccountType.CHECKING,
         Currency.EUR,
         VALID_IBAN,
@@ -90,7 +93,7 @@ class AddJointAccountHolderUseCaseImplTest {
     when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
       .thenReturn(Optional.of(bankAccount));
 
-    var command = new AddJointAccountHolderCommand(BANK_ACCOUNT_ID, JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH);
+    var command = new AddJointAccountHolderCommand(BANK_ACCOUNT_ID, JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH, JOINT_EMAIL);
 
     useCase.execute(command);
     verify(lookupBankAccountRepository).byId(BANK_ACCOUNT_ID);
@@ -117,7 +120,7 @@ class AddJointAccountHolderUseCaseImplTest {
     when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
       .thenReturn(Optional.empty());
 
-    var command = new AddJointAccountHolderCommand(BANK_ACCOUNT_ID, JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH);
+    var command = new AddJointAccountHolderCommand(BANK_ACCOUNT_ID, JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH, JOINT_EMAIL);
 
     assertThatThrownBy(() -> useCase.execute(command))
       .isInstanceOf(BankAccountNotFoundException.class);

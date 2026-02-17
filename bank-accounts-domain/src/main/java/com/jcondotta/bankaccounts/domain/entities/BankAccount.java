@@ -59,12 +59,13 @@ public final class BankAccount {
     AccountHolderName name,
     PassportNumber passportNumber,
     DateOfBirth dateOfBirth,
+    Email email,
     AccountType accountType,
     Currency currency,
     Iban iban,
     ZonedDateTime createdAt
   ) {
-    var primaryHolder = AccountHolder.createPrimary(name, passportNumber, dateOfBirth, createdAt);
+    var primaryHolder = AccountHolder.createPrimary(name, passportNumber, dateOfBirth, email, createdAt);
 
     var bankAccount = new BankAccount(
       BankAccountId.newId(),
@@ -115,10 +116,11 @@ public final class BankAccount {
     AccountHolderName accountHolderName,
     PassportNumber passportNumber,
     DateOfBirth dateOfBirth,
+    Email email,
     AccountHolderType accountHolderType,
     ZonedDateTime createdAt
   ) {
-    return AccountHolder.restore(accountHolderId, accountHolderName, passportNumber, dateOfBirth, accountHolderType, createdAt);
+    return AccountHolder.restore(accountHolderId, accountHolderName, passportNumber, dateOfBirth, email, accountHolderType, createdAt);
   }
 
   public void activate(ZonedDateTime occurredAt) {
@@ -163,7 +165,7 @@ public final class BankAccount {
     registerEvent(new BankAccountUnblockedEvent(EventId.newId(), this.getBankAccountId(), occurredAt));
   }
 
-  public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, ZonedDateTime createdAt) {
+  public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, ZonedDateTime createdAt) {
     if (!accountStatus.isActive()) {
       throw new BankAccountNotActiveException(accountStatus);
     }
@@ -176,7 +178,7 @@ public final class BankAccount {
       throw new MaxJointAccountHoldersExceededException(jointAccountHoldersCount);
     }
 
-    var accountHolder = AccountHolder.createJoint(name, passportNumber, dateOfBirth, createdAt);
+    var accountHolder = AccountHolder.createJoint(name, passportNumber, dateOfBirth, email, createdAt);
     accountHolders.add(accountHolder);
 
     this.registerEvent(new JointAccountHolderAddedEvent(EventId.newId(), this.getBankAccountId(), accountHolder.getAccountHolderId(), accountHolder.getCreatedAt()));

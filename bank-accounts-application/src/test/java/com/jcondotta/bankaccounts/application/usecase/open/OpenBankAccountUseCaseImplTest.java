@@ -12,10 +12,7 @@ import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.events.BankAccountOpenedEvent;
 import com.jcondotta.bankaccounts.domain.events.DomainEvent;
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
-import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
-import com.jcondotta.bankaccounts.domain.value_objects.Iban;
-import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
+import com.jcondotta.bankaccounts.domain.value_objects.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +36,7 @@ class OpenBankAccountUseCaseImplTest {
   private static final AccountHolderName ACCOUNT_HOLDER_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName();
   private static final PassportNumber PASSPORT_NUMBER = AccountHolderFixtures.JEFFERSON.getPassportNumber();
   private static final DateOfBirth DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
+  private static final Email EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
 
   private static final Iban GENERATED_IBAN = Iban.of("ES3801283316232166447417");
 
@@ -77,7 +75,7 @@ class OpenBankAccountUseCaseImplTest {
   void shouldOpenBankAccount_whenCommandIsValid(AccountType accountType, Currency currency) {
     when(ibanGeneratorFacade.generate()).thenReturn(GENERATED_IBAN);
 
-    var command = new OpenBankAccountCommand(ACCOUNT_HOLDER_NAME, PASSPORT_NUMBER, DATE_OF_BIRTH, accountType, currency);
+    var command = new OpenBankAccountCommand(ACCOUNT_HOLDER_NAME, PASSPORT_NUMBER, DATE_OF_BIRTH, EMAIL, accountType, currency);
 
     useCase.execute(command);
 
@@ -102,6 +100,7 @@ class OpenBankAccountUseCaseImplTest {
             assertThat(accountHolder.getAccountHolderName()).isEqualTo(ACCOUNT_HOLDER_NAME);
             assertThat(accountHolder.getPassportNumber()).isEqualTo(PASSPORT_NUMBER);
             assertThat(accountHolder.getDateOfBirth()).isEqualTo(DATE_OF_BIRTH);
+            assertThat(accountHolder.getEmail()).isEqualTo(EMAIL);
             assertThat(accountHolder.isPrimaryAccountHolder()).isTrue();
             assertThat(accountHolder.getCreatedAt()).isEqualTo(CREATED_AT);
           });
