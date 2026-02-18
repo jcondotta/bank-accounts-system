@@ -56,7 +56,8 @@
 		</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.coverage.exclusions>
 			**/*Application.java,
-			**/config/**
+			**/config/**,
+			**/*MapperImpl.java
 		</sonar.coverage.exclusions>
 	</properties>
 
