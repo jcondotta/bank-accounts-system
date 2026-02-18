@@ -22,9 +22,16 @@ jobs:
           java-version: 21
           cache: maven
 
+      - name: Verify Docker is running
+        run: |
+          docker version
+          docker info
+          docker ps
+
       - name: Build, Test & Sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          TESTCONTAINERS_RYUK_DISABLED: true
         run: |
           mvn -B verify \
             org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
