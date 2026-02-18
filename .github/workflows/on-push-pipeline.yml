@@ -22,17 +22,25 @@ jobs:
           java-version: 21
           cache: maven
 
-      - name: Verify Docker is running
+      - name: Start infrastructure
+        run: docker compose -f .github/docker-compose.ci.yml up -d
+
+      - name: Wait for LocalStack
         run: |
-          docker version
-          docker info
-          docker ps
+          timeout 120 bash -c 'until curl -f http://localhost:4566/_localstack/health; do sleep 5; done'
+
+      - name: Wait for Kafka
+        run: |
+          timeout 120 bash -c 'until nc -z localhost 9092; do sleep 5; done'
 
       - name: Build, Test & Sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          TESTCONTAINERS_RYUK_DISABLED: true
-          TESTCONTAINERS_CHECKS_DISABLE: true
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_DYNAMODB_ENDPOINT: http://localhost:4566
+          SPRING_KAFKA_BOOTSTRAP_SERVERS: localhost:9092
         run: |
           mvn -B verify \
             org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
@@ -40,3 +48,7 @@ jobs:
             -Dsonar.projectKey=jcondotta_bank-accounts-system \
             -Dsonar.organization=jcondotta \
             -Dsonar.host.url=https://sonarcloud.io
+
+      - name: Shutdown
+        if: always()
+        run: docker compose -f .github/docker-compose.ci.yml down
