@@ -12,12 +12,30 @@ import java.util.UUID;
 public record BankAccountsURIProperties(@NotBlank String rootPath, @NotBlank String bankAccountIdPath) {
 
   public URI bankAccountURI(UUID bankAccountId) {
-    var expanded = bankAccountIdPath.replace("{bank-account-id}", bankAccountId.toString());
-    return URI.create(expanded);
+    return URI.create(bankAccountExpanded(bankAccountId));
   }
 
   public URI accountHoldersURI(UUID bankAccountId) {
-    var expanded = bankAccountIdPath.replace("{bank-account-id}", bankAccountId.toString());
-    return URI.create(expanded + "/account-holders");
+    return URI.create(bankAccountExpanded(bankAccountId) + "/account-holders");
+  }
+
+  public URI activateBankAccountURI(UUID bankAccountId) {
+    return URI.create(bankAccountExpanded(bankAccountId) + "/activate");
+  }
+
+  public URI blockBankAccountURI(UUID bankAccountId) {
+    return URI.create(bankAccountExpanded(bankAccountId) + "/block");
+  }
+
+  public URI unblockBankAccountURI(UUID bankAccountId) {
+    return URI.create(bankAccountExpanded(bankAccountId) + "/unblock");
+  }
+
+  public URI closeBankAccountURI(UUID bankAccountId) {
+    return URI.create(bankAccountExpanded(bankAccountId) + "/close");
+  }
+
+  private String bankAccountExpanded(UUID bankAccountId) {
+    return bankAccountIdPath.replace("{bank-account-id}", bankAccountId.toString());
   }
 }
