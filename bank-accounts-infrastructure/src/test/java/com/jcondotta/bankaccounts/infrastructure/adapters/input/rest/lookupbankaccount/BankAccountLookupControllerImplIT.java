@@ -1,21 +1,15 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcondotta.bankaccounts.application.usecase.activate.ActivateBankAccountUseCase;
 import com.jcondotta.bankaccounts.application.usecase.activate.model.ActivateBankAccountCommand;
 import com.jcondotta.bankaccounts.application.usecase.addholder.AddJointAccountHolderUseCase;
 import com.jcondotta.bankaccounts.application.usecase.addholder.model.AddJointAccountHolderCommand;
 import com.jcondotta.bankaccounts.application.usecase.open.OpenBankAccountUseCase;
 import com.jcondotta.bankaccounts.application.usecase.open.model.OpenBankAccountCommand;
-import com.jcondotta.bankaccounts.application.usecase.open.model.OpenBankAccountResult;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.mapper.AddJointAccountHolderRequestControllerMapper;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model.BankAccountLookupResponse;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.mapper.OpenBankAccountRequestControllerMapper;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.OpenBankAccountRequest;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.PrimaryAccountHolderRequest;
 import com.jcondotta.bankaccounts.infrastructure.arguments_provider.AccountTypeAndCurrencyArgumentsProvider;
 import com.jcondotta.bankaccounts.infrastructure.container.KafkaTestContainer;
 import com.jcondotta.bankaccounts.infrastructure.container.LocalStackTestContainer;
@@ -40,7 +34,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -134,16 +127,7 @@ class BankAccountLookupControllerImplIT {
     activateBankAccountUseCase.execute(new ActivateBankAccountCommand(bankAccountId));
 
     AccountHolderFixtures jointHolderFixture = AccountHolderFixtures.PATRIZIO;
-
-    addJointAccountHolderUseCase.execute(
-      new AddJointAccountHolderCommand(
-        bankAccountId,
-        jointHolderFixture.getAccountHolderName(),
-        jointHolderFixture.getPassportNumber(),
-        jointHolderFixture.getDateOfBirth(),
-        jointHolderFixture.getEmail()
-      )
-    );
+    addJointAccountHolder(bankAccountId, jointHolderFixture);
 
     var bankAccountLookupResponse =
       given()
@@ -214,5 +198,17 @@ class BankAccountLookupControllerImplIT {
     );
 
     return openBankAccountUseCase.execute(command).bankAccountId();
+  }
+
+  private void addJointAccountHolder(BankAccountId bankAccountId, AccountHolderFixtures fixture) {
+    addJointAccountHolderUseCase.execute(
+      new AddJointAccountHolderCommand(
+        bankAccountId,
+        fixture.getAccountHolderName(),
+        fixture.getPassportNumber(),
+        fixture.getDateOfBirth(),
+        fixture.getEmail()
+      )
+    );
   }
 }

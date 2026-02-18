@@ -88,7 +88,7 @@ class OpenBankAccountControllerImplIT {
 
     var response = given()
       .spec(requestSpecification)
-      .body(objectMapper.writeValueAsString(request))
+      .body(request)
     .when()
       .post()
     .then()
@@ -146,7 +146,7 @@ class OpenBankAccountControllerImplIT {
 
     given()
       .spec(requestSpecification)
-      .body(objectMapper.writeValueAsString(request))
+      .body(request)
     .when()
       .post()
     .then()

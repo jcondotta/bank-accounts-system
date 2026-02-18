@@ -15,4 +15,9 @@ public record BankAccountsURIProperties(@NotBlank String rootPath, @NotBlank Str
     var expanded = bankAccountIdPath.replace("{bank-account-id}", bankAccountId.toString());
     return URI.create(expanded);
   }
+
+  public URI accountHoldersURI(UUID bankAccountId) {
+    var expanded = bankAccountIdPath.replace("{bank-account-id}", bankAccountId.toString());
+    return URI.create(expanded + "/account-holders");
+  }
 }
