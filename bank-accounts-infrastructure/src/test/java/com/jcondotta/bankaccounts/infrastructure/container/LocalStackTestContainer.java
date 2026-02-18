@@ -24,8 +24,8 @@ public class LocalStackTestContainer implements ApplicationContextInitializer<Co
       new LocalStackContainer(LOCALSTACK_IMAGE)
           .withServices(Service.DYNAMODB)
           .withCopyFileToContainer(
-              MountableFile.forHostPath("../docker/localstack/"),
-              "/etc/localstack/init/ready.d/")
+              MountableFile.forHostPath("../docker/localstack/01_create_tables.sh"),
+              "/etc/localstack/init/ready.d/01_create_tables.sh")
           .withLogConsumer(outputFrame -> log.info(outputFrame.getUtf8StringWithoutLineEnding()))
           .withReuse(true);
 
