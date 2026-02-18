@@ -9,6 +9,11 @@ jobs:
   build-and-analyze:
     runs-on: ubuntu-latest
 
+    # 🔥 Força Testcontainers a usar o Docker correto do runner
+    env:
+      DOCKER_HOST: unix:///var/run/docker.sock
+      TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: /var/run/docker.sock
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,6 +26,12 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: maven
+
+      # 🧪 Debug temporário (pode remover depois que validar)
+      - name: Debug Docker
+        run: |
+          docker version
+          docker info
 
       - name: Start infrastructure
         run: docker compose -f .github/docker-compose-ci.yml up -d
