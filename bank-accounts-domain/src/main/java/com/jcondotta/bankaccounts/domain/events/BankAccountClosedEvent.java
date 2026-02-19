@@ -6,6 +6,7 @@ import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 
 import static java.util.Objects.requireNonNull;
@@ -13,7 +14,7 @@ import static java.util.Objects.requireNonNull;
 public record BankAccountClosedEvent(
   EventId eventId,
   BankAccountId bankAccountId,
-  ZonedDateTime occurredAt
+  Instant occurredAt
 ) implements BankAccountEvent {
 
   public BankAccountClosedEvent {

@@ -7,7 +7,7 @@ import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,7 +17,7 @@ class BankAccountUnblockedEventTest {
   private static final EventId EVENT_ID = EventId.newId();
   private static final BankAccountId BANK_ACCOUNT_ID = BankAccountId.newId();
   private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final ZonedDateTime OCCURRED_AT = ZonedDateTime.now(FIXED_CLOCK);
+  private static final Instant OCCURRED_AT = Instant.now(FIXED_CLOCK);
 
   @Test
   void shouldCreateBankAccountUnblockedEvent_whenAllArgumentsAreValid() {
@@ -28,7 +28,7 @@ class BankAccountUnblockedEventTest {
     assertThat(event.bankAccountId()).isEqualTo(BANK_ACCOUNT_ID);
     assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
     assertThat(event.eventType()).isEqualTo(DomainEventType.BANK_ACCOUNT_UNBLOCKED);
-    assertThat(event.eventType().value()).isEqualTo("BankAccountUnblocked");
+    assertThat(event.eventType().value()).isEqualTo("bank-account-unblocked");
   }
 
   @Test

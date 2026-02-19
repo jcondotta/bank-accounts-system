@@ -4,31 +4,31 @@ import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.validation.AccountHolderValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.*;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 import static java.util.Objects.requireNonNull;
 
 public final class AccountHolder {
 
-  private final AccountHolderId accountHolderId;
-  private final AccountHolderName accountHolderName;
+  private final AccountHolderId id;
+  private final AccountHolderName name;
   private final PassportNumber passportNumber;
   private final DateOfBirth dateOfBirth;
   private final Email email;
   private final AccountHolderType accountHolderType;
-  private final ZonedDateTime createdAt;
+  private final Instant createdAt;
 
   private AccountHolder(
-    AccountHolderId accountHolderId,
-    AccountHolderName accountHolderName,
+    AccountHolderId id,
+    AccountHolderName name,
     PassportNumber passportNumber,
     DateOfBirth dateOfBirth,
     Email email,
     AccountHolderType accountHolderType,
-    ZonedDateTime createdAt
+    Instant createdAt
   ) {
-    this.accountHolderId = requireNonNull(accountHolderId, AccountHolderValidationErrors.ID_NOT_NULL);
-    this.accountHolderName = requireNonNull(accountHolderName, AccountHolderValidationErrors.NAME_NOT_NULL);
+    this.id = requireNonNull(id, AccountHolderValidationErrors.ID_NOT_NULL);
+    this.name = requireNonNull(name, AccountHolderValidationErrors.NAME_NOT_NULL);
     this.passportNumber = requireNonNull(passportNumber, AccountHolderValidationErrors.PASSPORT_NUMBER_NOT_NULL);
     this.dateOfBirth = requireNonNull(dateOfBirth, AccountHolderValidationErrors.DATE_OF_BIRTH_NOT_NULL);
     this.email = requireNonNull(email, AccountHolderValidationErrors.EMAIL_NOT_NULL);
@@ -36,11 +36,11 @@ public final class AccountHolder {
     this.createdAt = requireNonNull(createdAt, AccountHolderValidationErrors.CREATED_AT_NOT_NULL);
   }
 
-  static AccountHolder createPrimary(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, ZonedDateTime createdAt) {
+  static AccountHolder createPrimary(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, Instant createdAt) {
     return create(accountHolderName, passportNumber, dateOfBirth, email, AccountHolderType.PRIMARY, createdAt);
   }
 
-  static AccountHolder createJoint(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, ZonedDateTime createdAt) {
+  static AccountHolder createJoint(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, Instant createdAt) {
     return create(accountHolderName, passportNumber, dateOfBirth, email, AccountHolderType.JOINT, createdAt);
   }
 
@@ -50,7 +50,7 @@ public final class AccountHolder {
     DateOfBirth dateOfBirth,
     Email email,
     AccountHolderType accountHolderType,
-    ZonedDateTime createdAt) {
+    Instant createdAt) {
 
     return new AccountHolder(AccountHolderId.newId(), accountHolderName, passportNumber, dateOfBirth, email, accountHolderType, createdAt);
   }
@@ -62,44 +62,44 @@ public final class AccountHolder {
     DateOfBirth dateOfBirth,
     Email email,
     AccountHolderType accountHolderType,
-    ZonedDateTime createdAt) {
+    Instant createdAt) {
 
     return new AccountHolder(accountHolderId, accountHolderName, passportNumber, dateOfBirth, email, accountHolderType, createdAt);
   }
 
-  public boolean isPrimaryAccountHolder() {
+  public boolean isPrimary() {
     return accountHolderType.isPrimary();
   }
 
-  public boolean isJointAccountHolder() {
+  public boolean isJoint() {
     return accountHolderType.isJoint();
   }
 
-  public AccountHolderId getAccountHolderId() {
-    return accountHolderId;
+  public AccountHolderId id() {
+    return id;
   }
 
-  public AccountHolderName getAccountHolderName() {
-    return accountHolderName;
+  public AccountHolderName name() {
+    return name;
   }
 
-  public PassportNumber getPassportNumber() {
+  public PassportNumber passportNumber() {
     return passportNumber;
   }
 
-  public DateOfBirth getDateOfBirth() {
+  public DateOfBirth dateOfBirth() {
     return dateOfBirth;
   }
 
-  public Email getEmail() {
+  public Email email() {
     return email;
   }
 
-  public AccountHolderType getAccountHolderType() {
+  public AccountHolderType accountHolderType() {
     return accountHolderType;
   }
 
-  public ZonedDateTime getCreatedAt() {
+  public Instant createdAt() {
     return createdAt;
   }
 }

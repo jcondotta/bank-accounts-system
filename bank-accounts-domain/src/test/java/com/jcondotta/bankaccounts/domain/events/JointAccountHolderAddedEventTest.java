@@ -8,6 +8,7 @@ import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +20,7 @@ class JointAccountHolderAddedEventTest {
   private static final BankAccountId BANK_ACCOUNT_ID = BankAccountId.newId();
   private static final AccountHolderId ACCOUNT_HOLDER_ID = AccountHolderId.newId();
   private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final ZonedDateTime OCCURRED_AT = ZonedDateTime.now(FIXED_CLOCK);
+  private static final Instant OCCURRED_AT = Instant.now(FIXED_CLOCK);
 
   @Test
   void shouldCreateJointAccountHolderAddedEvent_whenAllArgumentsAreValid() {
@@ -38,7 +39,7 @@ class JointAccountHolderAddedEventTest {
     assertThat(event.eventType())
       .isEqualTo(DomainEventType.JOINT_ACCOUNT_HOLDER_ADDED);
     assertThat(event.eventType().value())
-      .isEqualTo("JointAccountHolderAdded");
+      .isEqualTo("joint-account-holder-added");
   }
 
   @Test

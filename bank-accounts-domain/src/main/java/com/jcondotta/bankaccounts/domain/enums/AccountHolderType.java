@@ -6,7 +6,6 @@ public enum AccountHolderType {
     public boolean isPrimary() {
         return this == PRIMARY;
     }
-
     public boolean isJoint() {
         return this == JOINT;
     }

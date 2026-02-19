@@ -3,6 +3,7 @@ package com.jcondotta.bankaccounts.domain.events;
 import com.jcondotta.bankaccounts.domain.events.types.DomainEventType;
 import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 
 /**
@@ -12,5 +13,5 @@ import java.time.ZonedDateTime;
 public sealed interface DomainEvent permits BankAccountEvent {
   EventId eventId();
   DomainEventType eventType();
-  ZonedDateTime occurredAt();
+  Instant occurredAt();
 }

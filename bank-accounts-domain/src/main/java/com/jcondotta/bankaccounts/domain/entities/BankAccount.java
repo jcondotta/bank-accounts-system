@@ -12,7 +12,8 @@ import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.*;
 
-import java.time.ZonedDateTime;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,11 +27,11 @@ public final class BankAccount {
   public static final AccountStatus ACCOUNT_STATUS_ON_OPENING = AccountStatus.PENDING;
   public static final int MAX_JOINT_ACCOUNT_HOLDERS = 1;
 
-  private final BankAccountId bankAccountId;
+  private final BankAccountId id;
   private final AccountType accountType;
   private final Currency currency;
   private final Iban iban;
-  private final ZonedDateTime createdAt;
+  private final Instant createdAt;
   private final List<AccountHolder> accountHolders;
 
   private final List<DomainEvent> domainEvents = new ArrayList<>();
@@ -38,15 +39,15 @@ public final class BankAccount {
   private AccountStatus accountStatus;
 
   private BankAccount(
-    BankAccountId bankAccountId,
+    BankAccountId id,
     AccountType accountType,
     Currency currency,
     Iban iban,
     AccountStatus accountStatus,
-    ZonedDateTime createdAt,
+    Instant createdAt,
     List<AccountHolder> accountHolders
   ) {
-    this.bankAccountId = requireNonNull(bankAccountId, BankAccountValidationErrors.ID_NOT_NULL);
+    this.id = requireNonNull(id, BankAccountValidationErrors.ID_NOT_NULL);
     this.accountType = requireNonNull(accountType, BankAccountValidationErrors.ACCOUNT_TYPE_NOT_NULL);
     this.currency = requireNonNull(currency, BankAccountValidationErrors.CURRENCY_NOT_NULL);
     this.iban = requireNonNull(iban, BankAccountValidationErrors.IBAN_NOT_NULL);
@@ -63,9 +64,10 @@ public final class BankAccount {
     AccountType accountType,
     Currency currency,
     Iban iban,
-    ZonedDateTime createdAt
+    Clock clock
   ) {
-    var primaryHolder = AccountHolder.createPrimary(name, passportNumber, dateOfBirth, email, createdAt);
+    Instant now = Instant.now(clock);
+    var primaryHolder = AccountHolder.createPrimary(name, passportNumber, dateOfBirth, email, now);
 
     var bankAccount = new BankAccount(
       BankAccountId.newId(),
@@ -73,18 +75,18 @@ public final class BankAccount {
       currency,
       iban,
       ACCOUNT_STATUS_ON_OPENING,
-      createdAt,
+      now,
       List.of(primaryHolder)
     );
 
     bankAccount.registerEvent(
       new BankAccountOpenedEvent(
         EventId.newId(),
-        bankAccount.getBankAccountId(),
-        bankAccount.getAccountType(),
-        bankAccount.getCurrency(),
-        primaryHolder.getAccountHolderId(),
-        createdAt
+        bankAccount.id(),
+        bankAccount.accountType(),
+        bankAccount.currency(),
+        primaryHolder.id(),
+        now
       )
     );
 
@@ -97,7 +99,7 @@ public final class BankAccount {
     Currency currency,
     Iban iban,
     AccountStatus accountStatus,
-    ZonedDateTime createdAt,
+    Instant createdAt,
     List<AccountHolder> accountHolders
   ) {
     return new BankAccount(
@@ -118,12 +120,12 @@ public final class BankAccount {
     DateOfBirth dateOfBirth,
     Email email,
     AccountHolderType accountHolderType,
-    ZonedDateTime createdAt
+    Instant createdAt
   ) {
     return AccountHolder.restore(accountHolderId, accountHolderName, passportNumber, dateOfBirth, email, accountHolderType, createdAt);
   }
 
-  public void activate(ZonedDateTime occurredAt) {
+  public void activate(Clock clock) {
     if (accountStatus == AccountStatus.ACTIVE) {
       return;
     }
@@ -133,10 +135,10 @@ public final class BankAccount {
     }
 
     this.accountStatus = AccountStatus.ACTIVE;
-    registerEvent(new BankAccountActivatedEvent(EventId.newId(), this.getBankAccountId(), occurredAt));
+    registerEvent(new BankAccountActivatedEvent(EventId.newId(), this.id(), Instant.now(clock)));
   }
 
-  public void block(ZonedDateTime occurredAt) {
+  public void block(Clock clock) {
     if (accountStatus == AccountStatus.BLOCKED) {
       return;
     }
@@ -149,10 +151,10 @@ public final class BankAccount {
     }
 
     this.accountStatus = AccountStatus.BLOCKED;
-    registerEvent(new BankAccountBlockedEvent(EventId.newId(), this.getBankAccountId(), occurredAt));
+    registerEvent(new BankAccountBlockedEvent(EventId.newId(), this.id(), Instant.now(clock)));
   }
 
-  public void unblock(ZonedDateTime occurredAt) {
+  public void unblock(Clock clock) {
     if (accountStatus == AccountStatus.ACTIVE) {
       return;
     }
@@ -162,29 +164,30 @@ public final class BankAccount {
     }
 
     this.accountStatus = AccountStatus.ACTIVE;
-    registerEvent(new BankAccountUnblockedEvent(EventId.newId(), this.getBankAccountId(), occurredAt));
+    registerEvent(new BankAccountUnblockedEvent(EventId.newId(), this.id(), Instant.now(clock)));
   }
 
-  public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, ZonedDateTime createdAt) {
+  public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, Clock clock) {
     if (!accountStatus.isActive()) {
       throw new BankAccountNotActiveException(accountStatus);
     }
 
     var jointAccountHoldersCount = (int) accountHolders.stream()
-      .filter(Predicate.not(AccountHolder::isPrimaryAccountHolder))
+      .filter(Predicate.not(AccountHolder::isPrimary))
       .count();
 
     if (jointAccountHoldersCount >= MAX_JOINT_ACCOUNT_HOLDERS) {
       throw new MaxJointAccountHoldersExceededException(jointAccountHoldersCount);
     }
 
-    var accountHolder = AccountHolder.createJoint(name, passportNumber, dateOfBirth, email, createdAt);
+    Instant now = Instant.now(clock);
+    var accountHolder = AccountHolder.createJoint(name, passportNumber, dateOfBirth, email, now);
     accountHolders.add(accountHolder);
 
-    this.registerEvent(new JointAccountHolderAddedEvent(EventId.newId(), this.getBankAccountId(), accountHolder.getAccountHolderId(), accountHolder.getCreatedAt()));
+    this.registerEvent(new JointAccountHolderAddedEvent(EventId.newId(), this.id(), accountHolder.id(), now));
   }
 
-  public void close(ZonedDateTime occurredAt) {
+  public void close(Clock clock) {
     if (accountStatus == AccountStatus.CLOSED) {
       return;
     }
@@ -195,25 +198,25 @@ public final class BankAccount {
 
     this.accountStatus = AccountStatus.CLOSED;
 
-    registerEvent(new BankAccountClosedEvent(EventId.newId(), this.getBankAccountId(), occurredAt));
+    registerEvent(new BankAccountClosedEvent(EventId.newId(), this.id(), Instant.now(clock)));
   }
 
   public Optional<AccountHolder> findAccountHolder(AccountHolderId accountHolderId) {
     return accountHolders.stream()
-      .filter(accountHolder -> accountHolder.getAccountHolderId().equals(accountHolderId))
+      .filter(accountHolder -> accountHolder.id().equals(accountHolderId))
       .findFirst();
   }
 
   public AccountHolder primaryAccountHolder() {
     return accountHolders.stream()
-      .filter(AccountHolder::isPrimaryAccountHolder)
+      .filter(AccountHolder::isPrimary)
       .findFirst()
       .orElseThrow(IllegalStateException::new);
   }
 
   public List<AccountHolder> jointAccountHolders() {
     return accountHolders.stream()
-      .filter(AccountHolder::isJointAccountHolder)
+      .filter(AccountHolder::isJoint)
       .toList();
   }
 
@@ -227,31 +230,31 @@ public final class BankAccount {
     return events;
   }
 
-  public BankAccountId getBankAccountId() {
-    return bankAccountId;
+  public BankAccountId id() {
+    return id;
   }
 
-  public AccountType getAccountType() {
+  public AccountType accountType() {
     return accountType;
   }
 
-  public Currency getCurrency() {
+  public Currency currency() {
     return currency;
   }
 
-  public Iban getIban() {
+  public Iban iban() {
     return iban;
   }
 
-  public AccountStatus getAccountStatus() {
+  public AccountStatus accountStatus() {
     return accountStatus;
   }
 
-  public ZonedDateTime getCreatedAt() {
+  public Instant createdAt() {
     return createdAt;
   }
 
-  public List<AccountHolder> getAccountHolders() {
+  public List<AccountHolder> accountHolders() {
     return Collections.unmodifiableList(accountHolders);
   }
 }

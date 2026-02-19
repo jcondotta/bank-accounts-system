@@ -7,7 +7,6 @@ import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.value_objects.Iban;
 
 import java.time.Clock;
-import java.time.ZonedDateTime;
 
 public final class BankAccountTestFixture {
 
@@ -41,7 +40,7 @@ public final class BankAccountTestFixture {
       accountType,
       currency,
       VALID_IBAN,
-      ZonedDateTime.now(clock)
+      clock
     );
   }
 
@@ -55,7 +54,7 @@ public final class BankAccountTestFixture {
 
   public static BankAccount openActiveAccount(AccountHolderFixtures holder, AccountType accountType, Currency currency, Clock clock) {
     var account = openPendingAccount(holder, accountType, currency, clock);
-    account.activate(ZonedDateTime.now(clock));
+    account.activate(clock);
     account.pullDomainEvents();
 
     return account;

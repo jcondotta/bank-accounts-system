@@ -7,6 +7,7 @@ import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +18,7 @@ class BankAccountClosedEventTest {
   private static final EventId EVENT_ID = EventId.newId();
   private static final BankAccountId BANK_ACCOUNT_ID = BankAccountId.newId();
   private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final ZonedDateTime OCCURRED_AT = ZonedDateTime.now(FIXED_CLOCK);
+  private static final Instant OCCURRED_AT = Instant.now(FIXED_CLOCK);
 
   @Test
   void shouldCreateBankAccountClosedEvent_whenAllArgumentsAreValid() {
@@ -30,7 +31,7 @@ class BankAccountClosedEventTest {
     assertThat(event.eventType())
       .isEqualTo(DomainEventType.BANK_ACCOUNT_CLOSED);
     assertThat(event.eventType().value())
-      .isEqualTo("BankAccountClosed");
+      .isEqualTo("bank-account-closed");
   }
 
   @Test

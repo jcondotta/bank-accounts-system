@@ -8,7 +8,7 @@ import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 import static java.util.Objects.requireNonNull;
 
@@ -16,7 +16,7 @@ public record JointAccountHolderAddedEvent(
   EventId eventId,
   BankAccountId bankAccountId,
   AccountHolderId accountHolderId,
-  ZonedDateTime occurredAt
+  Instant occurredAt
 ) implements BankAccountEvent {
 
   public JointAccountHolderAddedEvent {

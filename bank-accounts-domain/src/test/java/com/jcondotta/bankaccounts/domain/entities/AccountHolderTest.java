@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +22,7 @@ class AccountHolderTest {
   private static final DateOfBirth VALID_DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
   private static final Email VALID_EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
 
-  private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(ClockTestFactory.FIXED_CLOCK);
+  private static final Instant CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
 
   @Test
   void shouldCreatePrimaryAccountHolder_whenValuesAreValid() {
@@ -35,15 +35,15 @@ class AccountHolderTest {
     );
 
     assertThat(accountHolder).satisfies(holder -> {
-      assertThat(holder.getAccountHolderId()).isNotNull();
-      assertThat(holder.getAccountHolderName()).isEqualTo(VALID_ACCOUNT_HOLDER_NAME);
-      assertThat(holder.getPassportNumber()).isEqualTo(VALID_PASSPORT_NUMBER);
-      assertThat(holder.getDateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH);
-      assertThat(holder.getEmail()).isEqualTo(VALID_EMAIL);
-      assertThat(holder.getAccountHolderType()).isEqualTo(AccountHolderType.PRIMARY);
-      assertThat(holder.getCreatedAt()).isEqualTo(CREATED_AT);
-      assertThat(holder.isPrimaryAccountHolder()).isTrue();
-      assertThat(holder.isJointAccountHolder()).isFalse();
+      assertThat(holder.id()).isNotNull();
+      assertThat(holder.name()).isEqualTo(VALID_ACCOUNT_HOLDER_NAME);
+      assertThat(holder.passportNumber()).isEqualTo(VALID_PASSPORT_NUMBER);
+      assertThat(holder.dateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH);
+      assertThat(holder.email()).isEqualTo(VALID_EMAIL);
+      assertThat(holder.accountHolderType()).isEqualTo(AccountHolderType.PRIMARY);
+      assertThat(holder.createdAt()).isEqualTo(CREATED_AT);
+      assertThat(holder.isPrimary()).isTrue();
+      assertThat(holder.isJoint()).isFalse();
     });
   }
 
@@ -58,15 +58,15 @@ class AccountHolderTest {
     );
 
     assertThat(accountHolder).satisfies(holder -> {
-      assertThat(holder.getAccountHolderId()).isNotNull();
-      assertThat(holder.getAccountHolderName()).isEqualTo(VALID_ACCOUNT_HOLDER_NAME);
-      assertThat(holder.getPassportNumber()).isEqualTo(VALID_PASSPORT_NUMBER);
-      assertThat(holder.getDateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH);
-      assertThat(holder.getEmail()).isEqualTo(VALID_EMAIL);
-      assertThat(holder.getAccountHolderType()).isEqualTo(AccountHolderType.JOINT);
-      assertThat(holder.getCreatedAt()).isEqualTo(CREATED_AT);
-      assertThat(holder.isJointAccountHolder()).isTrue();
-      assertThat(holder.isPrimaryAccountHolder()).isFalse();
+      assertThat(holder.id()).isNotNull();
+      assertThat(holder.name()).isEqualTo(VALID_ACCOUNT_HOLDER_NAME);
+      assertThat(holder.passportNumber()).isEqualTo(VALID_PASSPORT_NUMBER);
+      assertThat(holder.dateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH);
+      assertThat(holder.email()).isEqualTo(VALID_EMAIL);
+      assertThat(holder.accountHolderType()).isEqualTo(AccountHolderType.JOINT);
+      assertThat(holder.createdAt()).isEqualTo(CREATED_AT);
+      assertThat(holder.isJoint()).isTrue();
+      assertThat(holder.isPrimary()).isFalse();
     });
   }
 
@@ -85,13 +85,13 @@ class AccountHolderTest {
       CREATED_AT
     );
 
-    assertThat(accountHolder.getAccountHolderId()).isEqualTo(accountHolderId);
-    assertThat(accountHolder.getAccountHolderName()).isEqualTo(VALID_ACCOUNT_HOLDER_NAME);
-    assertThat(accountHolder.getPassportNumber()).isEqualTo(VALID_PASSPORT_NUMBER);
-    assertThat(accountHolder.getDateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH);
-    assertThat(accountHolder.getEmail()).isEqualTo(VALID_EMAIL);
-    assertThat(accountHolder.getAccountHolderType()).isEqualTo(accountHolderType);
-    assertThat(accountHolder.getCreatedAt()).isEqualTo(CREATED_AT);
+    assertThat(accountHolder.id()).isEqualTo(accountHolderId);
+    assertThat(accountHolder.name()).isEqualTo(VALID_ACCOUNT_HOLDER_NAME);
+    assertThat(accountHolder.passportNumber()).isEqualTo(VALID_PASSPORT_NUMBER);
+    assertThat(accountHolder.dateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH);
+    assertThat(accountHolder.email()).isEqualTo(VALID_EMAIL);
+    assertThat(accountHolder.accountHolderType()).isEqualTo(accountHolderType);
+    assertThat(accountHolder.createdAt()).isEqualTo(CREATED_AT);
   }
 
   @ParameterizedTest
@@ -135,7 +135,7 @@ class AccountHolderTest {
   }
 
   @SuppressWarnings("all")
-  private AccountHolder createAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, AccountHolderType type, ZonedDateTime createdAt) {
+  private AccountHolder createAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, AccountHolderType type, Instant createdAt) {
     Objects.requireNonNull(type, AccountHolderValidationErrors.ACCOUNT_HOLDER_TYPE);
 
     if (type.isPrimary()) {

@@ -10,6 +10,7 @@ import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 
 import static java.util.Objects.requireNonNull;
@@ -20,7 +21,7 @@ public record BankAccountOpenedEvent(
   AccountType accountType,
   Currency currency,
   AccountHolderId primaryAccountHolderId,
-  ZonedDateTime occurredAt
+  Instant occurredAt
 ) implements BankAccountEvent {
 
   public BankAccountOpenedEvent {

@@ -10,6 +10,7 @@ import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +24,7 @@ class BankAccountOpenedEventTest {
   private static final AccountType ACCOUNT_TYPE = AccountType.CHECKING;
   private static final Currency CURRENCY = Currency.USD;
   private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final ZonedDateTime OCCURRED_AT = ZonedDateTime.now(FIXED_CLOCK);
+  private static final Instant OCCURRED_AT = Instant.now(FIXED_CLOCK);
 
   @Test
   void shouldCreateBankAccountOpenedEvent_whenAllArgumentsAreValid() {
@@ -46,7 +47,7 @@ class BankAccountOpenedEventTest {
     assertThat(event.eventType())
       .isEqualTo(DomainEventType.BANK_ACCOUNT_OPENED);
     assertThat(event.eventType().value())
-      .isEqualTo("BankAccountOpened");
+      .isEqualTo("bank-account-opened");
   }
 
   @Test

@@ -6,11 +6,9 @@ public enum AccountStatus {
   public boolean isPending() {
     return this == PENDING;
   }
-
   public boolean isActive() {
     return this == ACTIVE;
   }
-
   public boolean isBlocked() {
     return this == BLOCKED;
   }

@@ -20,7 +20,9 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Clock;
-import java.time.ZonedDateTime;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,8 +39,10 @@ class BankAccountTest {
   private static final Email JOINT_EMAIL = AccountHolderFixtures.PATRIZIO.getEmail();
 
   private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(ClockTestFactory.FIXED_CLOCK);
-  private static final ZonedDateTime OCCURRED_AT = CREATED_AT.plusHours(2);
+  private static final Instant CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
+
+  private static final Clock OCCURRED_AT =
+    Clock.fixed(CREATED_AT.plus(2, ChronoUnit.HOURS), ZoneOffset.UTC);
 
   @ParameterizedTest
   @ArgumentsSource(AccountTypeAndCurrencyArgumentsProvider.class)
@@ -47,22 +51,22 @@ class BankAccountTest {
 
     assertThat(bankAccount)
       .satisfies(account -> {
-        assertThat(account.getBankAccountId()).isNotNull();
-        assertThat(account.getAccountType()).isEqualTo(accountType);
-        assertThat(account.getCurrency()).isEqualTo(currency);
-        assertThat(account.getIban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
-        assertThat(account.getAccountStatus()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
-        assertThat(account.getCreatedAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
-        assertThat(account.getAccountHolders())
+        assertThat(account.id()).isNotNull();
+        assertThat(account.accountType()).isEqualTo(accountType);
+        assertThat(account.currency()).isEqualTo(currency);
+        assertThat(account.iban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
+        assertThat(account.accountStatus()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
+        assertThat(account.createdAt()).isEqualTo(Instant.now(FIXED_CLOCK));
+        assertThat(account.accountHolders())
           .hasSize(1)
           .first()
           .satisfies(accountHolder -> {
-            assertThat(accountHolder.getAccountHolderId()).isNotNull();
-            assertThat(accountHolder.getAccountHolderName()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.getAccountHolderName());
-            assertThat(accountHolder.getPassportNumber()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.getPassportNumber());
-            assertThat(accountHolder.getDateOfBirth()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.getDateOfBirth());
-            assertThat(accountHolder.isPrimaryAccountHolder()).isTrue();
-            assertThat(accountHolder.getCreatedAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
+            assertThat(accountHolder.id()).isNotNull();
+            assertThat(accountHolder.name()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.getAccountHolderName());
+            assertThat(accountHolder.passportNumber()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.getPassportNumber());
+            assertThat(accountHolder.dateOfBirth()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.getDateOfBirth());
+            assertThat(accountHolder.isPrimary()).isTrue();
+            assertThat(accountHolder.createdAt()).isEqualTo(Instant.now(FIXED_CLOCK));
           });
 
         var events = bankAccount.pullDomainEvents();
@@ -73,11 +77,11 @@ class BankAccountTest {
           .singleElement()
           .isInstanceOfSatisfying(BankAccountOpenedEvent.class, event -> {
               assertThat(event.eventId()).isNotNull();
-              assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
+              assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
               assertThat(event.accountType()).isEqualTo(accountType);
               assertThat(event.currency()).isEqualTo(currency);
-              assertThat(event.primaryAccountHolderId()).isEqualTo(primaryAccountHolder.getAccountHolderId());
-              assertThat(event.occurredAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
+              assertThat(event.primaryAccountHolderId()).isEqualTo(primaryAccountHolder.id());
+              assertThat(event.occurredAt()).isEqualTo(Instant.now(FIXED_CLOCK));
             }
           );
       });
@@ -88,21 +92,21 @@ class BankAccountTest {
   void shouldAddJointAccountHolder_whenBankAccountIsActive(AccountType accountType, Currency currency) {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER, accountType, currency, FIXED_CLOCK);
 
-    bankAccount.addJointAccountHolder(JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH, JOINT_EMAIL, CREATED_AT);
+    bankAccount.addJointAccountHolder(JOINT_ACCOUNT_HOLDER_NAME, JOINT_PASSPORT_NUMBER, JOINT_DATE_OF_BIRTH, JOINT_EMAIL, FIXED_CLOCK);
 
-    assertThat(bankAccount.getAccountHolders())
+    assertThat(bankAccount.accountHolders())
       .hasSize(2)
-      .filteredOn(AccountHolder::isJointAccountHolder)
+      .filteredOn(AccountHolder::isJoint)
       .hasSize(1)
       .singleElement()
       .satisfies(holder -> {
-        assertThat(holder.getAccountHolderId()).isNotNull();
-        assertThat(holder.getAccountHolderName()).isEqualTo(JOINT_ACCOUNT_HOLDER_NAME);
-        assertThat(holder.getPassportNumber()).isEqualTo(JOINT_PASSPORT_NUMBER);
-        assertThat(holder.getDateOfBirth()).isEqualTo(JOINT_DATE_OF_BIRTH);
-        assertThat(holder.getEmail()).isEqualTo(JOINT_EMAIL);
-        assertThat(holder.isJointAccountHolder()).isTrue();
-        assertThat(holder.getCreatedAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
+        assertThat(holder.id()).isNotNull();
+        assertThat(holder.name()).isEqualTo(JOINT_ACCOUNT_HOLDER_NAME);
+        assertThat(holder.passportNumber()).isEqualTo(JOINT_PASSPORT_NUMBER);
+        assertThat(holder.dateOfBirth()).isEqualTo(JOINT_DATE_OF_BIRTH);
+        assertThat(holder.email()).isEqualTo(JOINT_EMAIL);
+        assertThat(holder.isJoint()).isTrue();
+        assertThat(holder.createdAt()).isEqualTo(Instant.now(FIXED_CLOCK));
       });
 
     var events = bankAccount.pullDomainEvents();
@@ -113,9 +117,9 @@ class BankAccountTest {
       .singleElement()
       .isInstanceOfSatisfying(JointAccountHolderAddedEvent.class, event -> {
           assertThat(event.eventId()).isNotNull();
-          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-          assertThat(event.accountHolderId()).isEqualTo(jointAccountHolder.getAccountHolderId());
-          assertThat(event.occurredAt()).isEqualTo(ZonedDateTime.now(FIXED_CLOCK));
+          assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
+          assertThat(event.accountHolderId()).isEqualTo(jointAccountHolder.id());
+          assertThat(event.occurredAt()).isEqualTo(Instant.now(FIXED_CLOCK));
         }
       );
   }
@@ -146,15 +150,15 @@ class BankAccountTest {
     );
 
     assertThat(bankAccount).isNotNull();
-    assertThat(bankAccount.getBankAccountId()).isEqualTo(bankAccountId);
-    assertThat(bankAccount.getAccountType()).isEqualTo(accountType);
-    assertThat(bankAccount.getCurrency()).isEqualTo(currency);
-    assertThat(bankAccount.getIban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
-    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
-    assertThat(bankAccount.getCreatedAt()).isEqualTo(CREATED_AT);
+    assertThat(bankAccount.id()).isEqualTo(bankAccountId);
+    assertThat(bankAccount.accountType()).isEqualTo(accountType);
+    assertThat(bankAccount.currency()).isEqualTo(currency);
+    assertThat(bankAccount.iban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
+    assertThat(bankAccount.accountStatus().isActive()).isTrue();
+    assertThat(bankAccount.createdAt()).isEqualTo(CREATED_AT);
     assertThat(bankAccount.pullDomainEvents()).isEmpty();
 
-    assertThat(bankAccount.getAccountHolders())
+    assertThat(bankAccount.accountHolders())
       .hasSize(1)
       .containsExactlyInAnyOrder(primaryAccountHolder);
   }
@@ -196,15 +200,15 @@ class BankAccountTest {
     );
 
     assertThat(bankAccount).isNotNull();
-    assertThat(bankAccount.getBankAccountId()).isEqualTo(bankAccountId);
-    assertThat(bankAccount.getAccountType()).isEqualTo(accountType);
-    assertThat(bankAccount.getCurrency()).isEqualTo(currency);
-    assertThat(bankAccount.getIban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
-    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
-    assertThat(bankAccount.getCreatedAt()).isEqualTo(CREATED_AT);
+    assertThat(bankAccount.id()).isEqualTo(bankAccountId);
+    assertThat(bankAccount.accountType()).isEqualTo(accountType);
+    assertThat(bankAccount.currency()).isEqualTo(currency);
+    assertThat(bankAccount.iban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
+    assertThat(bankAccount.accountStatus().isActive()).isTrue();
+    assertThat(bankAccount.createdAt()).isEqualTo(CREATED_AT);
     assertThat(bankAccount.pullDomainEvents()).isEmpty();
 
-    assertThat(bankAccount.getAccountHolders())
+    assertThat(bankAccount.accountHolders())
       .hasSize(2)
       .containsExactlyInAnyOrder(primaryAccountHolder, jointAccountHolder);
   }
@@ -233,7 +237,7 @@ class BankAccountTest {
     bankAccount.pullDomainEvents();
 
     bankAccount.activate(OCCURRED_AT);
-    assertThat(bankAccount.getAccountStatus()).isEqualTo(AccountStatus.ACTIVE);
+    assertThat(bankAccount.accountStatus()).isEqualTo(AccountStatus.ACTIVE);
 
     var events = bankAccount.pullDomainEvents();
 
@@ -241,8 +245,8 @@ class BankAccountTest {
       .hasSize(1)
       .singleElement()
       .isInstanceOfSatisfying(BankAccountActivatedEvent.class, event -> {
-          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-          assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
+          assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
+          assertThat(event.occurredAt()).isEqualTo(Instant.now(OCCURRED_AT));
         }
       );
   }
@@ -259,7 +263,7 @@ class BankAccountTest {
     bankAccount.activate(OCCURRED_AT);
     bankAccount.activate(OCCURRED_AT);
 
-    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
+    assertThat(bankAccount.accountStatus().isActive()).isTrue();
   }
 
   @ParameterizedTest
@@ -277,7 +281,7 @@ class BankAccountTest {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
 
     bankAccount.block(OCCURRED_AT);
-    assertThat(bankAccount.getAccountStatus().isBlocked()).isTrue();
+    assertThat(bankAccount.accountStatus().isBlocked()).isTrue();
 
     var events = bankAccount.pullDomainEvents();
 
@@ -285,8 +289,8 @@ class BankAccountTest {
       .hasSize(1)
       .singleElement()
       .isInstanceOfSatisfying(BankAccountBlockedEvent.class, event -> {
-          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-          assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
+          assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
+          assertThat(event.occurredAt()).isEqualTo(Instant.now(OCCURRED_AT));
         }
       );
   }
@@ -298,7 +302,7 @@ class BankAccountTest {
     bankAccount.block(OCCURRED_AT);
     bankAccount.block(OCCURRED_AT);
 
-    assertThat(bankAccount.getAccountStatus().isBlocked()).isTrue();
+    assertThat(bankAccount.accountStatus().isBlocked()).isTrue();
   }
 
   @ParameterizedTest
@@ -320,7 +324,7 @@ class BankAccountTest {
 
     bankAccount.unblock(OCCURRED_AT);
 
-    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
+    assertThat(bankAccount.accountStatus().isActive()).isTrue();
 
     var events = bankAccount.pullDomainEvents();
 
@@ -328,8 +332,8 @@ class BankAccountTest {
       .hasSize(1)
       .singleElement()
       .isInstanceOfSatisfying(BankAccountUnblockedEvent.class, event -> {
-          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-          assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
+          assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
+        assertThat(event.occurredAt()).isEqualTo(Instant.now(OCCURRED_AT));
         }
       );
   }
@@ -342,7 +346,7 @@ class BankAccountTest {
     bankAccount.unblock(OCCURRED_AT);
     bankAccount.unblock(OCCURRED_AT);
 
-    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
+    assertThat(bankAccount.accountStatus().isActive()).isTrue();
   }
 
   @ParameterizedTest
@@ -361,7 +365,7 @@ class BankAccountTest {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
     bankAccount.close(OCCURRED_AT);
 
-    assertThat(bankAccount.getAccountStatus()).isEqualTo(AccountStatus.CLOSED);
+    assertThat(bankAccount.accountStatus()).isEqualTo(AccountStatus.CLOSED);
 
     var events = bankAccount.pullDomainEvents();
 
@@ -370,8 +374,8 @@ class BankAccountTest {
       .singleElement()
       .isInstanceOfSatisfying(BankAccountClosedEvent.class, event -> {
           assertThat(event.eventId()).isNotNull();
-          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-          assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
+          assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
+          assertThat(event.occurredAt()).isEqualTo(Instant.now(OCCURRED_AT));
         }
       );
   }
@@ -381,9 +385,9 @@ class BankAccountTest {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
 
     bankAccount.close(OCCURRED_AT);
-    bankAccount.close(OCCURRED_AT.plusHours(1));
+    bankAccount.close(OCCURRED_AT);
 
-    assertThat(bankAccount.getAccountStatus()).isEqualTo(AccountStatus.CLOSED);
+    assertThat(bankAccount.accountStatus()).isEqualTo(AccountStatus.CLOSED);
   }
 
   @ParameterizedTest
@@ -403,7 +407,7 @@ class BankAccountTest {
 
     var primaryAccountHolder = bankAccount.primaryAccountHolder();
 
-    assertThat(bankAccount.findAccountHolder(primaryAccountHolder.getAccountHolderId()))
+    assertThat(bankAccount.findAccountHolder(primaryAccountHolder.id()))
       .hasValueSatisfying(holder -> assertThat(holder).isSameAs(primaryAccountHolder));
   }
 
@@ -440,7 +444,7 @@ class BankAccountTest {
       holder.getPassportNumber(),
       holder.getDateOfBirth(),
       holder.getEmail(),
-      CREATED_AT
+      FIXED_CLOCK
     );
   }
 }
