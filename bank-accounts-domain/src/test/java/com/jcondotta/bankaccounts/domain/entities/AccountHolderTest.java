@@ -4,70 +4,71 @@ import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.domain.validation.AccountHolderValidationErrors;
-import com.jcondotta.bankaccounts.domain.value_objects.*;
+import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.time.Instant;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AccountHolderTest {
 
-  private static final AccountHolderName VALID_ACCOUNT_HOLDER_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName();
-  private static final PassportNumber VALID_PASSPORT_NUMBER = AccountHolderFixtures.JEFFERSON.getPassportNumber();
-  private static final DateOfBirth VALID_DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
-  private static final Email VALID_EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
+  private static final AccountHolderFixtures PRIMARY_ACCOUNT_HOLDER = AccountHolderFixtures.JEFFERSON;
+  private static final AccountHolderFixtures JOINT_ACCOUNT_HOLDER = AccountHolderFixtures.PATRIZIO;
 
   private static final Instant CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
+
+  private static final AccountHolderType ACCOUNT_HOLDER_TYPE_PRIMARY = AccountHolderType.PRIMARY;
+
+  @ParameterizedTest
+  @EnumSource(AccountHolderType.class)
+  void shouldCreateAccountHolder_whenValuesAreValid(AccountHolderType accountHolderType) {
+    var accountHolder = AccountHolder.create(
+      PRIMARY_ACCOUNT_HOLDER.getAccountHolderName(),
+      PRIMARY_ACCOUNT_HOLDER.getPassportNumber(),
+      PRIMARY_ACCOUNT_HOLDER.getDateOfBirth(),
+      PRIMARY_ACCOUNT_HOLDER.getEmail(),
+      accountHolderType,
+      CREATED_AT
+    );
+
+    assertHolderMatchesFixture(accountHolder, PRIMARY_ACCOUNT_HOLDER);
+    assertThat(accountHolder.accountHolderType()).isEqualTo(accountHolderType);
+    assertThat(accountHolder.isPrimary()).isEqualTo(accountHolderType.isPrimary());
+    assertThat(accountHolder.isJoint()).isEqualTo(accountHolderType.isJoint());
+  }
 
   @Test
   void shouldCreatePrimaryAccountHolder_whenValuesAreValid() {
     var accountHolder = AccountHolder.createPrimary(
-      VALID_ACCOUNT_HOLDER_NAME,
-      VALID_PASSPORT_NUMBER,
-      VALID_DATE_OF_BIRTH,
-      VALID_EMAIL,
+      PRIMARY_ACCOUNT_HOLDER.getAccountHolderName(),
+      PRIMARY_ACCOUNT_HOLDER.getPassportNumber(),
+      PRIMARY_ACCOUNT_HOLDER.getDateOfBirth(),
+      PRIMARY_ACCOUNT_HOLDER.getEmail(),
       CREATED_AT
     );
 
-    assertThat(accountHolder).satisfies(holder -> {
-      assertThat(holder.id()).isNotNull();
-      assertThat(holder.name()).isEqualTo(VALID_ACCOUNT_HOLDER_NAME);
-      assertThat(holder.passportNumber()).isEqualTo(VALID_PASSPORT_NUMBER);
-      assertThat(holder.dateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH);
-      assertThat(holder.email()).isEqualTo(VALID_EMAIL);
-      assertThat(holder.accountHolderType()).isEqualTo(AccountHolderType.PRIMARY);
-      assertThat(holder.createdAt()).isEqualTo(CREATED_AT);
-      assertThat(holder.isPrimary()).isTrue();
-      assertThat(holder.isJoint()).isFalse();
-    });
+    assertHolderMatchesFixture(accountHolder, PRIMARY_ACCOUNT_HOLDER);
+    assertThat(accountHolder.isPrimary()).isTrue();
+    assertThat(accountHolder.isJoint()).isFalse();
   }
 
   @Test
   void shouldCreateJointAccountHolder_whenValuesAreValid() {
     var accountHolder = AccountHolder.createJoint(
-      VALID_ACCOUNT_HOLDER_NAME,
-      VALID_PASSPORT_NUMBER,
-      VALID_DATE_OF_BIRTH,
-      VALID_EMAIL,
+      JOINT_ACCOUNT_HOLDER.getAccountHolderName(),
+      JOINT_ACCOUNT_HOLDER.getPassportNumber(),
+      JOINT_ACCOUNT_HOLDER.getDateOfBirth(),
+      JOINT_ACCOUNT_HOLDER.getEmail(),
       CREATED_AT
     );
 
-    assertThat(accountHolder).satisfies(holder -> {
-      assertThat(holder.id()).isNotNull();
-      assertThat(holder.name()).isEqualTo(VALID_ACCOUNT_HOLDER_NAME);
-      assertThat(holder.passportNumber()).isEqualTo(VALID_PASSPORT_NUMBER);
-      assertThat(holder.dateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH);
-      assertThat(holder.email()).isEqualTo(VALID_EMAIL);
-      assertThat(holder.accountHolderType()).isEqualTo(AccountHolderType.JOINT);
-      assertThat(holder.createdAt()).isEqualTo(CREATED_AT);
-      assertThat(holder.isJoint()).isTrue();
-      assertThat(holder.isPrimary()).isFalse();
-    });
+    assertHolderMatchesFixture(accountHolder, JOINT_ACCOUNT_HOLDER);
+    assertThat(accountHolder.isJoint()).isTrue();
+    assertThat(accountHolder.isPrimary()).isFalse();
   }
 
   @ParameterizedTest
@@ -77,70 +78,91 @@ class AccountHolderTest {
 
     var accountHolder = AccountHolder.restore(
       accountHolderId,
-      VALID_ACCOUNT_HOLDER_NAME,
-      VALID_PASSPORT_NUMBER,
-      VALID_DATE_OF_BIRTH,
-      VALID_EMAIL,
+      PRIMARY_ACCOUNT_HOLDER.getAccountHolderName(),
+      PRIMARY_ACCOUNT_HOLDER.getPassportNumber(),
+      PRIMARY_ACCOUNT_HOLDER.getDateOfBirth(),
+      PRIMARY_ACCOUNT_HOLDER.getEmail(),
       accountHolderType,
       CREATED_AT
     );
 
+    assertHolderMatchesFixture(accountHolder, PRIMARY_ACCOUNT_HOLDER);
     assertThat(accountHolder.id()).isEqualTo(accountHolderId);
-    assertThat(accountHolder.name()).isEqualTo(VALID_ACCOUNT_HOLDER_NAME);
-    assertThat(accountHolder.passportNumber()).isEqualTo(VALID_PASSPORT_NUMBER);
-    assertThat(accountHolder.dateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH);
-    assertThat(accountHolder.email()).isEqualTo(VALID_EMAIL);
     assertThat(accountHolder.accountHolderType()).isEqualTo(accountHolderType);
-    assertThat(accountHolder.createdAt()).isEqualTo(CREATED_AT);
+    assertThat(accountHolder.isPrimary()).isEqualTo(accountHolderType.isPrimary());
+    assertThat(accountHolder.isJoint()).isEqualTo(accountHolderType.isJoint());
   }
 
-  @ParameterizedTest
-  @EnumSource(AccountHolderType.class)
-  void shouldThrowNullPointerException_whenAccountHolderNameIsNull(AccountHolderType accountHolderType) {
-    assertThatThrownBy(() -> createAccountHolder(null, VALID_PASSPORT_NUMBER, VALID_DATE_OF_BIRTH, VALID_EMAIL, accountHolderType, CREATED_AT))
+  @Test
+  void shouldThrowNullPointerException_whenAccountHolderNameIsNull() {
+    assertThatThrownBy(() -> AccountHolder.create(
+      null,
+      PRIMARY_ACCOUNT_HOLDER.getPassportNumber(),
+      PRIMARY_ACCOUNT_HOLDER.getDateOfBirth(),
+      PRIMARY_ACCOUNT_HOLDER.getEmail(),
+      ACCOUNT_HOLDER_TYPE_PRIMARY,
+      CREATED_AT))
       .isInstanceOf(NullPointerException.class)
       .hasMessage(AccountHolderValidationErrors.NAME_NOT_NULL);
   }
 
-  @ParameterizedTest
-  @EnumSource(AccountHolderType.class)
-  void shouldThrowNullPointerException_whenPassportNumberIsNull(AccountHolderType accountHolderType) {
-    assertThatThrownBy(() -> createAccountHolder(VALID_ACCOUNT_HOLDER_NAME, null, VALID_DATE_OF_BIRTH, VALID_EMAIL, accountHolderType, CREATED_AT))
+  @Test
+  void shouldThrowNullPointerException_whenPassportNumberIsNull() {
+    assertThatThrownBy(() -> AccountHolder.create(
+      PRIMARY_ACCOUNT_HOLDER.getAccountHolderName(),
+      null,
+      PRIMARY_ACCOUNT_HOLDER.getDateOfBirth(),
+      PRIMARY_ACCOUNT_HOLDER.getEmail(),
+      ACCOUNT_HOLDER_TYPE_PRIMARY,
+      CREATED_AT))
       .isInstanceOf(NullPointerException.class)
       .hasMessage(AccountHolderValidationErrors.PASSPORT_NUMBER_NOT_NULL);
   }
 
-  @ParameterizedTest
-  @EnumSource(AccountHolderType.class)
-  void shouldThrowNullPointerException_whenDateOfBirthIsNull(AccountHolderType accountHolderType) {
-    assertThatThrownBy(() -> createAccountHolder(VALID_ACCOUNT_HOLDER_NAME, VALID_PASSPORT_NUMBER, null, VALID_EMAIL, accountHolderType, CREATED_AT))
+  @Test
+  void shouldThrowNullPointerException_whenDateOfBirthIsNull() {
+    assertThatThrownBy(() -> AccountHolder.create(
+      PRIMARY_ACCOUNT_HOLDER.getAccountHolderName(),
+      PRIMARY_ACCOUNT_HOLDER.getPassportNumber(),
+      null,
+      PRIMARY_ACCOUNT_HOLDER.getEmail(),
+      ACCOUNT_HOLDER_TYPE_PRIMARY,
+      CREATED_AT))
       .isInstanceOf(NullPointerException.class)
       .hasMessage(AccountHolderValidationErrors.DATE_OF_BIRTH_NOT_NULL);
   }
 
-  @ParameterizedTest
-  @EnumSource(AccountHolderType.class)
-  void shouldThrowNullPointerException_whenEmailIsNull(AccountHolderType accountHolderType) {
-    assertThatThrownBy(() -> createAccountHolder(VALID_ACCOUNT_HOLDER_NAME, VALID_PASSPORT_NUMBER, VALID_DATE_OF_BIRTH, null, accountHolderType, CREATED_AT))
+  @Test
+  void shouldThrowNullPointerException_whenEmailIsNull() {
+    assertThatThrownBy(() -> AccountHolder.create(
+      PRIMARY_ACCOUNT_HOLDER.getAccountHolderName(),
+      PRIMARY_ACCOUNT_HOLDER.getPassportNumber(),
+      PRIMARY_ACCOUNT_HOLDER.getDateOfBirth(),
+      null,
+      ACCOUNT_HOLDER_TYPE_PRIMARY,
+      CREATED_AT))
       .isInstanceOf(NullPointerException.class)
       .hasMessage(AccountHolderValidationErrors.EMAIL_NOT_NULL);
   }
 
-  @ParameterizedTest
-  @EnumSource(AccountHolderType.class)
-  void shouldThrowNullPointerException_whenCreatedAtIsNull(AccountHolderType accountHolderType) {
-    assertThatThrownBy(() -> createAccountHolder(VALID_ACCOUNT_HOLDER_NAME, VALID_PASSPORT_NUMBER, VALID_DATE_OF_BIRTH, VALID_EMAIL, accountHolderType, null))
+  @Test
+  void shouldThrowNullPointerException_whenCreatedAtIsNull() {
+    assertThatThrownBy(() -> AccountHolder.create(
+      PRIMARY_ACCOUNT_HOLDER.getAccountHolderName(),
+      PRIMARY_ACCOUNT_HOLDER.getPassportNumber(),
+      PRIMARY_ACCOUNT_HOLDER.getDateOfBirth(),
+      PRIMARY_ACCOUNT_HOLDER.getEmail(),
+      ACCOUNT_HOLDER_TYPE_PRIMARY,
+      null))
       .isInstanceOf(NullPointerException.class)
       .hasMessage(AccountHolderValidationErrors.CREATED_AT_NOT_NULL);
   }
 
-  @SuppressWarnings("all")
-  private AccountHolder createAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, AccountHolderType type, Instant createdAt) {
-    Objects.requireNonNull(type, AccountHolderValidationErrors.ACCOUNT_HOLDER_TYPE);
-
-    if (type.isPrimary()) {
-      return AccountHolder.createPrimary(name, passportNumber, dateOfBirth, email, createdAt);
-    }
-    return AccountHolder.createJoint(name, passportNumber, dateOfBirth, email, createdAt);
+  private void assertHolderMatchesFixture(AccountHolder actual, AccountHolderFixtures expected) {
+    assertThat(actual.name()).isEqualTo(expected.getAccountHolderName());
+    assertThat(actual.passportNumber()).isEqualTo(expected.getPassportNumber());
+    assertThat(actual.dateOfBirth()).isEqualTo(expected.getDateOfBirth());
+    assertThat(actual.email()).isEqualTo(expected.getEmail());
+    assertThat(actual.createdAt()).isEqualTo(CREATED_AT);
   }
 }

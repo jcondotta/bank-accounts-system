@@ -6,6 +6,7 @@ import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.events.*;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotActiveException;
+import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountHoldersConfigurationException;
 import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountStateTransitionException;
 import com.jcondotta.bankaccounts.domain.exceptions.MaxJointAccountHoldersExceededException;
 import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
@@ -17,14 +18,15 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
 public final class BankAccount {
 
   public static final AccountStatus ACCOUNT_STATUS_ON_OPENING = AccountStatus.PENDING;
+  public static final int MIN_PRIMARY_ACCOUNT_HOLDERS = 1;
+  public static final int MAX_PRIMARY_ACCOUNT_HOLDERS = 1;
   public static final int MAX_JOINT_ACCOUNT_HOLDERS = 1;
 
   private final BankAccountId id;
@@ -53,7 +55,11 @@ public final class BankAccount {
     this.iban = requireNonNull(iban, BankAccountValidationErrors.IBAN_NOT_NULL);
     this.accountStatus = requireNonNull(accountStatus, BankAccountValidationErrors.ACCOUNT_STATUS_NOT_NULL);
     this.createdAt = requireNonNull(createdAt, DomainValidationErrors.CREATED_AT_NOT_NULL);
-    this.accountHolders = new ArrayList<>(requireNonNull(accountHolders, BankAccountValidationErrors.ACCOUNT_HOLDERS_NOT_NULL));
+
+    requireNonNull(accountHolders, BankAccountValidationErrors.ACCOUNT_HOLDERS_NOT_NULL);
+
+    validateAccountHoldersConfiguration(accountHolders);
+    this.accountHolders = new ArrayList<>(accountHolders);
   }
 
   public static BankAccount open(
@@ -66,7 +72,7 @@ public final class BankAccount {
     Iban iban,
     Clock clock
   ) {
-    Instant now = Instant.now(clock);
+    Instant now = Instant.now(Objects.requireNonNull(clock));
     var primaryHolder = AccountHolder.createPrimary(name, passportNumber, dateOfBirth, email, now);
 
     var bankAccount = new BankAccount(
@@ -172,12 +178,12 @@ public final class BankAccount {
       throw new BankAccountNotActiveException(accountStatus);
     }
 
-    var jointAccountHoldersCount = (int) accountHolders.stream()
-      .filter(Predicate.not(AccountHolder::isPrimary))
+    int jointCount = (int) this.accountHolders.stream()
+      .filter(AccountHolder::isJoint)
       .count();
 
-    if (jointAccountHoldersCount >= MAX_JOINT_ACCOUNT_HOLDERS) {
-      throw new MaxJointAccountHoldersExceededException(jointAccountHoldersCount);
+    if (jointCount >= MAX_JOINT_ACCOUNT_HOLDERS) {
+      throw new MaxJointAccountHoldersExceededException(jointCount);
     }
 
     Instant now = Instant.now(clock);
@@ -192,19 +198,13 @@ public final class BankAccount {
       return;
     }
 
-    if (accountStatus == AccountStatus.PENDING) {
+    if (accountStatus != AccountStatus.ACTIVE) {
       throw new InvalidBankAccountStateTransitionException(accountStatus, AccountStatus.CLOSED);
     }
 
     this.accountStatus = AccountStatus.CLOSED;
 
     registerEvent(new BankAccountClosedEvent(EventId.newId(), this.id(), Instant.now(clock)));
-  }
-
-  public Optional<AccountHolder> findAccountHolder(AccountHolderId accountHolderId) {
-    return accountHolders.stream()
-      .filter(accountHolder -> accountHolder.id().equals(accountHolderId))
-      .findFirst();
   }
 
   public AccountHolder primaryAccountHolder() {
@@ -256,5 +256,34 @@ public final class BankAccount {
 
   public List<AccountHolder> accountHolders() {
     return Collections.unmodifiableList(accountHolders);
+  }
+
+  private void validateAccountHoldersConfiguration(List<AccountHolder> holders) {
+    validatePrimaryAccountHolders(holders);
+    validateJointAccountHolders(holders);
+  }
+
+  private void validatePrimaryAccountHolders(List<AccountHolder> holders) {
+    int primaryCount = (int) holders.stream()
+      .filter(AccountHolder::isPrimary)
+      .count();
+
+    if (primaryCount < MIN_PRIMARY_ACCOUNT_HOLDERS || primaryCount > MAX_PRIMARY_ACCOUNT_HOLDERS) {
+      throw new InvalidBankAccountHoldersConfigurationException(
+        primaryCount,
+        MIN_PRIMARY_ACCOUNT_HOLDERS,
+        MAX_PRIMARY_ACCOUNT_HOLDERS
+      );
+    }
+  }
+
+  private void validateJointAccountHolders(List<AccountHolder> holders) {
+    int jointCount = (int) holders.stream()
+      .filter(AccountHolder::isJoint)
+      .count();
+
+    if (jointCount > MAX_JOINT_ACCOUNT_HOLDERS) {
+      throw new MaxJointAccountHoldersExceededException(jointCount);
+    }
   }
 }

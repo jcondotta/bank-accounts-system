@@ -11,7 +11,6 @@ import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 
 import static java.util.Objects.requireNonNull;
 

@@ -4,7 +4,6 @@ import com.jcondotta.bankaccounts.domain.events.types.DomainEventType;
 import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 
 /**
  * Marker interface for domain events.

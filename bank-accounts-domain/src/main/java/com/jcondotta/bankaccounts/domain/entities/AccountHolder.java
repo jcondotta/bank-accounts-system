@@ -44,7 +44,7 @@ public final class AccountHolder {
     return create(accountHolderName, passportNumber, dateOfBirth, email, AccountHolderType.JOINT, createdAt);
   }
 
-  private static AccountHolder create(
+  static AccountHolder create(
     AccountHolderName accountHolderName,
     PassportNumber passportNumber,
     DateOfBirth dateOfBirth,
