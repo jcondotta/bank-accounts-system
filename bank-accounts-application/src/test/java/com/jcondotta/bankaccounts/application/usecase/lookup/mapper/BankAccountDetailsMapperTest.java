@@ -54,28 +54,26 @@ class BankAccountDetailsMapperTest {
       PRIMARY_EMAIL,
       AccountType.CHECKING,
       Currency.EUR,
-      VALID_IBAN,
-      CREATED_AT
+      VALID_IBAN
     );
 
-    bankAccount.activate(CREATED_AT);
+    bankAccount.activate();
 
     bankAccount.addJointAccountHolder(
       JOINT_ACCOUNT_HOLDER_NAME,
       JOINT_PASSPORT_NUMBER,
       JOINT_DATE_OF_BIRTH,
-      JOINT_EMAIL,
-      CREATED_AT
+      JOINT_EMAIL
     );
 
     BankAccountDetails details = mapper.toDetails(bankAccount);
 
-    assertThat(details.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-    assertThat(details.accountType()).isEqualTo(bankAccount.getAccountType());
-    assertThat(details.currency()).isEqualTo(bankAccount.getCurrency());
-    assertThat(details.iban()).isEqualTo(bankAccount.getIban());
-    assertThat(details.accountStatus()).isEqualTo(bankAccount.getAccountStatus());
-    assertThat(details.openingDate()).isEqualTo(bankAccount.getCreatedAt());
+    assertThat(details.bankAccountId()).isEqualTo(bankAccount.id());
+    assertThat(details.accountType()).isEqualTo(bankAccount.accountType());
+    assertThat(details.currency()).isEqualTo(bankAccount.currency());
+    assertThat(details.iban()).isEqualTo(bankAccount.iban());
+    assertThat(details.accountStatus()).isEqualTo(bankAccount.accountStatus());
+    assertThat(details.createdAt()).isNotNull();
 
     List<AccountHolderDetails> holders = details.accountHolders();
     assertThat(holders).hasSize(2);
@@ -86,11 +84,11 @@ class BankAccountDetailsMapperTest {
         .findFirst()
         .orElseThrow();
 
-    assertThat(primaryHolder.accountHolderName()).isEqualTo(PRIMARY_ACCOUNT_HOLDER_NAME);
+    assertThat(primaryHolder.name()).isEqualTo(PRIMARY_ACCOUNT_HOLDER_NAME);
     assertThat(primaryHolder.passportNumber()).isEqualTo(PRIMARY_PASSPORT_NUMBER);
     assertThat(primaryHolder.dateOfBirth()).isEqualTo(PRIMARY_DATE_OF_BIRTH);
     assertThat(primaryHolder.email()).isEqualTo(PRIMARY_EMAIL);
-    assertThat(primaryHolder.createdAt()).isEqualTo(CREATED_AT);
+    assertThat(primaryHolder.createdAt()).isNotNull();
 
     AccountHolderDetails jointHolder =
       holders.stream()
@@ -98,11 +96,11 @@ class BankAccountDetailsMapperTest {
         .findFirst()
         .orElseThrow();
 
-    assertThat(jointHolder.accountHolderName()).isEqualTo(JOINT_ACCOUNT_HOLDER_NAME);
+    assertThat(jointHolder.name()).isEqualTo(JOINT_ACCOUNT_HOLDER_NAME);
     assertThat(jointHolder.passportNumber()).isEqualTo(JOINT_PASSPORT_NUMBER);
     assertThat(jointHolder.dateOfBirth()).isEqualTo(JOINT_DATE_OF_BIRTH);
     assertThat(jointHolder.email()).isEqualTo(JOINT_EMAIL);
-    assertThat(jointHolder.createdAt()).isEqualTo(CREATED_AT);
+    assertThat(jointHolder.createdAt()).isNotNull();
   }
 
   @Test
@@ -113,7 +111,7 @@ class BankAccountDetailsMapperTest {
   @Test
   void shouldReturnNull_whenAccountHoldersListIsNull() {
     BankAccountDetailsMapperImpl mapperImpl = (BankAccountDetailsMapperImpl) mapper;
-    assertThat(mapperImpl.accountHolderListToAccountHolderDetailsList(null))
+    assertThat(mapperImpl.toDetails(null))
       .isNull();
   }
 }

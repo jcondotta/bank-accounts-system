@@ -5,11 +5,9 @@ import com.jcondotta.bankaccounts.domain.entities.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.Iban;
 
-import java.time.Clock;
 import java.time.Instant;
 
 public final class BankAccountTestFixture {
@@ -20,16 +18,14 @@ public final class BankAccountTestFixture {
 
   public static final Currency DEFAULT_CURRENCY = Currency.EUR;
 
-  public static final Clock DEFAULT_CLOCK = ClockTestFactory.FIXED_CLOCK;
-
   private BankAccountTestFixture() {
   }
 
   public static BankAccount openPendingAccount(AccountHolderFixtures holder) {
-    return openPendingAccount(holder, DEFAULT_ACCOUNT_TYPE, DEFAULT_CURRENCY, DEFAULT_CLOCK);
+    return openPendingAccount(holder, DEFAULT_ACCOUNT_TYPE, DEFAULT_CURRENCY);
   }
 
-  public static BankAccount openPendingAccount(AccountHolderFixtures holder, AccountType accountType, Currency currency, Clock clock) {
+  public static BankAccount openPendingAccount(AccountHolderFixtures holder, AccountType accountType, Currency currency) {
     return BankAccount.open(
       holder.getAccountHolderName(),
       holder.getPassportNumber(),
@@ -37,24 +33,23 @@ public final class BankAccountTestFixture {
       holder.getEmail(),
       accountType,
       currency,
-      VALID_IBAN,
-      clock
+      VALID_IBAN
     );
   }
 
   public static BankAccount openActiveAccount(AccountHolderFixtures holder) {
-    return openActiveAccount(holder, DEFAULT_ACCOUNT_TYPE, DEFAULT_CURRENCY, DEFAULT_CLOCK);
+    return openActiveAccount(holder, DEFAULT_ACCOUNT_TYPE, DEFAULT_CURRENCY);
   }
 
-  public static BankAccount openActiveAccount(AccountHolderFixtures holder, AccountType accountType, Currency currency, Clock clock) {
-    var account = openPendingAccount(holder, accountType, currency, clock);
-    account.activate(clock);
+  public static BankAccount openActiveAccount(AccountHolderFixtures holder, AccountType accountType, Currency currency) {
+    var account = openPendingAccount(holder, accountType, currency);
+    account.activate();
     account.pullDomainEvents();
 
     return account;
   }
 
-  public static AccountHolder createPrimaryHolder(AccountHolderFixtures fixture, Clock clock) {
+  public static AccountHolder createPrimaryHolder(AccountHolderFixtures fixture, Instant createdAt) {
     return BankAccount.restoreAccountHolder(
       AccountHolderId.newId(),
       fixture.getAccountHolderName(),
@@ -62,11 +57,11 @@ public final class BankAccountTestFixture {
       fixture.getDateOfBirth(),
       fixture.getEmail(),
       AccountHolderType.PRIMARY,
-      Instant.now(clock)
+      createdAt
     );
   }
 
-  public static AccountHolder createJointHolder(AccountHolderFixtures fixture, Clock clock) {
+  public static AccountHolder createJointHolder(AccountHolderFixtures fixture, Instant createdAt) {
     return BankAccount.restoreAccountHolder(
       AccountHolderId.newId(),
       fixture.getAccountHolderName(),
@@ -74,7 +69,7 @@ public final class BankAccountTestFixture {
       fixture.getDateOfBirth(),
       fixture.getEmail(),
       AccountHolderType.JOINT,
-      Instant.now(clock)
+      createdAt
     );
   }
 }

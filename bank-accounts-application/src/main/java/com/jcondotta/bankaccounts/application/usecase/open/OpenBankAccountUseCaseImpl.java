@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Slf4j
@@ -23,7 +21,6 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
   private final OpenBankAccountRepository openBankAccountRepository;
   private final IbanGeneratorFacade ibanGeneratorFacade;
   private final BankAccountOpenedEventPublisher bankAccountOpenedEventPublisher;
-  private final Clock clock;
 
   @Override
   @Observed(
@@ -45,14 +42,13 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
     var iban = ibanGeneratorFacade.generate();
 
     BankAccount bankAccount = BankAccount.open(
-      command.accountHolderName(),
+      command.name(),
       command.passportNumber(),
       command.dateOfBirth(),
       command.email(),
       command.accountType(),
       command.currency(),
-      iban,
-      ZonedDateTime.now(clock)
+      iban
     );
 
     openBankAccountRepository.create(bankAccount);
@@ -62,9 +58,9 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
       .forEach(bankAccountOpenedEventPublisher::publish);
 
     log.info(
-      "Bank account opened successfully [bankAccountId={}]", bankAccount.getBankAccountId().value()
+      "Bank account opened successfully [bankAccountId={}]", bankAccount.id().value()
     );
 
-    return new OpenBankAccountResult(bankAccount.getBankAccountId(), bankAccount.getCreatedAt());
+    return new OpenBankAccountResult(bankAccount.id(), bankAccount.createdAt());
   }
 }

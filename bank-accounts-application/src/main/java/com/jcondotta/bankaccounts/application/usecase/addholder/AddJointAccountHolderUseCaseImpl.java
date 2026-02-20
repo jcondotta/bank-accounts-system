@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Slf4j
@@ -22,7 +20,6 @@ public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUs
   private final LookupBankAccountRepository lookupBankAccountRepository;
   private final UpdateBankAccountRepository updateBankAccountRepository;
   private final JointAccountHolderAddedEventPublisher jointAccountHolderAddedEventPublisher;
-  private final Clock clock;
 
   @Override
   @Observed(
@@ -45,11 +42,10 @@ public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUs
       .orElseThrow(() -> new BankAccountNotFoundException(command.bankAccountId()));
 
     bankAccount.addJointAccountHolder(
-      command.accountHolderName(),
+      command.name(),
       command.passportNumber(),
       command.dateOfBirth(),
-      command.email(),
-      ZonedDateTime.now(clock)
+      command.email()
     );
 
     updateBankAccountRepository.update(bankAccount);
@@ -59,7 +55,7 @@ public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUs
       .forEach(jointAccountHolderAddedEventPublisher::publish);
 
     log.info(
-      "Joint account holder added successfully [bankAccountId={}]", bankAccount.getBankAccountId()
+      "Joint account holder added successfully [bankAccountId={}]", bankAccount.id()
     );
   }
 }

@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Slf4j
@@ -22,7 +20,6 @@ public class UnblockBankAccountUseCaseImpl implements UnblockBankAccountUseCase 
   private final LookupBankAccountRepository lookupBankAccountRepository;
   private final UpdateBankAccountRepository updateBankAccountRepository;
   private final BankAccountUnblockedEventPublisher bankAccountUnblockedEventPublisher;
-  private final Clock clock;
 
   @Override
   @Observed(
@@ -46,9 +43,7 @@ public class UnblockBankAccountUseCaseImpl implements UnblockBankAccountUseCase 
     var bankAccount = lookupBankAccountRepository.byId(command.bankAccountId())
         .orElseThrow(() -> new BankAccountNotFoundException(command.bankAccountId()));
 
-    var now = ZonedDateTime.now(clock);
-
-    bankAccount.unblock(now);
+    bankAccount.unblock();
 
     updateBankAccountRepository.update(bankAccount);
 
@@ -58,7 +53,7 @@ public class UnblockBankAccountUseCaseImpl implements UnblockBankAccountUseCase 
 
     log.info(
       "Bank account unblocked successfully [bankAccountId={}]",
-      bankAccount.getBankAccountId().value()
+      bankAccount.id().value()
     );
   }
 }

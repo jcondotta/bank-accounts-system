@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 
@@ -31,13 +30,12 @@ class BankAccountRestoreTest {
   private static final AccountType ACCOUNT_TYPE_SAVINGS = AccountType.SAVINGS;
   private static final Currency CURRENCY_USD = Currency.USD;
 
-  private static final Clock ACCOUNT_CREATION_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final Instant ACCOUNT_CREATED_AT = Instant.now(ACCOUNT_CREATION_CLOCK);
+  private static final Instant ACCOUNT_CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
 
   @ParameterizedTest
   @ArgumentsSource(AccountTypeAndCurrencyArgumentsProvider.class)
   void shouldRestoreBankAccountWithPrimaryAccountHolder_whenValidDataProvided(AccountType accountType, Currency currency) {
-    var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATION_CLOCK);
+    var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     var bankAccountId = BankAccountId.newId();
     var bankAccount = BankAccount.restore(
@@ -66,8 +64,8 @@ class BankAccountRestoreTest {
   @ParameterizedTest
   @ArgumentsSource(AccountTypeAndCurrencyArgumentsProvider.class)
   void shouldRestoreBankAccountWithPrimaryAndJointAccountHolders_whenValidDataProvided(AccountType accountType, Currency currency) {
-    var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATION_CLOCK);
-    var jointAccountHolder = BankAccountTestFixture.createJointHolder(JOINT_ACCOUNT_HOLDER, ACCOUNT_CREATION_CLOCK);
+    var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
+    var jointAccountHolder = BankAccountTestFixture.createJointHolder(JOINT_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     var bankAccountId = BankAccountId.newId();
     var bankAccount = BankAccount.restore(
@@ -110,7 +108,7 @@ class BankAccountRestoreTest {
 
   @Test
   void shouldThrowInvalidBankAccountHoldersConfigurationException_whenRestoringWithOnlyJointAccountHolder() {
-    var jointAccountHolder = BankAccountTestFixture.createJointHolder(JOINT_ACCOUNT_HOLDER, ACCOUNT_CREATION_CLOCK);
+    var jointAccountHolder = BankAccountTestFixture.createJointHolder(JOINT_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     assertThatThrownBy(() ->
       BankAccount.restore(
@@ -127,8 +125,8 @@ class BankAccountRestoreTest {
 
   @Test
   void shouldThrowException_whenRestoringWithMultiplePrimaryAccountHolders() {
-    var primaryAccountHolder1 = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATION_CLOCK);
-    var primaryAccountHolder2 = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATION_CLOCK);
+    var primaryAccountHolder1 = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
+    var primaryAccountHolder2 = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     assertThatThrownBy(() ->
       BankAccount.restore(
@@ -145,9 +143,9 @@ class BankAccountRestoreTest {
 
   @Test
   void shouldThrowMaxJointAccountHoldersExceededException_whenRestoringWithPrimaryAndMultipleJointAccountHolders_ifOnlyOneJointIsAllowed() {
-    var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATION_CLOCK);
-    var jointAccountHolder1 = BankAccountTestFixture.createJointHolder(JOINT_ACCOUNT_HOLDER, ACCOUNT_CREATION_CLOCK);
-    var jointAccountHolder2 = BankAccountTestFixture.createJointHolder(JOINT_ACCOUNT_HOLDER, ACCOUNT_CREATION_CLOCK);
+    var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
+    var jointAccountHolder1 = BankAccountTestFixture.createJointHolder(JOINT_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
+    var jointAccountHolder2 = BankAccountTestFixture.createJointHolder(JOINT_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     assertThatThrownBy(() ->
       BankAccount.restore(

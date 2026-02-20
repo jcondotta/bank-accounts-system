@@ -1,6 +1,5 @@
 package com.jcondotta.bankaccounts.application.usecase.unblock;
 
-import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountUnblockedEventPublisher;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
@@ -21,8 +20,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,13 +36,6 @@ class UnblockBankAccountUseCaseImplTest {
   private static final PassportNumber PASSPORT_NUMBER = AccountHolderFixtures.JEFFERSON.getPassportNumber();
   private static final DateOfBirth DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
   private static final Email EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
-
-  private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(ClockTestFactory.FIXED_CLOCK);
-
-  private static final Clock USE_CASE_CLOCK =
-    Clock.fixed(CREATED_AT.toInstant().plusSeconds(7200), CREATED_AT.getZone());
-
-  private static final ZonedDateTime UNBLOCKED_AT = ZonedDateTime.now(USE_CASE_CLOCK);
 
   @Mock
   private LookupBankAccountRepository lookupBankAccountRepository;
@@ -66,8 +56,7 @@ class UnblockBankAccountUseCaseImplTest {
     useCase = new UnblockBankAccountUseCaseImpl(
       lookupBankAccountRepository,
       updateBankAccountRepository,
-      bankAccountUnblockedEventPublisher,
-      USE_CASE_CLOCK
+      bankAccountUnblockedEventPublisher
     );
   }
 
@@ -80,12 +69,11 @@ class UnblockBankAccountUseCaseImplTest {
       EMAIL,
       AccountType.CHECKING,
       Currency.USD,
-      VALID_IBAN,
-      CREATED_AT
+      VALID_IBAN
     );
 
-    bankAccount.activate(CREATED_AT);
-    bankAccount.block(CREATED_AT.plusHours(1));
+    bankAccount.activate();
+    bankAccount.block();
     bankAccount.pullDomainEvents();
 
     when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
@@ -101,8 +89,8 @@ class UnblockBankAccountUseCaseImplTest {
 
     assertThat(eventArgumentCaptor.getValue())
       .isInstanceOfSatisfying(BankAccountUnblockedEvent.class, event -> {
-        assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-        assertThat(event.occurredAt()).isEqualTo(UNBLOCKED_AT);
+        assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
+        assertThat(event.occurredAt()).isNotNull();
       });
   }
 

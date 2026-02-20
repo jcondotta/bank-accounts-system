@@ -1,6 +1,5 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 
-import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.AccountHolderDetails;
 import com.jcondotta.bankaccounts.domain.entities.AccountHolder;
@@ -12,30 +11,18 @@ import com.jcondotta.bankaccounts.domain.value_objects.*;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AccountHolderDetailsMapperTest {
 
-  private static final AccountHolderDetailsMapper mapper =
-    Mappers.getMapper(AccountHolderDetailsMapper.class);
+  private static final AccountHolderDetailsMapper mapper = Mappers.getMapper(AccountHolderDetailsMapper.class);
 
-  private static final Iban VALID_IBAN =
-    Iban.of("ES3801283316232166447417");
+  private static final Iban VALID_IBAN = Iban.of("ES3801283316232166447417");
 
-  private static final AccountHolderName ACCOUNT_HOLDER_NAME =
-    AccountHolderFixtures.JEFFERSON.getAccountHolderName();
-  private static final PassportNumber PASSPORT_NUMBER =
-    AccountHolderFixtures.JEFFERSON.getPassportNumber();
-  private static final DateOfBirth DATE_OF_BIRTH =
-    AccountHolderFixtures.JEFFERSON.getDateOfBirth();
-  private static final Email EMAIL =
-    AccountHolderFixtures.JEFFERSON.getEmail();
-
-  private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(FIXED_CLOCK);
+  private static final AccountHolderName ACCOUNT_HOLDER_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName();
+  private static final PassportNumber PASSPORT_NUMBER = AccountHolderFixtures.JEFFERSON.getPassportNumber();
+  private static final DateOfBirth DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
+  private static final Email EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
 
   @Test
   void shouldMapAccountHolderToAccountHolderDetails_whenAllFieldsArePresent() {
@@ -46,20 +33,19 @@ class AccountHolderDetailsMapperTest {
       EMAIL,
       AccountType.CHECKING,
       Currency.EUR,
-      VALID_IBAN,
-      CREATED_AT
+      VALID_IBAN
     );
 
     AccountHolder accountHolder = bankAccount.primaryAccountHolder();
     AccountHolderDetails details = mapper.toDetails(accountHolder);
 
-    assertThat(details.accountHolderId()).isEqualTo(accountHolder.getAccountHolderId());
-    assertThat(details.accountHolderName()).isEqualTo(accountHolder.getAccountHolderName());
-    assertThat(details.passportNumber()).isEqualTo(accountHolder.getPassportNumber());
-    assertThat(details.dateOfBirth()).isEqualTo(accountHolder.getDateOfBirth());
-    assertThat(details.email()).isEqualTo(accountHolder.getEmail());
+    assertThat(details.id()).isEqualTo(accountHolder.id());
+    assertThat(details.name()).isEqualTo(accountHolder.name());
+    assertThat(details.passportNumber()).isEqualTo(accountHolder.passportNumber());
+    assertThat(details.dateOfBirth()).isEqualTo(accountHolder.dateOfBirth());
+    assertThat(details.email()).isEqualTo(accountHolder.email());
     assertThat(details.accountHolderType()).isEqualTo(AccountHolderType.PRIMARY);
-    assertThat(details.createdAt()).isEqualTo(CREATED_AT);
+    assertThat(details.createdAt()).isNotNull();
   }
 
   @Test

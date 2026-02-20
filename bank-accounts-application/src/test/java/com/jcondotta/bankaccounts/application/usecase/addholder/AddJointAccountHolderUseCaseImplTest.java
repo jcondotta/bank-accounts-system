@@ -1,6 +1,5 @@
 package com.jcondotta.bankaccounts.application.usecase.addholder;
 
-import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.ports.output.messaging.JointAccountHolderAddedEventPublisher;
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
@@ -22,8 +21,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,10 +43,6 @@ class AddJointAccountHolderUseCaseImplTest {
   private static final DateOfBirth JOINT_DATE_OF_BIRTH = AccountHolderFixtures.PATRIZIO.getDateOfBirth();
   private static final Email JOINT_EMAIL = AccountHolderFixtures.PATRIZIO.getEmail();
 
-  private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(ClockTestFactory.FIXED_CLOCK);
-
-  private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-
   @Mock
   private LookupBankAccountRepository lookupBankAccountRepository;
 
@@ -69,8 +62,7 @@ class AddJointAccountHolderUseCaseImplTest {
     useCase = new AddJointAccountHolderUseCaseImpl(
       lookupBankAccountRepository,
       updateBankAccountRepository,
-      domainEventPublisher,
-      FIXED_CLOCK
+      domainEventPublisher
     );
   }
 
@@ -84,10 +76,10 @@ class AddJointAccountHolderUseCaseImplTest {
         PRIMARY_EMAIL,
         AccountType.CHECKING,
         Currency.EUR,
-        VALID_IBAN,
-        CREATED_AT);
+        VALID_IBAN
+      );
 
-    bankAccount.activate(CREATED_AT);
+    bankAccount.activate();
     bankAccount.pullDomainEvents();
 
     when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
@@ -108,9 +100,9 @@ class AddJointAccountHolderUseCaseImplTest {
       .singleElement()
       .isInstanceOfSatisfying(JointAccountHolderAddedEvent.class, event -> {
           assertThat(event.eventId()).isNotNull();
-          assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
-          assertThat(event.accountHolderId()).isEqualTo(jointAccountHolder.getAccountHolderId());
-          assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
+          assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
+          assertThat(event.accountHolderId()).isEqualTo(jointAccountHolder.id());
+          assertThat(event.occurredAt()).isNotNull();
         }
       );
   }

@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Slf4j
@@ -22,7 +20,6 @@ public class ActivateBankAccountUseCaseImpl implements ActivateBankAccountUseCas
   private final LookupBankAccountRepository lookupBankAccountRepository;
   private final UpdateBankAccountRepository updateBankAccountRepository;
   private final BankAccountActivatedEventPublisher bankAccountActivatedEventPublisher;
-  private final Clock clock;
 
   @Override
   @Observed(
@@ -42,7 +39,7 @@ public class ActivateBankAccountUseCaseImpl implements ActivateBankAccountUseCas
     var bankAccount = lookupBankAccountRepository.byId(command.bankAccountId())
       .orElseThrow(() -> new BankAccountNotFoundException(command.bankAccountId()));
 
-    bankAccount.activate(ZonedDateTime.now(clock));
+    bankAccount.activate();
     updateBankAccountRepository.update(bankAccount);
 
     bankAccount
@@ -50,7 +47,7 @@ public class ActivateBankAccountUseCaseImpl implements ActivateBankAccountUseCas
       .forEach(bankAccountActivatedEventPublisher::publish);
 
     log.info(
-      "Bank account activated successfully [bankAccountId={}]", bankAccount.getBankAccountId().value()
+      "Bank account activated successfully [bankAccountId={}]", bankAccount.id().value()
     );
   }
 }

@@ -1,7 +1,6 @@
 package com.jcondotta.bankaccounts.application.usecase.open;
 
 import com.jcondotta.bankaccounts.application.argument_provider.AccountTypeAndCurrencyArgumentsProvider;
-import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.ports.output.facade.IbanGeneratorFacade;
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountOpenedEventPublisher;
@@ -23,9 +22,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -39,9 +35,6 @@ class OpenBankAccountUseCaseImplTest {
   private static final Email EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
 
   private static final Iban GENERATED_IBAN = Iban.of("ES3801283316232166447417");
-
-  private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(FIXED_CLOCK);
 
   @Mock
   private OpenBankAccountRepository openBankAccountRepository;
@@ -65,8 +58,7 @@ class OpenBankAccountUseCaseImplTest {
     useCase = new OpenBankAccountUseCaseImpl(
       openBankAccountRepository,
       ibanGeneratorFacade,
-      domainEventPublisher,
-      FIXED_CLOCK
+      domainEventPublisher
     );
   }
 
@@ -86,34 +78,34 @@ class OpenBankAccountUseCaseImplTest {
 
     assertThat(bankAccountCaptor.getValue())
       .satisfies(bankAccount -> {
-        assertThat(bankAccount.getBankAccountId()).isNotNull();
-        assertThat(bankAccount.getAccountType()).isEqualTo(accountType);
-        assertThat(bankAccount.getCurrency()).isEqualTo(currency);
-        assertThat(bankAccount.getIban()).isEqualTo(GENERATED_IBAN);
-        assertThat(bankAccount.getAccountStatus()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
-        assertThat(bankAccount.getCreatedAt()).isEqualTo(CREATED_AT);
-        assertThat(bankAccount.getAccountHolders())
+        assertThat(bankAccount.id()).isNotNull();
+        assertThat(bankAccount.accountType()).isEqualTo(accountType);
+        assertThat(bankAccount.currency()).isEqualTo(currency);
+        assertThat(bankAccount.iban()).isEqualTo(GENERATED_IBAN);
+        assertThat(bankAccount.accountStatus()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
+        assertThat(bankAccount.createdAt()).isNotNull();
+        assertThat(bankAccount.accountHolders())
           .hasSize(1)
           .singleElement()
           .satisfies(accountHolder -> {
-            assertThat(accountHolder.getAccountHolderId()).isNotNull();
-            assertThat(accountHolder.getAccountHolderName()).isEqualTo(ACCOUNT_HOLDER_NAME);
-            assertThat(accountHolder.getPassportNumber()).isEqualTo(PASSPORT_NUMBER);
-            assertThat(accountHolder.getDateOfBirth()).isEqualTo(DATE_OF_BIRTH);
-            assertThat(accountHolder.getEmail()).isEqualTo(EMAIL);
-            assertThat(accountHolder.isPrimaryAccountHolder()).isTrue();
-            assertThat(accountHolder.getCreatedAt()).isEqualTo(CREATED_AT);
+            assertThat(accountHolder.id()).isNotNull();
+            assertThat(accountHolder.name()).isEqualTo(ACCOUNT_HOLDER_NAME);
+            assertThat(accountHolder.passportNumber()).isEqualTo(PASSPORT_NUMBER);
+            assertThat(accountHolder.dateOfBirth()).isEqualTo(DATE_OF_BIRTH);
+            assertThat(accountHolder.email()).isEqualTo(EMAIL);
+            assertThat(accountHolder.isPrimary()).isTrue();
+            assertThat(accountHolder.createdAt()).isNotNull();
           });
 
         assertThat(eventArgumentCaptor.getAllValues())
           .hasSize(1)
           .singleElement()
           .isInstanceOfSatisfying(BankAccountOpenedEvent.class, event -> {
-              assertThat(event.bankAccountId()).isEqualTo(bankAccount.getBankAccountId());
+              assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
               assertThat(event.accountType()).isEqualTo(accountType);
               assertThat(event.currency()).isEqualTo(currency);
               assertThat(event.primaryAccountHolderId()).isNotNull();
-              assertThat(event.occurredAt()).isEqualTo(CREATED_AT);
+              assertThat(event.occurredAt()).isNotNull();
             }
           );
       });

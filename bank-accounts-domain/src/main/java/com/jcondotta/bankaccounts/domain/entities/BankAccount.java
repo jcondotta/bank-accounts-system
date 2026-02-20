@@ -13,12 +13,10 @@ import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.*;
 
-import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -69,10 +67,9 @@ public final class BankAccount {
     Email email,
     AccountType accountType,
     Currency currency,
-    Iban iban,
-    Clock clock
+    Iban iban
   ) {
-    Instant now = Instant.now(Objects.requireNonNull(clock));
+    Instant now = Instant.now();
     var primaryHolder = AccountHolder.createPrimary(name, passportNumber, dateOfBirth, email, now);
 
     var bankAccount = new BankAccount(
@@ -131,7 +128,7 @@ public final class BankAccount {
     return AccountHolder.restore(accountHolderId, accountHolderName, passportNumber, dateOfBirth, email, accountHolderType, createdAt);
   }
 
-  public void activate(Clock clock) {
+  public void activate() {
     if (accountStatus == AccountStatus.ACTIVE) {
       return;
     }
@@ -141,10 +138,10 @@ public final class BankAccount {
     }
 
     this.accountStatus = AccountStatus.ACTIVE;
-    registerEvent(new BankAccountActivatedEvent(EventId.newId(), this.id(), Instant.now(clock)));
+    registerEvent(new BankAccountActivatedEvent(EventId.newId(), this.id(), Instant.now()));
   }
 
-  public void block(Clock clock) {
+  public void block() {
     if (accountStatus == AccountStatus.BLOCKED) {
       return;
     }
@@ -157,10 +154,10 @@ public final class BankAccount {
     }
 
     this.accountStatus = AccountStatus.BLOCKED;
-    registerEvent(new BankAccountBlockedEvent(EventId.newId(), this.id(), Instant.now(clock)));
+    registerEvent(new BankAccountBlockedEvent(EventId.newId(), this.id(), Instant.now()));
   }
 
-  public void unblock(Clock clock) {
+  public void unblock() {
     if (accountStatus == AccountStatus.ACTIVE) {
       return;
     }
@@ -170,10 +167,10 @@ public final class BankAccount {
     }
 
     this.accountStatus = AccountStatus.ACTIVE;
-    registerEvent(new BankAccountUnblockedEvent(EventId.newId(), this.id(), Instant.now(clock)));
+    registerEvent(new BankAccountUnblockedEvent(EventId.newId(), this.id(), Instant.now()));
   }
 
-  public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, Clock clock) {
+  public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email) {
     if (!accountStatus.isActive()) {
       throw new BankAccountNotActiveException(accountStatus);
     }
@@ -186,14 +183,14 @@ public final class BankAccount {
       throw new MaxJointAccountHoldersExceededException(jointCount);
     }
 
-    Instant now = Instant.now(clock);
+    Instant now = Instant.now();
     var accountHolder = AccountHolder.createJoint(name, passportNumber, dateOfBirth, email, now);
     accountHolders.add(accountHolder);
 
     this.registerEvent(new JointAccountHolderAddedEvent(EventId.newId(), this.id(), accountHolder.id(), now));
   }
 
-  public void close(Clock clock) {
+  public void close() {
     if (accountStatus == AccountStatus.CLOSED) {
       return;
     }
@@ -204,7 +201,7 @@ public final class BankAccount {
 
     this.accountStatus = AccountStatus.CLOSED;
 
-    registerEvent(new BankAccountClosedEvent(EventId.newId(), this.id(), Instant.now(clock)));
+    registerEvent(new BankAccountClosedEvent(EventId.newId(), this.id(), Instant.now()));
   }
 
   public AccountHolder primaryAccountHolder() {

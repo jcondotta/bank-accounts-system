@@ -10,7 +10,7 @@ import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
 import static java.util.Objects.requireNonNull;
 
 public record OpenBankAccountCommand(
-  AccountHolderName accountHolderName,
+  AccountHolderName name,
   PassportNumber passportNumber,
   DateOfBirth dateOfBirth,
   Email email,
@@ -19,7 +19,7 @@ public record OpenBankAccountCommand(
 ) {
 
   public OpenBankAccountCommand {
-    requireNonNull(accountHolderName, "accountHolderName must not be null");
+    requireNonNull(name, "name must not be null");
     requireNonNull(passportNumber, "passportNumber must not be null");
     requireNonNull(dateOfBirth, "dateOfBirth must not be null");
     requireNonNull(accountType, "accountType must not be null");

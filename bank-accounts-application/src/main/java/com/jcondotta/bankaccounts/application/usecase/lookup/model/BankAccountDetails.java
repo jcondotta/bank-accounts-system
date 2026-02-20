@@ -6,7 +6,7 @@ import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.domain.value_objects.Iban;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -17,7 +17,7 @@ public record BankAccountDetails(
   Currency currency,
   Iban iban,
   AccountStatus accountStatus,
-  ZonedDateTime openingDate,
+  Instant createdAt,
   List<AccountHolderDetails> accountHolders
 ) {
   public BankAccountDetails {
@@ -26,7 +26,7 @@ public record BankAccountDetails(
     requireNonNull(currency, "currency");
     requireNonNull(iban, "iban");
     requireNonNull(accountStatus, "accountStatus");
-    requireNonNull(openingDate, "openingDate");
+    requireNonNull(createdAt, "createdAt");
     requireNonNull(accountHolders, "accountHolders");
   }
 }

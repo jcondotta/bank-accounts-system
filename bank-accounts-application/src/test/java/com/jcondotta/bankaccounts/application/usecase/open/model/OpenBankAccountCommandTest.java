@@ -26,7 +26,7 @@ class OpenBankAccountCommandTest {
   void shouldCreateCommand_whenAllFieldsAreProvided() {
     var command = new OpenBankAccountCommand(ACCOUNT_HOLDER_NAME, PASSPORT_NUMBER, DATE_OF_BIRTH, EMAIL, ACCOUNT_TYPE, CURRENCY);
 
-    assertThat(command.accountHolderName()).isEqualTo(ACCOUNT_HOLDER_NAME);
+    assertThat(command.name()).isEqualTo(ACCOUNT_HOLDER_NAME);
     assertThat(command.passportNumber()).isEqualTo(PASSPORT_NUMBER);
     assertThat(command.dateOfBirth()).isEqualTo(DATE_OF_BIRTH);
     assertThat(command.email()).isEqualTo(EMAIL);
@@ -38,7 +38,7 @@ class OpenBankAccountCommandTest {
   void shouldThrowNullPointerException_whenAccountHolderNameIsNull() {
     assertThatThrownBy(() -> new OpenBankAccountCommand(null, PASSPORT_NUMBER, DATE_OF_BIRTH, EMAIL, ACCOUNT_TYPE, CURRENCY))
       .isInstanceOf(NullPointerException.class)
-      .hasMessage("accountHolderName must not be null");
+      .hasMessage("name must not be null");
   }
 
   @Test

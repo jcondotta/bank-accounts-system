@@ -14,10 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,19 +28,15 @@ class BankAccountUnblockTest {
   private static final AccountType ACCOUNT_TYPE_SAVINGS = AccountType.SAVINGS;
   private static final Currency CURRENCY_USD = Currency.USD;
 
-  private static final Clock ACCOUNT_CREATION_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final Instant ACCOUNT_CREATED_AT = Instant.now(ACCOUNT_CREATION_CLOCK);
-
-  private static final Clock ACCOUNT_CHANGED_STATE_CLOCK =
-    Clock.fixed(ACCOUNT_CREATED_AT.plus(2, ChronoUnit.HOURS), ZoneOffset.UTC);
+  private static final Instant ACCOUNT_CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
 
   @Test
   void shouldUnblockBankAccount_whenStatusIsBlocked() {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
-    bankAccount.block(ACCOUNT_CHANGED_STATE_CLOCK);
+    bankAccount.block();
     bankAccount.pullDomainEvents();
 
-    bankAccount.unblock(ACCOUNT_CHANGED_STATE_CLOCK);
+    bankAccount.unblock();
 
     assertThat(bankAccount.accountStatus().isActive()).isTrue();
 
@@ -54,7 +47,7 @@ class BankAccountUnblockTest {
       .singleElement()
       .isInstanceOfSatisfying(BankAccountUnblockedEvent.class, event -> {
         assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
-        assertThat(event.occurredAt()).isEqualTo(Instant.now(ACCOUNT_CHANGED_STATE_CLOCK));
+        assertThat(event.occurredAt()).isNotNull();
       });
   }
 
@@ -62,9 +55,9 @@ class BankAccountUnblockTest {
   void shouldNotThrowAnyException_whenUnblockIsCalledTwice() {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
 
-    bankAccount.block(ACCOUNT_CHANGED_STATE_CLOCK);
-    bankAccount.unblock(ACCOUNT_CHANGED_STATE_CLOCK);
-    bankAccount.unblock(ACCOUNT_CHANGED_STATE_CLOCK);
+    bankAccount.block();
+    bankAccount.unblock();
+    bankAccount.unblock();
 
     assertThat(bankAccount.accountStatus().isActive()).isTrue();
   }
@@ -72,7 +65,7 @@ class BankAccountUnblockTest {
   @ParameterizedTest
   @EnumSource(value = AccountStatus.class, names = {"BLOCKED", "ACTIVE"}, mode = EnumSource.Mode.EXCLUDE)
   void shouldThrowInvalidBankAccountStateTransitionException_whenUnblockingFromInvalidState(AccountStatus status) {
-    var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATION_CLOCK);
+    var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     var bankAccount = BankAccount.restore(
       BankAccountId.newId(),
@@ -84,7 +77,7 @@ class BankAccountUnblockTest {
       List.of(primaryAccountHolder)
     );
 
-    assertThatThrownBy(() -> bankAccount.unblock(ACCOUNT_CHANGED_STATE_CLOCK))
+    assertThatThrownBy(bankAccount::unblock)
       .isInstanceOf(InvalidBankAccountStateTransitionException.class);
   }
 }

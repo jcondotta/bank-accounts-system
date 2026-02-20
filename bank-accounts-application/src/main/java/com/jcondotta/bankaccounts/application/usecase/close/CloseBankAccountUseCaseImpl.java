@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Slf4j
@@ -22,7 +20,6 @@ public class CloseBankAccountUseCaseImpl implements CloseBankAccountUseCase {
   private final LookupBankAccountRepository lookupBankAccountRepository;
   private final UpdateBankAccountRepository updateBankAccountRepository;
   private final BankAccountClosedEventPublisher bankAccountClosedEventPublisher;
-  private final Clock clock;
 
   @Override
   @Observed(
@@ -46,7 +43,7 @@ public class CloseBankAccountUseCaseImpl implements CloseBankAccountUseCase {
     var bankAccount = lookupBankAccountRepository.byId(command.bankAccountId())
       .orElseThrow(() -> new BankAccountNotFoundException(command.bankAccountId()));
 
-    bankAccount.close(ZonedDateTime.now(clock));
+    bankAccount.close();
 
     updateBankAccountRepository.update(bankAccount);
 
@@ -56,7 +53,7 @@ public class CloseBankAccountUseCaseImpl implements CloseBankAccountUseCase {
 
     log.info(
       "Bank account closed successfully [bankAccountId={}]",
-      bankAccount.getBankAccountId().value()
+      bankAccount.id().value()
     );
   }
 }

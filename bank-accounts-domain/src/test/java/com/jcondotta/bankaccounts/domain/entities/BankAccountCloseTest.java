@@ -14,10 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,18 +28,14 @@ class BankAccountCloseTest {
   private static final AccountType ACCOUNT_TYPE_SAVINGS = AccountType.SAVINGS;
   private static final Currency CURRENCY_USD = Currency.USD;
 
-  private static final Clock ACCOUNT_CREATION_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final Instant ACCOUNT_CREATED_AT = Instant.now(ACCOUNT_CREATION_CLOCK);
-
-  private static final Clock ACCOUNT_CHANGED_STATE_CLOCK =
-    Clock.fixed(ACCOUNT_CREATED_AT.plus(2, ChronoUnit.HOURS), ZoneOffset.UTC);
+  private static final Instant ACCOUNT_CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
 
   @Test
   void shouldCloseBankAccount_whenStatusIsActive() {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
     bankAccount.pullDomainEvents();
 
-    bankAccount.close(ACCOUNT_CHANGED_STATE_CLOCK);
+    bankAccount.close();
 
     assertThat(bankAccount.accountStatus().isClosed()).isTrue();
 
@@ -54,7 +47,7 @@ class BankAccountCloseTest {
       .isInstanceOfSatisfying(BankAccountClosedEvent.class, event -> {
         assertThat(event.eventId()).isNotNull();
         assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
-        assertThat(event.occurredAt()).isEqualTo(Instant.now(ACCOUNT_CHANGED_STATE_CLOCK));
+        assertThat(event.occurredAt()).isNotNull();
       });
   }
 
@@ -62,8 +55,8 @@ class BankAccountCloseTest {
   void shouldNotThrowAnyException_whenCloseIsCalledTwice() {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
 
-    bankAccount.close(ACCOUNT_CHANGED_STATE_CLOCK);
-    bankAccount.close(ACCOUNT_CHANGED_STATE_CLOCK);
+    bankAccount.close();
+    bankAccount.close();
 
     assertThat(bankAccount.accountStatus().isClosed()).isTrue();
   }
@@ -71,7 +64,7 @@ class BankAccountCloseTest {
   @ParameterizedTest
   @EnumSource(value = AccountStatus.class, names = {"ACTIVE", "CLOSED"}, mode = EnumSource.Mode.EXCLUDE)
   void shouldThrowInvalidBankAccountStateTransitionException_whenClosingFromInvalidState(AccountStatus status) {
-    var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATION_CLOCK);
+    var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     var bankAccount = BankAccount.restore(
       BankAccountId.newId(),
@@ -83,7 +76,7 @@ class BankAccountCloseTest {
       List.of(primaryAccountHolder)
     );
 
-    assertThatThrownBy(() -> bankAccount.close(ACCOUNT_CHANGED_STATE_CLOCK))
+    assertThatThrownBy(bankAccount::close)
       .isInstanceOf(InvalidBankAccountStateTransitionException.class);
   }
 }

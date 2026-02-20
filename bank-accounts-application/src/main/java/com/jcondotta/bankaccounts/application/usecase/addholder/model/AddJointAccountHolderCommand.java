@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public record AddJointAccountHolderCommand(
   BankAccountId bankAccountId,
-  AccountHolderName accountHolderName,
+  AccountHolderName name,
   PassportNumber passportNumber,
   DateOfBirth dateOfBirth,
   Email email
@@ -14,7 +14,7 @@ public record AddJointAccountHolderCommand(
 
   public AddJointAccountHolderCommand {
     Objects.requireNonNull(bankAccountId, "bankAccountId must not be null");
-    Objects.requireNonNull(accountHolderName, "accountHolderName must not be null");
+    Objects.requireNonNull(name, "name must not be null");
     Objects.requireNonNull(passportNumber, "passportNumber must not be null");
     Objects.requireNonNull(dateOfBirth, "dateOfBirth must not be null");
     Objects.requireNonNull(email, "email must not be null");

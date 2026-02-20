@@ -21,7 +21,7 @@ class AddJointAccountHolderCommandTest {
     var command = new AddJointAccountHolderCommand(bankAccountId, ACCOUNT_HOLDER_NAME, PASSPORT_NUMBER, DATE_OF_BIRTH, EMAIL);
 
     assertThat(command.bankAccountId()).isEqualTo(bankAccountId);
-    assertThat(command.accountHolderName()).isEqualTo(ACCOUNT_HOLDER_NAME);
+    assertThat(command.name()).isEqualTo(ACCOUNT_HOLDER_NAME);
     assertThat(command.passportNumber()).isEqualTo(PASSPORT_NUMBER);
     assertThat(command.dateOfBirth()).isEqualTo(DATE_OF_BIRTH);
     assertThat(command.email()).isEqualTo(EMAIL);
@@ -39,7 +39,7 @@ class AddJointAccountHolderCommandTest {
   void shouldThrowNullPointerException_whenAccountHolderNameIsNull() {
     assertThatThrownBy(() -> new AddJointAccountHolderCommand(BankAccountId.newId(), null, PASSPORT_NUMBER, DATE_OF_BIRTH, EMAIL))
       .isInstanceOf(NullPointerException.class)
-      .hasMessage("accountHolderName must not be null");
+      .hasMessage("name must not be null");
   }
 
   @Test

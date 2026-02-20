@@ -62,8 +62,7 @@ class BankAccountLookupUseCaseImplTest {
       AccountHolderFixtures.JEFFERSON.getEmail(),
       AccountType.CHECKING,
       Currency.EUR,
-      VALID_IBAN,
-      CREATED_AT
+      VALID_IBAN
     );
     BankAccountDetails bankAccountDetails = new BankAccountDetailsMapperImpl(new AccountHolderDetailsMapperImpl()).toDetails(bankAccount);
 
