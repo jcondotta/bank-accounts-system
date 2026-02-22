@@ -9,8 +9,8 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AccountHolderDetailsResponseMapper {
 
-  @Mapping(target = "accountHolderId", source = "accountHolderId.value")
-  @Mapping(target = "accountHolderName", source = "accountHolderName.value")
+  @Mapping(target = "id", source = "id.value")
+  @Mapping(target = "name", source = "name.value")
   @Mapping(target = "passportNumber", source = "passportNumber.value")
   @Mapping(target = "dateOfBirth", source = "dateOfBirth.value")
   @Mapping(target = "email", source = "email.value")

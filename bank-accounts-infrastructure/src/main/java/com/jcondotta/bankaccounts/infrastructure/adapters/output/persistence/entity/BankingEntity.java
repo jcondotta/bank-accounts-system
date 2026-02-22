@@ -16,7 +16,6 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.UUID;
 
 @Setter
@@ -44,7 +43,6 @@ public class BankingEntity {
   private AccountHolderType accountHolderType;
 
   private Instant createdAt;
-  private ZoneId createdAtZone;
 
   @DynamoDbPartitionKey
   @DynamoDbAttribute("partitionKey")
@@ -88,12 +86,12 @@ public class BankingEntity {
     return status;
   }
 
-  @DynamoDbAttribute("primaryAccountHolderId")
+  @DynamoDbAttribute("accountHolderId")
   public UUID getAccountHolderId() {
     return accountHolderId;
   }
 
-  @DynamoDbAttribute("accountHolderName")
+  @DynamoDbAttribute("name")
   public String getAccountHolderName() {
     return accountHolderName;
   }
@@ -121,11 +119,6 @@ public class BankingEntity {
   @DynamoDbAttribute("createdAt")
   public Instant getCreatedAt() {
     return createdAt;
-  }
-
-  @DynamoDbAttribute("createdAtZone")
-  public ZoneId getCreatedAtZone() {
-    return createdAtZone;
   }
 
   public boolean isEntityTypeBankAccount() {

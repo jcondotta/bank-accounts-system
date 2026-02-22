@@ -20,21 +20,18 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-public final class BankAccount {
+public final class BankAccount extends AggregateRoot<BankAccountId> {
 
   public static final AccountStatus ACCOUNT_STATUS_ON_OPENING = AccountStatus.PENDING;
   public static final int MIN_PRIMARY_ACCOUNT_HOLDERS = 1;
   public static final int MAX_PRIMARY_ACCOUNT_HOLDERS = 1;
   public static final int MAX_JOINT_ACCOUNT_HOLDERS = 1;
 
-  private final BankAccountId id;
   private final AccountType accountType;
   private final Currency currency;
   private final Iban iban;
   private final Instant createdAt;
   private final List<AccountHolder> accountHolders;
-
-  private final List<DomainEvent> domainEvents = new ArrayList<>();
 
   private AccountStatus accountStatus;
 
@@ -47,7 +44,7 @@ public final class BankAccount {
     Instant createdAt,
     List<AccountHolder> accountHolders
   ) {
-    this.id = requireNonNull(id, BankAccountValidationErrors.ID_NOT_NULL);
+    super(requireNonNull(id, BankAccountValidationErrors.ID_NOT_NULL));
     this.accountType = requireNonNull(accountType, BankAccountValidationErrors.ACCOUNT_TYPE_NOT_NULL);
     this.currency = requireNonNull(currency, BankAccountValidationErrors.CURRENCY_NOT_NULL);
     this.iban = requireNonNull(iban, BankAccountValidationErrors.IBAN_NOT_NULL);
@@ -215,20 +212,6 @@ public final class BankAccount {
     return accountHolders.stream()
       .filter(AccountHolder::isJoint)
       .toList();
-  }
-
-  public void registerEvent(DomainEvent event) {
-    domainEvents.add(event);
-  }
-
-  public List<DomainEvent> pullDomainEvents() {
-    var events = List.copyOf(domainEvents);
-    domainEvents.clear();
-    return events;
-  }
-
-  public BankAccountId id() {
-    return id;
   }
 
   public AccountType accountType() {

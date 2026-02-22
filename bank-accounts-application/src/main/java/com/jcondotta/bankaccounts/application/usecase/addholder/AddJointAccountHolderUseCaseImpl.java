@@ -50,9 +50,9 @@ public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUs
 
     updateBankAccountRepository.update(bankAccount);
 
-    bankAccount
-      .pullDomainEvents()
-      .forEach(jointAccountHolderAddedEventPublisher::publish);
+//    bankAccount
+//      .pullEvents()
+//      .forEach(jointAccountHolderAddedEventPublisher::publish);
 
     log.info(
       "Joint account holder added successfully [bankAccountId={}]", bankAccount.id()

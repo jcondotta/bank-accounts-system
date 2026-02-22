@@ -35,10 +35,6 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
   public OpenBankAccountResult execute(OpenBankAccountCommand command) {
     Objects.requireNonNull(command, "command must not be null");
 
-    log.info(
-      "Opening new bank account [accountType={}, currency={}]", command.accountType(), command.currency()
-    );
-
     var iban = ibanGeneratorFacade.generate();
 
     BankAccount bankAccount = BankAccount.open(
@@ -53,13 +49,10 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
 
     openBankAccountRepository.create(bankAccount);
 
-    bankAccount
-      .pullDomainEvents()
-      .forEach(bankAccountOpenedEventPublisher::publish);
-
-    log.info(
-      "Bank account opened successfully [bankAccountId={}]", bankAccount.id().value()
-    );
+    log.atInfo()
+      .setMessage("Bank account created successfully.")
+      .addKeyValue("bankAccountId", bankAccount.id())
+      .log();
 
     return new OpenBankAccountResult(bankAccount.id(), bankAccount.createdAt());
   }

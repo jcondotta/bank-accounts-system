@@ -55,7 +55,7 @@ class BankAccountRestoreTest {
     assertThat(bankAccount.iban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
     assertThat(bankAccount.accountStatus().isActive()).isTrue();
     assertThat(bankAccount.createdAt()).isEqualTo(ACCOUNT_CREATED_AT);
-    assertThat(bankAccount.pullDomainEvents()).isEmpty();
+    assertThat(bankAccount.pullEvents()).isEmpty();
     assertThat(bankAccount.accountHolders())
       .hasSize(1)
       .containsExactly(primaryAccountHolder);
@@ -85,7 +85,7 @@ class BankAccountRestoreTest {
     assertThat(bankAccount.iban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
     assertThat(bankAccount.accountStatus().isActive()).isTrue();
     assertThat(bankAccount.createdAt()).isEqualTo(ACCOUNT_CREATED_AT);
-    assertThat(bankAccount.pullDomainEvents()).isEmpty();
+    assertThat(bankAccount.pullEvents()).isEmpty();
     assertThat(bankAccount.accountHolders())
       .hasSize(2)
       .containsExactlyInAnyOrder(primaryAccountHolder, jointAccountHolder);

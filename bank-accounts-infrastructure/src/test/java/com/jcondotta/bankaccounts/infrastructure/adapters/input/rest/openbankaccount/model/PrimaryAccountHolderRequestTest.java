@@ -56,7 +56,7 @@ class PrimaryAccountHolderRequestTest {
       .hasSize(1)
       .first()
       .satisfies(violation ->
-        assertThat(violation.getPropertyPath()).hasToString("accountHolderName")
+        assertThat(violation.getPropertyPath()).hasToString("name")
       );
   }
 
@@ -75,7 +75,7 @@ class PrimaryAccountHolderRequestTest {
       .hasSize(1)
       .first()
       .satisfies(violation ->
-        assertThat(violation.getPropertyPath()).hasToString("accountHolderName")
+        assertThat(violation.getPropertyPath()).hasToString("name")
       );
   }
 

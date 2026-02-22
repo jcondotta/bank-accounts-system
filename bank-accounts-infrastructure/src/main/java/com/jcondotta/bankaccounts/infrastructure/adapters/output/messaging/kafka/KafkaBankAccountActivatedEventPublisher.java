@@ -3,13 +3,10 @@ package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.kafk
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountActivatedEventPublisher;
 import com.jcondotta.bankaccounts.domain.events.BankAccountActivatedEvent;
 import com.jcondotta.bankaccounts.domain.events.DomainEvent;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventEnvelope;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.BankAccountActivatedMessageMapper;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountActivatedMessage;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.BankAccountActivatedIntegrationEventMapper;
 import com.jcondotta.bankaccounts.infrastructure.properties.BankAccountActivatedTopicProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +15,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class KafkaBankAccountActivatedEventPublisher implements BankAccountActivatedEventPublisher {
 
-  private final KafkaTemplate<String, EventEnvelope<BankAccountActivatedMessage>> kafkaTemplate;
-  private final BankAccountActivatedMessageMapper messageMapper;
+  private final KafkaTemplate<String, Object> kafkaTemplate;
+  private final BankAccountActivatedIntegrationEventMapper messageMapper;
   private final BankAccountActivatedTopicProperties topicProperties;
 
   @Override
@@ -32,13 +29,13 @@ public class KafkaBankAccountActivatedEventPublisher implements BankAccountActiv
         bankAccountActivatedEvent.bankAccountId()
       );
 
-      var producerRecord = new ProducerRecord<>(
-        topicProperties.topicName(),
-        bankAccountActivatedEvent.bankAccountId().value().toString(),
-        messageMapper.toMessage(bankAccountActivatedEvent)
-      );
-
-      kafkaTemplate.send(producerRecord);
+//      var producerRecord = new ProducerRecord<String, Object>(
+//        topicProperties.topicName(),
+//        bankAccountActivatedEvent.bankAccountId().value().toString(),
+//        messageMapper.toMessage(bankAccountActivatedEvent)
+//      );
+//
+//      kafkaTemplate.send(producerRecord);
     }
   }
 }

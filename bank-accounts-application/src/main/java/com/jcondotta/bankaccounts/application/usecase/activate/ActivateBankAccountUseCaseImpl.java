@@ -42,9 +42,9 @@ public class ActivateBankAccountUseCaseImpl implements ActivateBankAccountUseCas
     bankAccount.activate();
     updateBankAccountRepository.update(bankAccount);
 
-    bankAccount
-      .pullDomainEvents()
-      .forEach(bankAccountActivatedEventPublisher::publish);
+//    bankAccount
+//      .pullEvents()
+//      .forEach(bankAccountActivatedEventPublisher::publish);
 
     log.info(
       "Bank account activated successfully [bankAccountId={}]", bankAccount.id().value()

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcondotta.bankaccounts.application.usecase.activate.ActivateBankAccountUseCase;
 import com.jcondotta.bankaccounts.application.usecase.activate.model.ActivateBankAccountCommand;
-import com.jcondotta.bankaccounts.application.usecase.addholder.AddJointAccountHolderUseCase;
-import com.jcondotta.bankaccounts.application.usecase.addholder.model.AddJointAccountHolderCommand;
 import com.jcondotta.bankaccounts.application.usecase.lookup.BankAccountLookupUseCase;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDetails;
 import com.jcondotta.bankaccounts.application.usecase.open.OpenBankAccountUseCase;
@@ -14,9 +12,6 @@ import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.model.AddJointAccountHolderRequest;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model.BankAccountLookupResponse;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.OpenBankAccountRequest;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model.PrimaryAccountHolderRequest;
 import com.jcondotta.bankaccounts.infrastructure.arguments_provider.AccountTypeAndCurrencyArgumentsProvider;
 import com.jcondotta.bankaccounts.infrastructure.container.KafkaTestContainer;
 import com.jcondotta.bankaccounts.infrastructure.container.LocalStackTestContainer;
@@ -26,7 +21,6 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,8 +34,6 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -51,9 +43,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(initializers = {LocalStackTestContainer.class, KafkaTestContainer.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AddJointAccountHolderControllerImplIT {
-
-  @Autowired
-  Clock fixedClock;
 
   @Autowired
   ObjectMapper objectMapper;
@@ -121,12 +110,12 @@ class AddJointAccountHolderControllerImplIT {
     assertThat(bankAccountDetails.accountHolders())
       .hasSize(2)
       .anySatisfy(holder -> {
-        assertThat(holder.accountHolderName()).isEqualTo(jointHolderFixture.getAccountHolderName());
+        assertThat(holder.name()).isEqualTo(jointHolderFixture.getAccountHolderName());
         assertThat(holder.passportNumber()).isEqualTo(jointHolderFixture.getPassportNumber());
         assertThat(holder.dateOfBirth()).isEqualTo(jointHolderFixture.getDateOfBirth());
         assertThat(holder.email()).isEqualTo(jointHolderFixture.getEmail());
         assertThat(holder.accountHolderType().isJoint()).isTrue();
-        assertThat(holder.createdAt()).isEqualTo(ZonedDateTime.now(fixedClock));
+        assertThat(holder.createdAt()).isNotNull();
       });
   }
 

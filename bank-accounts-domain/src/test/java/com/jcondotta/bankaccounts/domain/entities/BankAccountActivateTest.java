@@ -33,12 +33,12 @@ class BankAccountActivateTest {
   @Test
   void shouldActivateBankAccount_whenStatusIsPending() {
     var bankAccount = BankAccountTestFixture.openPendingAccount(PRIMARY_ACCOUNT_HOLDER);
-    bankAccount.pullDomainEvents();
+    bankAccount.pullEvents();
 
     bankAccount.activate();
     assertThat(bankAccount.accountStatus().isActive()).isTrue();
 
-    var events = bankAccount.pullDomainEvents();
+    var events = bankAccount.pullEvents();
 
     assertThat(events)
       .hasSize(1)

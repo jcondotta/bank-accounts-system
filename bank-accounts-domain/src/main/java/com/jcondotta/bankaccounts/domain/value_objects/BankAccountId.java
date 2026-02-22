@@ -4,7 +4,7 @@ import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
 
 import java.util.UUID;
 
-public record BankAccountId(UUID value) {
+public record BankAccountId(UUID value) implements AggregateId{
 
   public static final String BANK_ACCOUNT_ID_NOT_PROVIDED = "bank account id must be provided.";
 

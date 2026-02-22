@@ -34,13 +34,13 @@ class BankAccountUnblockTest {
   void shouldUnblockBankAccount_whenStatusIsBlocked() {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
     bankAccount.block();
-    bankAccount.pullDomainEvents();
+    bankAccount.pullEvents();
 
     bankAccount.unblock();
 
     assertThat(bankAccount.accountStatus().isActive()).isTrue();
 
-    var events = bankAccount.pullDomainEvents();
+    var events = bankAccount.pullEvents();
 
     assertThat(events)
       .hasSize(1)

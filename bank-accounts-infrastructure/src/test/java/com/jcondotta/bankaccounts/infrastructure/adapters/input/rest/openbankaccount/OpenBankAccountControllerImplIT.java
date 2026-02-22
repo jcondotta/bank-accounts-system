@@ -79,7 +79,7 @@ class OpenBankAccountControllerImplIT {
       .setAccept(ContentType.JSON)
       .build();
   }
-//
+
   @ParameterizedTest
   @ArgumentsSource(AccountTypeAndCurrencyArgumentsProvider.class)
   void shouldReturn201CreatedWithValidLocationHeader_whenRequestIsValid(AccountType accountType, Currency currency) throws JsonProcessingException {
@@ -124,7 +124,7 @@ class OpenBankAccountControllerImplIT {
 //          assertThat(message.bankAccountId()).isEqualTo(bankAccountId);
 //          assertThat(message.accountType()).isEqualTo(accountType.toString());
 //          assertThat(message.currency()).isEqualTo(currency.toString());
-//          assertThat(message.primaryAccountHolderId()).isNotNull();
+//          assertThat(message.accountHolderId()).isNotNull();
 //          assertThat(message.occurredAt()).isEqualTo(ZonedDateTime.now(testClockUTC).toString());
 //
 //        });
@@ -153,7 +153,7 @@ class OpenBankAccountControllerImplIT {
       .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value())
       .body("instance", equalTo(uriProperties.rootPath()))
       .body("properties.errors", hasSize(1))
-      .body("properties.errors[0].field", equalTo("accountHolder.accountHolderName"))
+      .body("properties.errors[0].field", equalTo("accountHolder.name"))
       .body("properties.errors[0].messages[0]", equalTo("must not be blank"));
   }
 }

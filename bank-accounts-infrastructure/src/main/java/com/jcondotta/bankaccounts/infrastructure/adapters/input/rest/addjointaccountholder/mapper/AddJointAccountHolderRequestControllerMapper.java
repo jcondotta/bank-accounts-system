@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface AddJointAccountHolderRequestControllerMapper {
 
   @Mapping(target = "bankAccountId", source = "bankAccountId", qualifiedByName = "toBankAccountId")
-  @Mapping(target = "accountHolderName", source = "request.accountHolderName", qualifiedByName = "toAccountHolderName")
+  @Mapping(target = "name", source = "request.name", qualifiedByName = "toAccountHolderName")
   @Mapping(target = "passportNumber", source = "request.passportNumber", qualifiedByName = "toPassportNumber")
   @Mapping(target = "dateOfBirth", source = "request.dateOfBirth", qualifiedByName = "toDateOfBirth")
   @Mapping(target = "email", source = "request.email", qualifiedByName = "toEmail")

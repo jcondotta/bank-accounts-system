@@ -45,9 +45,9 @@ public class BlockBankAccountUseCaseImpl implements BlockBankAccountUseCase {
 
     updateBankAccountRepository.update(bankAccount);
 
-    bankAccount
-      .pullDomainEvents()
-      .forEach(bankAccountBlockedEventPublisher::publish);
+//    bankAccount
+//      .pullEvents()
+//      .forEach(bankAccountBlockedEventPublisher::publish);
 
     log.info(
       "Bank account blocked successfully [bankAccountId={}]", bankAccount.id().value()

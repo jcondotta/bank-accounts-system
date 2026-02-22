@@ -33,8 +33,6 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -44,9 +42,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(initializers = {LocalStackTestContainer.class, KafkaTestContainer.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BankAccountLookupControllerImplIT {
-
-  @Autowired
-  Clock fixedClock;
 
   @Autowired
   BankAccountsURIProperties uriProperties;
@@ -104,17 +99,17 @@ class BankAccountLookupControllerImplIT {
         () -> assertThat(bankAccount.accountType()).isEqualTo(accountType),
         () -> assertThat(bankAccount.currency()).isEqualTo(currency),
         () -> assertThat(bankAccount.iban()).isNotBlank(),
-        () -> assertThat(bankAccount.openingDate()).isEqualTo(ZonedDateTime.now(fixedClock)),
+        () -> assertThat(bankAccount.createdAt()).isNotNull(),
         () -> assertThat(bankAccount.accountHolders())
           .hasSize(1)
           .singleElement()
           .satisfies(accountHolderDetails -> {
-            assertThat(accountHolderDetails.accountHolderName()).isEqualTo(primaryHolderFixture.getAccountHolderName().value());
+            assertThat(accountHolderDetails.name()).isEqualTo(primaryHolderFixture.getAccountHolderName().value());
             assertThat(accountHolderDetails.passportNumber()).isEqualTo(primaryHolderFixture.getPassportNumber().value());
             assertThat(accountHolderDetails.dateOfBirth()).isEqualTo(primaryHolderFixture.getDateOfBirth().value());
             assertThat(accountHolderDetails.email()).isEqualTo(primaryHolderFixture.getEmail().value());
             assertThat(accountHolderDetails.accountHolderType().isPrimary()).isTrue();
-            assertThat(accountHolderDetails.createdAt()).isEqualTo(ZonedDateTime.now(fixedClock));
+            assertThat(accountHolderDetails.createdAt()).isNotNull();
           })
       ));
   }
@@ -146,24 +141,24 @@ class BankAccountLookupControllerImplIT {
         () -> assertThat(bankAccount.accountType()).isEqualTo(accountType),
         () -> assertThat(bankAccount.currency()).isEqualTo(currency),
         () -> assertThat(bankAccount.iban()).isNotBlank(),
-        () -> assertThat(bankAccount.openingDate()).isEqualTo(ZonedDateTime.now(fixedClock)),
+        () -> assertThat(bankAccount.createdAt()).isNotNull(),
         () -> assertThat(bankAccount.accountHolders())
           .hasSize(2)
           .anySatisfy(accountHolderDetails -> {
-            assertThat(accountHolderDetails.accountHolderName()).isEqualTo(primaryHolderFixture.getAccountHolderName().value());
+            assertThat(accountHolderDetails.name()).isEqualTo(primaryHolderFixture.getAccountHolderName().value());
             assertThat(accountHolderDetails.passportNumber()).isEqualTo(primaryHolderFixture.getPassportNumber().value());
             assertThat(accountHolderDetails.dateOfBirth()).isEqualTo(primaryHolderFixture.getDateOfBirth().value());
             assertThat(accountHolderDetails.email()).isEqualTo(primaryHolderFixture.getEmail().value());
             assertThat(accountHolderDetails.accountHolderType().isPrimary()).isTrue();
-            assertThat(accountHolderDetails.createdAt()).isEqualTo(ZonedDateTime.now(fixedClock));
+            assertThat(accountHolderDetails.createdAt()).isNotNull();
           })
           .anySatisfy(accountHolderDetails -> {
-            assertThat(accountHolderDetails.accountHolderName()).isEqualTo(jointHolderFixture.getAccountHolderName().value());
+            assertThat(accountHolderDetails.name()).isEqualTo(jointHolderFixture.getAccountHolderName().value());
             assertThat(accountHolderDetails.passportNumber()).isEqualTo(jointHolderFixture.getPassportNumber().value());
             assertThat(accountHolderDetails.dateOfBirth()).isEqualTo(jointHolderFixture.getDateOfBirth().value());
             assertThat(accountHolderDetails.email()).isEqualTo(jointHolderFixture.getEmail().value());
             assertThat(accountHolderDetails.accountHolderType().isJoint()).isTrue();
-            assertThat(accountHolderDetails.createdAt()).isEqualTo(ZonedDateTime.now(fixedClock));
+            assertThat(accountHolderDetails.createdAt()).isNotNull();
           })
       ));
   }

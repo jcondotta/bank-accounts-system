@@ -2,8 +2,10 @@ package com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.re
 
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
 import com.jcondotta.bankaccounts.domain.entities.BankAccount;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.outbox.OutboxEventCollector;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.BankAccountEntityKey;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.BankingEntity;
+import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.OutboxEntity;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.mapper.BankAccountEntityMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +29,13 @@ public class UpdateBankAccountDynamoDbRepository implements UpdateBankAccountRep
 
     private final DynamoDbEnhancedClient dynamoDbEnhancedClient;
     private final DynamoDbTable<BankingEntity> bankingEntityDynamoDbTable;
+    private final DynamoDbTable<OutboxEntity> outboxTable;
     private final BankAccountEntityMapper bankAccountEntityMapper;
+    private final OutboxEventCollector outboxEventCollector;
 
     @Override
     public void update(BankAccount bankAccount) {
-        log.info("Updating bank account and holders for ID: {}", bankAccount.getBankAccountId());
+        log.info("Updating bank account and holders for ID: {}", bankAccount.id());
 
         // Novas entidades geradas a partir do estado atual no domínio
         var newEntities = bankAccountEntityMapper.toBankingEntities(bankAccount);
@@ -44,10 +48,11 @@ public class UpdateBankAccountDynamoDbRepository implements UpdateBankAccountRep
         // Consulta todos os registros atuais no DynamoDB para a PK da conta
         List<BankingEntity> existingEntities = bankingEntityDynamoDbTable
             .query(r -> r.queryConditional(QueryConditional.keyEqualTo(
-                Key.builder().partitionValue(BankAccountEntityKey.partitionKey(bankAccount.getBankAccountId())).build()
+                Key.builder().partitionValue(BankAccountEntityKey.partitionKey(bankAccount.id())).build()
             )))
             .items()
             .stream()
+            .filter(entity -> !"OUTBOX_EVENT".equals(entity.getEntityType()))
             .toList();
 
         // Determina quais SKs devem ser removidos
@@ -62,6 +67,11 @@ public class UpdateBankAccountDynamoDbRepository implements UpdateBankAccountRep
             txBuilder.addPutItem(bankingEntityDynamoDbTable, entity)
         );
 
+        outboxEventCollector.collect(bankAccount)
+          .forEach(entry ->
+            txBuilder.addPutItem(outboxTable, entry)
+          );
+
         toDelete.forEach(entity ->
             txBuilder.addDeleteItem(bankingEntityDynamoDbTable,
                 Key.builder()
@@ -74,6 +84,6 @@ public class UpdateBankAccountDynamoDbRepository implements UpdateBankAccountRep
         // Executa a transação
         dynamoDbEnhancedClient.transactWriteItems(txBuilder.build());
 
-        log.debug("Successfully updated bank account and holders for ID: {}", bankAccount.getBankAccountId());
+        log.debug("Successfully updated bank account and holders for ID: {}", bankAccount.id());
     }
 }

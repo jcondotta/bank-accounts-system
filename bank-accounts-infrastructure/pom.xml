@@ -13,13 +13,16 @@
         <dependency>
             <groupId>com.jcondotta</groupId>
             <artifactId>bank-accounts-domain</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.jcondotta</groupId>
             <artifactId>bank-accounts-application</artifactId>
-            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jcondotta</groupId>
+            <artifactId>bank-accounts-contracts</artifactId>
         </dependency>
 
         <dependency>

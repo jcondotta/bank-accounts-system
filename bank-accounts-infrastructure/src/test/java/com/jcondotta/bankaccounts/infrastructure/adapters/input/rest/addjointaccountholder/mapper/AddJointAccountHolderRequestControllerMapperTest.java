@@ -39,7 +39,7 @@ class AddJointAccountHolderRequestControllerMapperTest {
 
     assertThat(command).isNotNull();
     assertThat(command.bankAccountId().value()).isEqualTo(BANK_ACCOUNT_UUID);
-    assertThat(command.accountHolderName().value()).isEqualTo(VALID_NAME);
+    assertThat(command.name().value()).isEqualTo(VALID_NAME);
     assertThat(command.passportNumber().value()).isEqualTo(VALID_PASSPORT);
     assertThat(command.dateOfBirth().value()).isEqualTo(VALID_DATE_OF_BIRTH);
     assertThat(command.email().value()).isEqualTo(VALID_EMAIL);

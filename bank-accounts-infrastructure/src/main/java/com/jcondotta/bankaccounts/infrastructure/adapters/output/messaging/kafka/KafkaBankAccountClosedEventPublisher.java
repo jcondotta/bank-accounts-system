@@ -3,13 +3,9 @@ package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.kafk
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountClosedEventPublisher;
 import com.jcondotta.bankaccounts.domain.events.BankAccountClosedEvent;
 import com.jcondotta.bankaccounts.domain.events.DomainEvent;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.common.EventEnvelope;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.BankAccountClosedMessageMapper;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.message.BankAccountClosedMessage;
 import com.jcondotta.bankaccounts.infrastructure.properties.BankAccountClosedTopicProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class KafkaBankAccountClosedEventPublisher implements BankAccountClosedEventPublisher {
 
-  private final KafkaTemplate<String, EventEnvelope<BankAccountClosedMessage>> kafkaTemplate;
-  private final BankAccountClosedMessageMapper messageMapper;
+  private final KafkaTemplate<String, Object> kafkaTemplate;
   private final BankAccountClosedTopicProperties topicProperties;
 
   @Override
@@ -32,13 +27,13 @@ public class KafkaBankAccountClosedEventPublisher implements BankAccountClosedEv
         bankAccountClosedEvent.bankAccountId()
       );
 
-      var producerRecord = new ProducerRecord<>(
-        topicProperties.topicName(),
-        bankAccountClosedEvent.bankAccountId().value().toString(),
-        messageMapper.toMessage(bankAccountClosedEvent)
-      );
-
-      kafkaTemplate.send(producerRecord);
+//      var producerRecord = new ProducerRecord<String, Object>(
+//        topicProperties.topicName(),
+//        bankAccountClosedEvent.bankAccountId().value().toString(),
+//        messageMapper.toMessage(bankAccountClosedEvent)
+//      );
+//
+//      kafkaTemplate.send(producerRecord);
     }
   }
 }

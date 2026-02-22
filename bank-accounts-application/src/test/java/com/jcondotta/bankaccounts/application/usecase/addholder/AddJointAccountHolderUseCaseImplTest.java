@@ -80,7 +80,7 @@ class AddJointAccountHolderUseCaseImplTest {
       );
 
     bankAccount.activate();
-    bankAccount.pullDomainEvents();
+    bankAccount.pullEvents();
 
     when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
       .thenReturn(Optional.of(bankAccount));

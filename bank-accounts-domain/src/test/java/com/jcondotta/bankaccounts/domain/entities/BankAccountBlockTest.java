@@ -33,13 +33,13 @@ class BankAccountBlockTest {
   @Test
   void shouldBlockBankAccount_whenStatusIsActive() {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
-    bankAccount.pullDomainEvents();
+    bankAccount.pullEvents();
 
     bankAccount.block();
 
     assertThat(bankAccount.accountStatus().isBlocked()).isTrue();
 
-    var events = bankAccount.pullDomainEvents();
+    var events = bankAccount.pullEvents();
 
     assertThat(events)
       .hasSize(1)

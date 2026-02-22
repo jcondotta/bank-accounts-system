@@ -40,7 +40,7 @@ class BankAccountAddJointAccountHolderTest {
     assertThat(jointHolder.email()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.getEmail());
     assertThat(jointHolder.createdAt()).isNotNull();
 
-    var events = bankAccount.pullDomainEvents();
+    var events = bankAccount.pullEvents();
 
     assertThat(events)
       .hasSize(1)

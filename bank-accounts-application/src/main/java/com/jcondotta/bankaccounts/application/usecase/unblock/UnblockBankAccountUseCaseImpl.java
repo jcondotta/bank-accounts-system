@@ -47,9 +47,9 @@ public class UnblockBankAccountUseCaseImpl implements UnblockBankAccountUseCase 
 
     updateBankAccountRepository.update(bankAccount);
 
-    bankAccount
-        .pullDomainEvents()
-        .forEach(bankAccountUnblockedEventPublisher::publish);
+//    bankAccount
+//        .pullEvents()
+//        .forEach(bankAccountUnblockedEventPublisher::publish);
 
     log.info(
       "Bank account unblocked successfully [bankAccountId={}]",

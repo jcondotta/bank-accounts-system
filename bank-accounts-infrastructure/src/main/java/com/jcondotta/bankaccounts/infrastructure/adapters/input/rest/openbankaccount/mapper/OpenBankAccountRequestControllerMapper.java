@@ -14,7 +14,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface OpenBankAccountRequestControllerMapper {
 
-    @Mapping(target = "accountHolderName", source = "accountHolder.accountHolderName", qualifiedByName = "toAccountHolderName")
+    @Mapping(target = "name", source = "accountHolder.name", qualifiedByName = "toAccountHolderName")
     @Mapping(target = "passportNumber", source = "accountHolder.passportNumber", qualifiedByName = "toPassportNumber")
     @Mapping(target = "dateOfBirth", source = "accountHolder.dateOfBirth", qualifiedByName = "toDateOfBirth")
     @Mapping(target = "email", source = "accountHolder.email", qualifiedByName = "toEmail")

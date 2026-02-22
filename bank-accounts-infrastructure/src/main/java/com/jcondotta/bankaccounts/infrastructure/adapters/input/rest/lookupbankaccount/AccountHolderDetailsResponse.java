@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
@@ -19,13 +19,13 @@ public record AccountHolderDetailsResponse(
     @Schema(description = "The UUID value representing the account holder identifier.",
         example = "c6a4a1b2-0f8c-41e3-a622-98d66de824a9",
         requiredMode = RequiredMode.REQUIRED)
-    UUID accountHolderId,
+    UUID id,
 
     @NotBlank
     @Schema(description = "Name of the account holder associated with this bank account.",
         example = "Jefferson Condotta",
         requiredMode = RequiredMode.REQUIRED)
-    String accountHolderName,
+    String name,
 
     @NotBlank
     @Schema(description = "Passport number of the account holder.",
@@ -55,10 +55,12 @@ public record AccountHolderDetailsResponse(
     AccountHolderType accountHolderType,
 
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    @Schema(description = "Date and time when the account holder was created.",
-        example = "2023-08-23T14:55:00+02:00",
-        requiredMode = RequiredMode.REQUIRED)
-    ZonedDateTime createdAt
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Schema(
+      description = "Date and time when the account holder was created (UTC).",
+      example = "2023-08-23T12:55:00Z",
+      requiredMode = RequiredMode.REQUIRED
+    )
+    Instant createdAt
 ) {
 }

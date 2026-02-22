@@ -1,12 +1,11 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,13 +32,14 @@ public record BankAccountDetailsResponse(
     requiredMode = RequiredMode.REQUIRED)
   String iban,
 
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-  @Schema(description = "Date and time when the bank account was opened.",
-    example = "2023-08-23T14:55:00+02:00",
-    requiredMode = RequiredMode.REQUIRED)
-  ZonedDateTime openingDate,
+  @Schema(
+    description = "Date and time when the bank account was opened (UTC).",
+    example = "2023-08-23T12:55:00Z",
+    requiredMode = RequiredMode.REQUIRED
+  )
+  Instant createdAt,
 
-  @Schema(description = "Current accountStatus of the bank account",
+    @Schema(description = "Current accountStatus of the bank account",
     allowableValues = {"PENDING", "ACTIVE", "BLOCKED", "CLOSED"},
     requiredMode = RequiredMode.REQUIRED)
   AccountStatus accountStatus,

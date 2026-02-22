@@ -11,8 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mapstruct.factory.Mappers;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,8 +24,7 @@ class AccountHolderDetailsResponseMapperTest {
   private static final DateOfBirth VALID_DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
   private static final Email VALID_EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
 
-  private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(FIXED_CLOCK);
+  private static final Instant CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
 
   private final AccountHolderDetailsResponseMapper mapper =
     Mappers.getMapper(AccountHolderDetailsResponseMapper.class);
@@ -47,8 +45,8 @@ class AccountHolderDetailsResponseMapperTest {
     AccountHolderDetailsResponse response = mapper.toResponse(details);
 
     assertThat(response).isNotNull();
-    assertThat(response.accountHolderId()).isEqualTo(ACCOUNT_HOLDER_ID.value());
-    assertThat(response.accountHolderName()).isEqualTo(VALID_NAME.value());
+    assertThat(response.id()).isEqualTo(ACCOUNT_HOLDER_ID.value());
+    assertThat(response.name()).isEqualTo(VALID_NAME.value());
     assertThat(response.passportNumber()).isEqualTo(VALID_PASSPORT.value());
     assertThat(response.dateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH.value());
     assertThat(response.email()).isEqualTo(VALID_EMAIL.value());

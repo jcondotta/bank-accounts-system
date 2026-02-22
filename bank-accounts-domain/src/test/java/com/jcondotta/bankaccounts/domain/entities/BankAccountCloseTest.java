@@ -33,13 +33,13 @@ class BankAccountCloseTest {
   @Test
   void shouldCloseBankAccount_whenStatusIsActive() {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
-    bankAccount.pullDomainEvents();
+    bankAccount.pullEvents();
 
     bankAccount.close();
 
     assertThat(bankAccount.accountStatus().isClosed()).isTrue();
 
-    var events = bankAccount.pullDomainEvents();
+    var events = bankAccount.pullEvents();
 
     assertThat(events)
       .hasSize(1)

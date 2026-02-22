@@ -47,9 +47,9 @@ public class CloseBankAccountUseCaseImpl implements CloseBankAccountUseCase {
 
     updateBankAccountRepository.update(bankAccount);
 
-    bankAccount
-      .pullDomainEvents()
-      .forEach(bankAccountClosedEventPublisher::publish);
+//    bankAccount
+//      .pullEvents()
+//      .forEach(bankAccountClosedEventPublisher::publish);
 
     log.info(
       "Bank account closed successfully [bankAccountId={}]",

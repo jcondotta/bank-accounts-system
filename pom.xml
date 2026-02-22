@@ -20,6 +20,8 @@
 		<module>bank-accounts-domain</module>
 		<module>bank-accounts-application</module>
 		<module>bank-accounts-infrastructure</module>
+		<module>bank-accounts-contracts</module>
+		<module>bank-accounts-messaging</module>
 	</modules>
 
 	<properties>
@@ -56,8 +58,7 @@
 		</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.coverage.exclusions>
 			**/*Application.java,
-			**/config/**,
-			**/*MapperImpl.java
+			**/config/**
 		</sonar.coverage.exclusions>
 	</properties>
 
@@ -72,6 +73,12 @@
 			<dependency>
 				<groupId>com.jcondotta</groupId>
 				<artifactId>bank-accounts-application</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.jcondotta</groupId>
+				<artifactId>bank-accounts-contracts</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

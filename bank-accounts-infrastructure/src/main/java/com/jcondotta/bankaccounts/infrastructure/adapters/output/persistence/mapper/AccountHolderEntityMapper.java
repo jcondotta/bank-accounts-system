@@ -8,25 +8,22 @@ import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.ent
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.enums.EntityType;
 import org.mapstruct.Mapper;
 
-import java.time.ZonedDateTime;
-
 @Mapper(componentModel = "spring")
 public interface AccountHolderEntityMapper {
 
   default BankingEntity toAccountHolderEntity(BankAccountId bankAccountId, AccountHolder accountHolder) {
     return BankingEntity.builder()
       .partitionKey(AccountHolderEntityKey.partitionKey(bankAccountId))
-      .sortKey(AccountHolderEntityKey.sortKey(accountHolder.getAccountHolderId()))
+      .sortKey(AccountHolderEntityKey.sortKey(accountHolder.id()))
       .entityType(EntityType.ACCOUNT_HOLDER)
       .bankAccountId(bankAccountId.value())
-      .accountHolderId(accountHolder.getAccountHolderId().value())
-      .accountHolderName(accountHolder.getAccountHolderName().value())
-      .passportNumber(accountHolder.getPassportNumber().value())
-      .dateOfBirth(accountHolder.getDateOfBirth().value())
-      .email(accountHolder.getEmail().value())
-      .accountHolderType(accountHolder.getAccountHolderType())
-      .createdAt(accountHolder.getCreatedAt().toInstant())
-      .createdAtZone(accountHolder.getCreatedAt().getZone())
+      .accountHolderId(accountHolder.id().value())
+      .accountHolderName(accountHolder.name().value())
+      .passportNumber(accountHolder.passportNumber().value())
+      .dateOfBirth(accountHolder.dateOfBirth().value())
+      .email(accountHolder.email().value())
+      .accountHolderType(accountHolder.accountHolderType())
+      .createdAt(accountHolder.createdAt())
       .build();
   }
 
@@ -38,7 +35,7 @@ public interface AccountHolderEntityMapper {
       DateOfBirth.of(accountHolderEntity.getDateOfBirth()),
       Email.of(accountHolderEntity.getEmail()),
       accountHolderEntity.getAccountHolderType(),
-      ZonedDateTime.ofInstant(accountHolderEntity.getCreatedAt(), accountHolderEntity.getCreatedAtZone())
+      accountHolderEntity.getCreatedAt()
     );
   }
 }

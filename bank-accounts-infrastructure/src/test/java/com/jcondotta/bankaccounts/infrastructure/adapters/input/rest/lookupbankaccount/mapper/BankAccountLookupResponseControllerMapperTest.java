@@ -15,8 +15,7 @@ import com.jcondotta.bankaccounts.infrastructure.fixtures.AccountHolderFixtures;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,8 +34,7 @@ class BankAccountLookupResponseControllerMapperTest {
   private static final DateOfBirth VALID_DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
   private static final Email VALID_EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
 
-  private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(FIXED_CLOCK);
+  private static final Instant CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
 
   public static final Iban VALID_IBAN = Iban.of("ES3801283316232166447417");
 
@@ -75,13 +73,13 @@ class BankAccountLookupResponseControllerMapperTest {
     assertThat(details.accountType()).isEqualTo(ACCOUNT_TYPE_CHECKING);
     assertThat(details.currency()).isEqualTo(CURRENCY_EUR);
     assertThat(details.iban()).isEqualTo(VALID_IBAN.value());
-    assertThat(details.openingDate()).isEqualTo(CREATED_AT);
+    assertThat(details.createdAt()).isEqualTo(CREATED_AT);
     assertThat(details.accountStatus()).isEqualTo(ACCOUNT_STATUS_ACTIVE);
 
     assertThat(details.accountHolders()).hasSize(1);
     AccountHolderDetailsResponse holder = details.accountHolders().getFirst();
-    assertThat(holder.accountHolderId()).isEqualTo(ACCOUNT_HOLDER_ID.value());
-    assertThat(holder.accountHolderName()).isEqualTo(VALID_NAME.value());
+    assertThat(holder.id()).isEqualTo(ACCOUNT_HOLDER_ID.value());
+    assertThat(holder.name()).isEqualTo(VALID_NAME.value());
     assertThat(holder.passportNumber()).isEqualTo(VALID_PASSPORT.value());
     assertThat(holder.dateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH.value());
     assertThat(holder.email()).isEqualTo(VALID_EMAIL.value());

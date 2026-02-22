@@ -74,7 +74,7 @@ class UnblockBankAccountUseCaseImplTest {
 
     bankAccount.activate();
     bankAccount.block();
-    bankAccount.pullDomainEvents();
+    bankAccount.pullEvents();
 
     when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
       .thenReturn(Optional.of(bankAccount));

@@ -48,7 +48,7 @@ class OpenBankAccountRequestControllerMapperTest {
     OpenBankAccountCommand command = mapper.toCommand(request);
 
     assertThat(command).isNotNull();
-    assertThat(command.accountHolderName().value()).isEqualTo(VALID_NAME);
+    assertThat(command.name().value()).isEqualTo(VALID_NAME);
     assertThat(command.passportNumber().value()).isEqualTo(VALID_PASSPORT);
     assertThat(command.dateOfBirth().value()).isEqualTo(VALID_DATE_OF_BIRTH);
     assertThat(command.email().value()).isEqualTo(VALID_EMAIL);

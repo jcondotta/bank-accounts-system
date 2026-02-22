@@ -23,8 +23,8 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,7 +70,7 @@ class OpenBankAccountControllerImplTest {
         var openBankAccountCommand = requestMapper.toCommand(request);
 
         when(useCase.execute(openBankAccountCommand))
-          .thenReturn(new OpenBankAccountResult(BankAccountId.of(BANK_ACCOUNT_UUID), ZonedDateTime.now(FIXED_CLOCK)));
+          .thenReturn(new OpenBankAccountResult(BankAccountId.of(BANK_ACCOUNT_UUID), Instant.now(FIXED_CLOCK)));
 
         when(uriProperties.bankAccountURI(BANK_ACCOUNT_UUID)).thenReturn(EXPECTED_LOCATION_URI);
 

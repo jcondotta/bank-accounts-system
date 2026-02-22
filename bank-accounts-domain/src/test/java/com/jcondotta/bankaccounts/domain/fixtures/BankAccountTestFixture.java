@@ -44,7 +44,7 @@ public final class BankAccountTestFixture {
   public static BankAccount openActiveAccount(AccountHolderFixtures holder, AccountType accountType, Currency currency) {
     var account = openPendingAccount(holder, accountType, currency);
     account.activate();
-    account.pullDomainEvents();
+    account.pullEvents();
 
     return account;
   }

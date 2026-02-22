@@ -10,7 +10,6 @@ import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.enu
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -23,8 +22,8 @@ public class BankAccountEntityMapperImpl implements BankAccountEntityMapper {
   @Override
   public List<BankingEntity> toBankingEntities(BankAccount bankAccount) {
     var bankAccountEntity = toEntity(bankAccount);
-    var accountHolderEntities = bankAccount.getAccountHolders().stream()
-      .map(accountHolder -> accountHolderEntityMapper.toAccountHolderEntity(bankAccount.getBankAccountId(), accountHolder))
+    var accountHolderEntities = bankAccount.accountHolders().stream()
+      .map(accountHolder -> accountHolderEntityMapper.toAccountHolderEntity(bankAccount.id(), accountHolder))
       .toList();
 
     return Stream.concat(
@@ -36,16 +35,15 @@ public class BankAccountEntityMapperImpl implements BankAccountEntityMapper {
 
   BankingEntity toEntity(BankAccount bankAccount) {
     return BankingEntity.builder()
-      .partitionKey(BankAccountEntityKey.partitionKey(bankAccount.getBankAccountId()))
-      .sortKey(BankAccountEntityKey.sortKey(bankAccount.getBankAccountId()))
+      .partitionKey(BankAccountEntityKey.partitionKey(bankAccount.id()))
+      .sortKey(BankAccountEntityKey.sortKey(bankAccount.id()))
       .entityType(EntityType.BANK_ACCOUNT)
-      .bankAccountId(bankAccount.getBankAccountId().value())
-      .accountType(bankAccount.getAccountType())
-      .currency(bankAccount.getCurrency())
-      .iban(bankAccount.getIban().value())
-      .status(bankAccount.getAccountStatus())
-      .createdAt(bankAccount.getCreatedAt().toInstant())
-      .createdAtZone(bankAccount.getCreatedAt().getZone())
+      .bankAccountId(bankAccount.id().value())
+      .accountType(bankAccount.accountType())
+      .currency(bankAccount.currency())
+      .iban(bankAccount.iban().value())
+      .status(bankAccount.accountStatus())
+      .createdAt(bankAccount.createdAt())
       .build();
   }
 
@@ -61,7 +59,7 @@ public class BankAccountEntityMapperImpl implements BankAccountEntityMapper {
       entity.getCurrency(),
       Iban.of(entity.getIban()),
       entity.getStatus(),
-      ZonedDateTime.ofInstant(entity.getCreatedAt(), entity.getCreatedAtZone()),
+      entity.getCreatedAt(),
       accountHolders
     );
   }

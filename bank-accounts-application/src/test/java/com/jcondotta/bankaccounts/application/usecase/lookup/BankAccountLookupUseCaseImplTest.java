@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +33,6 @@ class BankAccountLookupUseCaseImplTest {
     Iban.of("ES3801283316232166447417");
 
   private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-  private static final ZonedDateTime CREATED_AT = ZonedDateTime.now(FIXED_CLOCK);
 
   @Mock
   private LookupBankAccountRepository lookupBankAccountRepository;

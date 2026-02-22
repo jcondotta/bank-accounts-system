@@ -9,7 +9,6 @@ import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDate;
 
@@ -50,7 +49,7 @@ class AddJointAccountHolderRequestTest {
       .hasSize(1)
       .first()
       .satisfies(violation ->
-        assertThat(violation.getPropertyPath()).hasToString("accountHolderName")
+        assertThat(violation.getPropertyPath()).hasToString("name")
       );
   }
 
@@ -69,7 +68,7 @@ class AddJointAccountHolderRequestTest {
       .hasSize(1)
       .first()
       .satisfies(violation ->
-        assertThat(violation.getPropertyPath()).hasToString("accountHolderName")
+        assertThat(violation.getPropertyPath()).hasToString("name")
       );
   }
 
