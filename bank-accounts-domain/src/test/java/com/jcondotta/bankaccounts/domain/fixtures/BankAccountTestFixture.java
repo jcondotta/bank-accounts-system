@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.domain.fixtures;
 
-import com.jcondotta.bankaccounts.domain.entities.AccountHolder;
-import com.jcondotta.bankaccounts.domain.entities.BankAccount;
+import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
+import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;

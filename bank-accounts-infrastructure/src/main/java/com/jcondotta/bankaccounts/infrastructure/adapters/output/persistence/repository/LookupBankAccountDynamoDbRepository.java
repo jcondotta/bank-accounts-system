@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.repository;
 
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
-import com.jcondotta.bankaccounts.domain.entities.BankAccount;
+import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.BankAccountEntityKey;

@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.repository;
 
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
-import com.jcondotta.bankaccounts.domain.entities.BankAccount;
+import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.outbox.OutboxEventCollector;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.BankAccountEntityKey;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.BankingEntity;

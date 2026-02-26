@@ -7,7 +7,7 @@ import com.jcondotta.bankaccounts.application.usecase.lookup.mapper.AccountHolde
 import com.jcondotta.bankaccounts.application.usecase.lookup.mapper.BankAccountDetailsMapper;
 import com.jcondotta.bankaccounts.application.usecase.lookup.mapper.BankAccountDetailsMapperImpl;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDetails;
-import com.jcondotta.bankaccounts.domain.entities.BankAccount;
+import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;

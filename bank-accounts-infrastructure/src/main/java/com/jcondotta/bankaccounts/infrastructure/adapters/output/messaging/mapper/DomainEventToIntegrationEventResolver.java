@@ -5,7 +5,7 @@ import com.jcondotta.bankaccounts.domain.events.DomainEvent;
 
 import java.util.UUID;
 
-public interface DomainEventToIntegrationResolver {
+public interface DomainEventToIntegrationEventResolver {
 
-  IntegrationEvent<?> toIntegrationEvent(DomainEvent event, UUID correlationId);
+  IntegrationEvent<?> toIntegrationEvent(DomainEvent event, EventMetadataContext eventMetadataContext);
 }

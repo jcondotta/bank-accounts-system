@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDetails;
-import com.jcondotta.bankaccounts.domain.entities.BankAccount;
+import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

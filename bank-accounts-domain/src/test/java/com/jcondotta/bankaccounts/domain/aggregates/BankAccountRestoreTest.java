@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.domain.entities;
+package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.arguments_provider.AccountTypeAndCurrencyArgumentsProvider;
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;

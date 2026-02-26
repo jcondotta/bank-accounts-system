@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.mapper;
 
-import com.jcondotta.bankaccounts.domain.entities.AccountHolder;
-import com.jcondotta.bankaccounts.domain.entities.BankAccount;
+import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
+import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import com.jcondotta.bankaccounts.domain.value_objects.*;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.AccountHolderEntityKey;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.BankingEntity;

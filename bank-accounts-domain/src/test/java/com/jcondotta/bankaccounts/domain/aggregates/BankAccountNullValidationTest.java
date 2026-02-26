@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.domain.entities;
+package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;

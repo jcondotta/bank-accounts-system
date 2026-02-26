@@ -5,7 +5,7 @@ import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccount
 import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.OpenBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.open.model.OpenBankAccountCommand;
 import com.jcondotta.bankaccounts.application.usecase.open.model.OpenBankAccountResult;
-import com.jcondotta.bankaccounts.domain.entities.BankAccount;
+import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

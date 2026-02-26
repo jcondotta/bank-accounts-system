@@ -1,9 +1,9 @@
-package com.jcondotta.bankaccounts.domain.entities;
+package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.events.BankAccountUnblockedEvent;
+import com.jcondotta.bankaccounts.domain.events.BankAccountBlockedEvent;
 import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountStateTransitionException;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
@@ -20,7 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class BankAccountUnblockTest {
+class BankAccountBlockTest {
 
   private static final AccountHolderFixtures PRIMARY_ACCOUNT_HOLDER = AccountHolderFixtures.JEFFERSON;
 
@@ -31,40 +31,38 @@ class BankAccountUnblockTest {
   private static final Instant ACCOUNT_CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
 
   @Test
-  void shouldUnblockBankAccount_whenStatusIsBlocked() {
+  void shouldBlockBankAccount_whenStatusIsActive() {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
-    bankAccount.block();
     bankAccount.pullEvents();
 
-    bankAccount.unblock();
+    bankAccount.block();
 
-    assertThat(bankAccount.accountStatus().isActive()).isTrue();
+    assertThat(bankAccount.accountStatus().isBlocked()).isTrue();
 
     var events = bankAccount.pullEvents();
 
     assertThat(events)
       .hasSize(1)
       .singleElement()
-      .isInstanceOfSatisfying(BankAccountUnblockedEvent.class, event -> {
+      .isInstanceOfSatisfying(BankAccountBlockedEvent.class, event -> {
         assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
         assertThat(event.occurredAt()).isNotNull();
       });
   }
 
   @Test
-  void shouldNotThrowAnyException_whenUnblockIsCalledTwice() {
+  void shouldNotThrowAnyException_whenBlockIsCalledTwice() {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
 
     bankAccount.block();
-    bankAccount.unblock();
-    bankAccount.unblock();
+    bankAccount.block();
 
-    assertThat(bankAccount.accountStatus().isActive()).isTrue();
+    assertThat(bankAccount.accountStatus().isBlocked()).isTrue();
   }
 
   @ParameterizedTest
-  @EnumSource(value = AccountStatus.class, names = {"BLOCKED", "ACTIVE"}, mode = EnumSource.Mode.EXCLUDE)
-  void shouldThrowInvalidBankAccountStateTransitionException_whenUnblockingFromInvalidState(AccountStatus status) {
+  @EnumSource(value = AccountStatus.class, names = {"ACTIVE", "BLOCKED"}, mode = EnumSource.Mode.EXCLUDE)
+  void shouldThrowInvalidBankAccountStateTransitionException_whenBlockingFromInvalidState(AccountStatus status) {
     var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     var bankAccount = BankAccount.restore(
@@ -77,7 +75,7 @@ class BankAccountUnblockTest {
       List.of(primaryAccountHolder)
     );
 
-    assertThatThrownBy(bankAccount::unblock)
+    assertThatThrownBy(bankAccount::block)
       .isInstanceOf(InvalidBankAccountStateTransitionException.class);
   }
 }

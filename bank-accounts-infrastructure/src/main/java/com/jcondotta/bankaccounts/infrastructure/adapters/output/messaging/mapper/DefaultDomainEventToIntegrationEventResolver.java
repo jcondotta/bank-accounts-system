@@ -10,53 +10,48 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 @Component
-public final class DefaultDomainEventToIntegrationEventResolver
-  implements DomainEventToIntegrationResolver {
+public final class DefaultDomainEventToIntegrationEventResolver implements DomainEventToIntegrationEventResolver {
 
-  private final Map<Class<? extends DomainEvent>, DomainEventMapper> eventMappersByEvent;
+  private final Map<Class<? extends DomainEvent>, DomainEventMapper<?>> registry;
 
-  public DefaultDomainEventToIntegrationEventResolver(List<DomainEventMapper> domainEventMappers) {
-    Objects.requireNonNull(domainEventMappers, "domainEventMappers must not be null");
-    this.eventMappersByEvent = buildRegistry(domainEventMappers);
+  public DefaultDomainEventToIntegrationEventResolver(List<DomainEventMapper<?>> mappers) {
+    Objects.requireNonNull(mappers, "domainEventMappers must not be null");
+    this.registry = buildRegistry(mappers);
   }
 
   @Override
-  public IntegrationEvent<?> toIntegrationEvent(
-    DomainEvent event,
-    UUID correlationId
-  ) {
+  public IntegrationEvent<?> toIntegrationEvent(DomainEvent event, EventMetadataContext context) {
     Objects.requireNonNull(event, "event must not be null");
-    Objects.requireNonNull(correlationId, "correlationId must not be null");
+    Objects.requireNonNull(context, "context must not be null");
 
-    return resolve(event).toIntegrationEvent(event, correlationId);
+    return resolve(event).toIntegrationEvent(event, context);
   }
 
-  private DomainEventMapper resolve(DomainEvent event) {
-    DomainEventMapper mapper = eventMappersByEvent.get(event.getClass());
+  @SuppressWarnings("unchecked")
+  private <E extends DomainEvent> DomainEventMapper<E> resolve(E event) {
+    DomainEventMapper<?> mapper = registry.get(event.getClass());
 
     if (mapper == null) {
       throw new DomainEventMapperNotFoundException(event.getClass());
     }
 
-    return mapper;
+    return (DomainEventMapper<E>) mapper;
   }
 
-  private Map<Class<? extends DomainEvent>, DomainEventMapper> buildRegistry(List<DomainEventMapper> domainEventMappers) {
-    Map<Class<? extends DomainEvent>, DomainEventMapper> registry = new HashMap<>();
+  private Map<Class<? extends DomainEvent>, DomainEventMapper<?>> buildRegistry(List<DomainEventMapper<?>> mappers) {
+    Map<Class<? extends DomainEvent>, DomainEventMapper<?>> map = new HashMap<>();
 
-    for (DomainEventMapper domainEventMapper : domainEventMappers) {
-      Objects.requireNonNull(domainEventMapper, "domainEventMapper must not be null");
+    for (DomainEventMapper<?> mapper : mappers) {
+      Objects.requireNonNull(mapper, "domainEventMapper must not be null");
+      Objects.requireNonNull(mapper.mappedEventType(), "mappedEventType must not be null");
 
-      Class<? extends DomainEvent> eventType = Objects.requireNonNull(domainEventMapper.mappedEventType(), "mappedEventType must not be null");
-
-      if (registry.putIfAbsent(eventType, domainEventMapper) != null) {
-        throw new DuplicateDomainEventMapperException(eventType);
+      if (map.putIfAbsent(mapper.mappedEventType(), mapper) != null) {
+        throw new DuplicateDomainEventMapperException(mapper.mappedEventType());
       }
     }
 
-    return Map.copyOf(registry);
+    return Map.copyOf(map);
   }
 }

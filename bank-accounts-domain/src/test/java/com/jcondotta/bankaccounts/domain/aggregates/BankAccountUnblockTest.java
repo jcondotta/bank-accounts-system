@@ -1,9 +1,9 @@
-package com.jcondotta.bankaccounts.domain.entities;
+package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.events.BankAccountActivatedEvent;
+import com.jcondotta.bankaccounts.domain.events.BankAccountUnblockedEvent;
 import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountStateTransitionException;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
@@ -20,7 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class BankAccountActivateTest {
+class BankAccountUnblockTest {
 
   private static final AccountHolderFixtures PRIMARY_ACCOUNT_HOLDER = AccountHolderFixtures.JEFFERSON;
 
@@ -31,11 +31,13 @@ class BankAccountActivateTest {
   private static final Instant ACCOUNT_CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
 
   @Test
-  void shouldActivateBankAccount_whenStatusIsPending() {
-    var bankAccount = BankAccountTestFixture.openPendingAccount(PRIMARY_ACCOUNT_HOLDER);
+  void shouldUnblockBankAccount_whenStatusIsBlocked() {
+    var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
+    bankAccount.block();
     bankAccount.pullEvents();
 
-    bankAccount.activate();
+    bankAccount.unblock();
+
     assertThat(bankAccount.accountStatus().isActive()).isTrue();
 
     var events = bankAccount.pullEvents();
@@ -43,25 +45,26 @@ class BankAccountActivateTest {
     assertThat(events)
       .hasSize(1)
       .singleElement()
-      .isInstanceOfSatisfying(BankAccountActivatedEvent.class, event -> {
+      .isInstanceOfSatisfying(BankAccountUnblockedEvent.class, event -> {
         assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
         assertThat(event.occurredAt()).isNotNull();
       });
   }
 
   @Test
-  void shouldNotThrowAnyException_whenActivateIsCalledTwice() {
-    var bankAccount = BankAccountTestFixture.openPendingAccount(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_TYPE_SAVINGS, CURRENCY_USD);
+  void shouldNotThrowAnyException_whenUnblockIsCalledTwice() {
+    var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
 
-    bankAccount.activate();
-    bankAccount.activate();
+    bankAccount.block();
+    bankAccount.unblock();
+    bankAccount.unblock();
 
     assertThat(bankAccount.accountStatus().isActive()).isTrue();
   }
 
   @ParameterizedTest
-  @EnumSource(value = AccountStatus.class, names = {"PENDING", "ACTIVE"}, mode = EnumSource.Mode.EXCLUDE)
-  void shouldThrowInvalidBankAccountStateTransitionException_whenActivatingFromInvalidState(AccountStatus status) {
+  @EnumSource(value = AccountStatus.class, names = {"BLOCKED", "ACTIVE"}, mode = EnumSource.Mode.EXCLUDE)
+  void shouldThrowInvalidBankAccountStateTransitionException_whenUnblockingFromInvalidState(AccountStatus status) {
     var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     var bankAccount = BankAccount.restore(
@@ -74,7 +77,7 @@ class BankAccountActivateTest {
       List.of(primaryAccountHolder)
     );
 
-    assertThatThrownBy(bankAccount::activate)
+    assertThatThrownBy(bankAccount::unblock)
       .isInstanceOf(InvalidBankAccountStateTransitionException.class);
   }
 }
