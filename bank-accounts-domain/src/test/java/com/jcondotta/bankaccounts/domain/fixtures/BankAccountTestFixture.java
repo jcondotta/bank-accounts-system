@@ -21,53 +21,50 @@ public final class BankAccountTestFixture {
   private BankAccountTestFixture() {
   }
 
-  public static BankAccount openPendingAccount(AccountHolderFixtures holder) {
-    return openPendingAccount(holder, DEFAULT_ACCOUNT_TYPE, DEFAULT_CURRENCY);
+  public static BankAccount openPendingAccount(AccountHolderFixtures fixtures) {
+    return openPendingAccount(fixtures, DEFAULT_ACCOUNT_TYPE, DEFAULT_CURRENCY);
   }
 
-  public static BankAccount openPendingAccount(AccountHolderFixtures holder, AccountType accountType, Currency currency) {
+  public static BankAccount openPendingAccount(AccountHolderFixtures fixtures, AccountType accountType, Currency currency) {
     return BankAccount.open(
-      holder.getAccountHolderName(),
-      holder.getPassportNumber(),
-      holder.getDateOfBirth(),
-      holder.getEmail(),
+      fixtures.personalInfo(),
+      fixtures.contactInfo(),
+      fixtures.address(),
       accountType,
       currency,
       VALID_IBAN
     );
   }
 
-  public static BankAccount openActiveAccount(AccountHolderFixtures holder) {
-    return openActiveAccount(holder, DEFAULT_ACCOUNT_TYPE, DEFAULT_CURRENCY);
+  public static BankAccount openActiveAccount(AccountHolderFixtures fixtures) {
+    return openActiveAccount(fixtures, DEFAULT_ACCOUNT_TYPE, DEFAULT_CURRENCY);
   }
 
-  public static BankAccount openActiveAccount(AccountHolderFixtures holder, AccountType accountType, Currency currency) {
-    var account = openPendingAccount(holder, accountType, currency);
+  public static BankAccount openActiveAccount(AccountHolderFixtures fixtures, AccountType accountType, Currency currency) {
+    var account = openPendingAccount(fixtures, accountType, currency);
     account.activate();
     account.pullEvents();
 
     return account;
   }
 
-  public static AccountHolder createPrimaryHolder(AccountHolderFixtures fixture, Instant createdAt) {
+  public static AccountHolder createPrimaryHolder(AccountHolderFixtures fixtures, Instant createdAt) {
     return BankAccount.restoreAccountHolder(
       AccountHolderId.newId(),
-      fixture.getAccountHolderName(),
-      fixture.getPassportNumber(),
-      fixture.getDateOfBirth(),
-      fixture.getEmail(),
+      fixtures.personalInfo(),
+      fixtures.contactInfo(),
+      fixtures.address(),
       AccountHolderType.PRIMARY,
       createdAt
     );
   }
 
-  public static AccountHolder createJointHolder(AccountHolderFixtures fixture, Instant createdAt) {
+  public static AccountHolder createJointHolder(AccountHolderFixtures fixtures, Instant createdAt) {
     return BankAccount.restoreAccountHolder(
       AccountHolderId.newId(),
-      fixture.getAccountHolderName(),
-      fixture.getPassportNumber(),
-      fixture.getDateOfBirth(),
-      fixture.getEmail(),
+      fixtures.personalInfo(),
+      fixtures.contactInfo(),
+      fixtures.address(),
       AccountHolderType.JOINT,
       createdAt
     );

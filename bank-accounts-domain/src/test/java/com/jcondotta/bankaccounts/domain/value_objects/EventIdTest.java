@@ -1,7 +1,6 @@
 package com.jcondotta.bankaccounts.domain.value_objects;
 
 import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
-import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -33,10 +32,10 @@ class EventIdTest {
   }
 
   @Test
-  void shouldThrowDomainValidationException_whenValueIsNull() {
+  void shouldThrowException_whenValueIsNull() {
     assertThatThrownBy(() -> EventId.of(null))
       .isInstanceOf(DomainValidationException.class)
-      .hasMessage(DomainEventValidationErrors.EVENT_ID_NOT_NULL);
+      .hasMessage(EventId.EVENT_ID_NOT_PROVIDED);
   }
 
   @Test

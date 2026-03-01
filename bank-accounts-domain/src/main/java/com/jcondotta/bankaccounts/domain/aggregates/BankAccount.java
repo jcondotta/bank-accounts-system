@@ -11,14 +11,20 @@ import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountStateTrans
 import com.jcondotta.bankaccounts.domain.exceptions.MaxJointAccountHoldersExceededException;
 import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainValidationErrors;
-import com.jcondotta.bankaccounts.domain.value_objects.*;
+import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
+import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.bankaccounts.domain.value_objects.EventId;
+import com.jcondotta.bankaccounts.domain.value_objects.Iban;
+import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
+import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
+import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
+import static com.jcondotta.bankaccounts.domain.validation.DomainPreconditions.required;
 
 public final class BankAccount extends AggregateRoot<BankAccountId> {
 
@@ -44,30 +50,29 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     Instant createdAt,
     List<AccountHolder> accountHolders
   ) {
-    super(requireNonNull(id, BankAccountValidationErrors.ID_NOT_NULL));
-    this.accountType = requireNonNull(accountType, BankAccountValidationErrors.ACCOUNT_TYPE_NOT_NULL);
-    this.currency = requireNonNull(currency, BankAccountValidationErrors.CURRENCY_NOT_NULL);
-    this.iban = requireNonNull(iban, BankAccountValidationErrors.IBAN_NOT_NULL);
-    this.accountStatus = requireNonNull(accountStatus, BankAccountValidationErrors.ACCOUNT_STATUS_NOT_NULL);
-    this.createdAt = requireNonNull(createdAt, DomainValidationErrors.CREATED_AT_NOT_NULL);
+    super(required(id, BankAccountValidationErrors.ID_NOT_NULL));
+    this.accountType = required(accountType, BankAccountValidationErrors.ACCOUNT_TYPE_NOT_NULL);
+    this.currency = required(currency, BankAccountValidationErrors.CURRENCY_NOT_NULL);
+    this.iban = required(iban, BankAccountValidationErrors.IBAN_NOT_NULL);
+    this.accountStatus = required(accountStatus, BankAccountValidationErrors.ACCOUNT_STATUS_NOT_NULL);
+    this.createdAt = required(createdAt, DomainValidationErrors.CREATED_AT_NOT_NULL);
 
-    requireNonNull(accountHolders, BankAccountValidationErrors.ACCOUNT_HOLDERS_NOT_NULL);
+    required(accountHolders, BankAccountValidationErrors.ACCOUNT_HOLDERS_NOT_NULL);
 
     validateAccountHoldersConfiguration(accountHolders);
     this.accountHolders = new ArrayList<>(accountHolders);
   }
 
   public static BankAccount open(
-    AccountHolderName name,
-    PassportNumber passportNumber,
-    DateOfBirth dateOfBirth,
-    Email email,
+    PersonalInfo personalInfo,
+    ContactInfo contactInfo,
+    Address address,
     AccountType accountType,
     Currency currency,
     Iban iban
   ) {
     Instant now = Instant.now();
-    var primaryHolder = AccountHolder.createPrimary(name, passportNumber, dateOfBirth, email, now);
+    var primaryHolder = AccountHolder.createPrimary(personalInfo, contactInfo, address, now);
 
     var bankAccount = new BankAccount(
       BankAccountId.newId(),
@@ -115,14 +120,13 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
 
   public static AccountHolder restoreAccountHolder(
     AccountHolderId accountHolderId,
-    AccountHolderName accountHolderName,
-    PassportNumber passportNumber,
-    DateOfBirth dateOfBirth,
-    Email email,
+    PersonalInfo personalInfo,
+    ContactInfo contactInfo,
+    Address address,
     AccountHolderType accountHolderType,
     Instant createdAt
   ) {
-    return AccountHolder.restore(accountHolderId, accountHolderName, passportNumber, dateOfBirth, email, accountHolderType, createdAt);
+    return AccountHolder.restore(accountHolderId, personalInfo, contactInfo, address, accountHolderType, createdAt);
   }
 
   public void activate() {
@@ -167,7 +171,7 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     registerEvent(new BankAccountUnblockedEvent(EventId.newId(), this.id(), Instant.now()));
   }
 
-  public void addJointAccountHolder(AccountHolderName name, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email) {
+  public void addJointAccountHolder(PersonalInfo personalInfo, ContactInfo contactInfo, Address address) {
     if (!accountStatus.isActive()) {
       throw new BankAccountNotActiveException(accountStatus);
     }
@@ -181,7 +185,7 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     }
 
     Instant now = Instant.now();
-    var accountHolder = AccountHolder.createJoint(name, passportNumber, dateOfBirth, email, now);
+    var accountHolder = AccountHolder.createJoint(personalInfo, contactInfo, address, now);
     accountHolders.add(accountHolder);
 
     this.registerEvent(new JointAccountHolderAddedEvent(EventId.newId(), this.id(), accountHolder.id(), now));
@@ -205,7 +209,7 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     return accountHolders.stream()
       .filter(AccountHolder::isPrimary)
       .findFirst()
-      .orElseThrow(IllegalStateException::new);
+      .orElseThrow();
   }
 
   public List<AccountHolder> jointAccountHolders() {

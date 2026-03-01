@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.domain.value_objects;
+package com.jcondotta.bankaccounts.domain.value_objects.personal;
 
 import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
 import org.junit.jupiter.api.Test;
@@ -20,14 +20,14 @@ class DateOfBirthTest {
   }
 
   @Test
-  void shouldThrowDomainValidationException_whenValueIsNull() {
+  void shouldThrowException_whenValueIsNull() {
     assertThatThrownBy(() -> DateOfBirth.of(null))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(DateOfBirth.DATE_OF_BIRTH_NOT_PROVIDED);
   }
 
   @Test
-  void shouldThrowDomainValidationException_whenDateIsInTheFuture() {
+  void shouldThrowException_whenDateIsInTheFuture() {
     var futureDate = LocalDate.now().plusDays(1);
 
     assertThatThrownBy(() -> DateOfBirth.of(futureDate))

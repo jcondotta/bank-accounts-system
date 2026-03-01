@@ -6,5 +6,11 @@ package com.jcondotta.bankaccounts.domain.events;
  */
 public sealed interface BankAccountEvent
   extends DomainEvent
-  permits BankAccountActivatedEvent, BankAccountBlockedEvent, BankAccountClosedEvent, BankAccountOpenedEvent, BankAccountUnblockedEvent, JointAccountHolderAddedEvent {
+  permits BankAccountActivatedEvent,
+    BankAccountBlockedEvent,
+    BankAccountClosedEvent,
+    BankAccountOpenedEvent,
+    BankAccountUnblockedEvent,
+    JointAccountHolderAddedEvent {
+
 }

@@ -1,98 +1,84 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
-import com.jcondotta.bankaccounts.domain.validation.AccountHolderValidationErrors;
-import com.jcondotta.bankaccounts.domain.value_objects.*;
+import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
+import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
+import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
+import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
 
 import java.time.Instant;
 
-import static java.util.Objects.requireNonNull;
+import static com.jcondotta.bankaccounts.domain.validation.DomainPreconditions.required;
 
 public final class AccountHolder {
 
+  static final String ID_MUST_BE_PROVIDED = "Account holder id must be provided";
+  static final String PERSONAL_INFO_MUST_BE_PROVIDED = "Account holder personal info must be provided";
+  static final String CONTACT_INFO_MUST_BE_PROVIDED = "Account holder contact info must be provided";
+  static final String ADDRESS_MUST_BE_PROVIDED = "Account holder address must be provided";
+  static final String ACCOUNT_HOLDER_TYPE_MUST_BE_PROVIDED = "Account holder type must be provided";
+  static final String CREATED_AT_MUST_BE_PROVIDED = "Created at must be provided";
+
   private final AccountHolderId id;
-  private final AccountHolderName name;
-  private final PassportNumber passportNumber;
-  private final DateOfBirth dateOfBirth;
-  private final Email email;
+  private final PersonalInfo personalInfo;
+  private final ContactInfo contactInfo;
+  private final Address address;
   private final AccountHolderType accountHolderType;
   private final Instant createdAt;
 
   private AccountHolder(
     AccountHolderId id,
-    AccountHolderName name,
-    PassportNumber passportNumber,
-    DateOfBirth dateOfBirth,
-    Email email,
+    PersonalInfo personalInfo,
+    ContactInfo contactInfo,
+    Address address,
     AccountHolderType accountHolderType,
     Instant createdAt
   ) {
-    this.id = requireNonNull(id, AccountHolderValidationErrors.ID_NOT_NULL);
-    this.name = requireNonNull(name, AccountHolderValidationErrors.NAME_NOT_NULL);
-    this.passportNumber = requireNonNull(passportNumber, AccountHolderValidationErrors.PASSPORT_NUMBER_NOT_NULL);
-    this.dateOfBirth = requireNonNull(dateOfBirth, AccountHolderValidationErrors.DATE_OF_BIRTH_NOT_NULL);
-    this.email = requireNonNull(email, AccountHolderValidationErrors.EMAIL_NOT_NULL);
-    this.accountHolderType = requireNonNull(accountHolderType, AccountHolderValidationErrors.ACCOUNT_HOLDER_TYPE);
-    this.createdAt = requireNonNull(createdAt, AccountHolderValidationErrors.CREATED_AT_NOT_NULL);
+    this.id = required(id, ID_MUST_BE_PROVIDED);
+    this.personalInfo = required(personalInfo, PERSONAL_INFO_MUST_BE_PROVIDED);
+    this.contactInfo = required(contactInfo, CONTACT_INFO_MUST_BE_PROVIDED);
+    this.address = required(address, ADDRESS_MUST_BE_PROVIDED);
+    this.accountHolderType = required(accountHolderType, ACCOUNT_HOLDER_TYPE_MUST_BE_PROVIDED);
+    this.createdAt = required(createdAt, CREATED_AT_MUST_BE_PROVIDED);
   }
 
-  static AccountHolder createPrimary(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, Instant createdAt) {
-    return create(accountHolderName, passportNumber, dateOfBirth, email, AccountHolderType.PRIMARY, createdAt);
+  static AccountHolder createPrimary(PersonalInfo personalInfo, ContactInfo contactInfo, Address address, Instant createdAt) {
+    return create(personalInfo, contactInfo, address, AccountHolderType.PRIMARY, createdAt);
   }
 
-  static AccountHolder createJoint(AccountHolderName accountHolderName, PassportNumber passportNumber, DateOfBirth dateOfBirth, Email email, Instant createdAt) {
-    return create(accountHolderName, passportNumber, dateOfBirth, email, AccountHolderType.JOINT, createdAt);
+  static AccountHolder createJoint(PersonalInfo personalInfo, ContactInfo contactInfo, Address address, Instant createdAt) {
+    return create(personalInfo, contactInfo, address, AccountHolderType.JOINT, createdAt);
   }
 
-  static AccountHolder create(
-    AccountHolderName accountHolderName,
-    PassportNumber passportNumber,
-    DateOfBirth dateOfBirth,
-    Email email,
-    AccountHolderType accountHolderType,
-    Instant createdAt) {
-
-    return new AccountHolder(AccountHolderId.newId(), accountHolderName, passportNumber, dateOfBirth, email, accountHolderType, createdAt);
+  static AccountHolder create(PersonalInfo personalInfo, ContactInfo contactInfo, Address address, AccountHolderType accountHolderType, Instant createdAt) {
+    return new AccountHolder(AccountHolderId.newId(), personalInfo, contactInfo, address, accountHolderType, createdAt);
   }
 
   static AccountHolder restore(
     AccountHolderId accountHolderId,
-    AccountHolderName accountHolderName,
-    PassportNumber passportNumber,
-    DateOfBirth dateOfBirth,
-    Email email,
+    PersonalInfo personalInfo,
+    ContactInfo contactInfo,
+    Address address,
     AccountHolderType accountHolderType,
     Instant createdAt) {
 
-    return new AccountHolder(accountHolderId, accountHolderName, passportNumber, dateOfBirth, email, accountHolderType, createdAt);
-  }
-
-  public boolean isPrimary() {
-    return accountHolderType.isPrimary();
-  }
-
-  public boolean isJoint() {
-    return accountHolderType.isJoint();
+    return new AccountHolder(accountHolderId, personalInfo, contactInfo, address, accountHolderType, createdAt);
   }
 
   public AccountHolderId id() {
     return id;
   }
 
-  public AccountHolderName name() {
-    return name;
+  public PersonalInfo personalInfo() {
+    return personalInfo;
   }
 
-  public PassportNumber passportNumber() {
-    return passportNumber;
+  public ContactInfo contactInfo() {
+    return contactInfo;
   }
 
-  public DateOfBirth dateOfBirth() {
-    return dateOfBirth;
-  }
-
-  public Email email() {
-    return email;
+  public Address address() {
+    return address;
   }
 
   public AccountHolderType accountHolderType() {
@@ -101,5 +87,13 @@ public final class AccountHolder {
 
   public Instant createdAt() {
     return createdAt;
+  }
+
+  public boolean isPrimary() {
+    return accountHolderType.isPrimary();
+  }
+
+  public boolean isJoint() {
+    return accountHolderType.isJoint();
   }
 }

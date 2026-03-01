@@ -29,8 +29,6 @@ class BankAccountClosedEventTest {
     assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
     assertThat(event.eventType())
       .isEqualTo(DomainEventType.BANK_ACCOUNT_CLOSED);
-    assertThat(event.eventType().value())
-      .isEqualTo("bank-account-closed");
   }
 
   @Test

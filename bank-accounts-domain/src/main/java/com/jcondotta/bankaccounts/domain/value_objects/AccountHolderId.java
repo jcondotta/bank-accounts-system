@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.domain.value_objects;
 
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.bankaccounts.domain.validation.DomainPreconditions;
 
 import java.util.UUID;
 
@@ -9,9 +9,7 @@ public record AccountHolderId(UUID value) {
   public static final String ACCOUNT_HOLDER_ID_NOT_PROVIDED = "Account holder id must be provided.";
 
   public AccountHolderId {
-    if (value == null) {
-      throw new DomainValidationException(ACCOUNT_HOLDER_ID_NOT_PROVIDED);
-    }
+    DomainPreconditions.required(value, ACCOUNT_HOLDER_ID_NOT_PROVIDED);
   }
 
   public static AccountHolderId newId() {

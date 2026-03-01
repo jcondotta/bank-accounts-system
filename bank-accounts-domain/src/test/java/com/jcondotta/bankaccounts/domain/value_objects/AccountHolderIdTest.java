@@ -32,7 +32,7 @@ class AccountHolderIdTest {
   }
 
   @Test
-  void shouldThrowDomainValidationException_whenValueIsNull() {
+  void shouldThrowException_whenValueIsNull() {
     assertThatThrownBy(() -> AccountHolderId.of(null))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(AccountHolderId.ACCOUNT_HOLDER_ID_NOT_PROVIDED);

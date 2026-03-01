@@ -32,7 +32,7 @@ class IbanTest {
   }
 
   @Test
-  void shouldThrowDomainValidationException_whenValueIsNull() {
+  void shouldThrowException_whenValueIsNull() {
     assertThatThrownBy(() -> Iban.of(null))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(Iban.IBAN_NOT_PROVIDED);
@@ -40,7 +40,7 @@ class IbanTest {
 
   @ParameterizedTest
   @ArgumentsSource(BlankValuesArgumentProvider.class)
-  void shouldThrowDomainValidationException_whenValueIsBlank(String blankValue) {
+  void shouldThrowException_whenValueIsBlank(String blankValue) {
     assertThatThrownBy(() -> Iban.of(blankValue))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(Iban.IBAN_NOT_PROVIDED);
@@ -53,7 +53,7 @@ class IbanTest {
     "INVALIDIBAN123",
     "DE44$00105175407324931"
   })
-  void shouldThrowDomainValidationException_whenIbanFormatIsInvalid(String invalidIban) {
+  void shouldThrowException_whenIbanFormatIsInvalid(String invalidIban) {
     assertThatThrownBy(() -> Iban.of(invalidIban))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(Iban.IBAN_INVALID_FORMAT);

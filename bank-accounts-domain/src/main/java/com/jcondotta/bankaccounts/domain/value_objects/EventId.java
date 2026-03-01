@@ -1,16 +1,15 @@
 package com.jcondotta.bankaccounts.domain.value_objects;
 
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
-import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
+import com.jcondotta.bankaccounts.domain.validation.DomainPreconditions;
 
 import java.util.UUID;
 
 public record EventId(UUID value) {
 
+  public static final String EVENT_ID_NOT_PROVIDED = "Event id must be provided.";
+
   public EventId {
-    if (value == null) {
-      throw new DomainValidationException(DomainEventValidationErrors.EVENT_ID_NOT_NULL);
-    }
+    DomainPreconditions.required(value, EVENT_ID_NOT_PROVIDED);
   }
 
   public static EventId newId() {

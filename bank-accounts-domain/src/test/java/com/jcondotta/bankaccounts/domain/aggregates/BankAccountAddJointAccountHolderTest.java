@@ -21,10 +21,9 @@ class BankAccountAddJointAccountHolderTest {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
 
     bankAccount.addJointAccountHolder(
-      JOINT_ACCOUNT_HOLDER_1.getAccountHolderName(),
-      JOINT_ACCOUNT_HOLDER_1.getPassportNumber(),
-      JOINT_ACCOUNT_HOLDER_1.getDateOfBirth(),
-      JOINT_ACCOUNT_HOLDER_1.getEmail()
+      JOINT_ACCOUNT_HOLDER_1.personalInfo(),
+      JOINT_ACCOUNT_HOLDER_1.contactInfo(),
+      JOINT_ACCOUNT_HOLDER_1.address()
     );
 
     assertThat(bankAccount.accountHolders())
@@ -34,10 +33,9 @@ class BankAccountAddJointAccountHolderTest {
 
     var jointHolder = bankAccount.jointAccountHolders().getFirst();
 
-    assertThat(jointHolder.name()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.getAccountHolderName());
-    assertThat(jointHolder.passportNumber()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.getPassportNumber());
-    assertThat(jointHolder.dateOfBirth()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.getDateOfBirth());
-    assertThat(jointHolder.email()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.getEmail());
+    assertThat(jointHolder.personalInfo()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.personalInfo());
+    assertThat(jointHolder.contactInfo()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.contactInfo());
+    assertThat(jointHolder.address()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.address());
     assertThat(jointHolder.createdAt()).isNotNull();
 
     var events = bankAccount.pullEvents();
@@ -50,6 +48,8 @@ class BankAccountAddJointAccountHolderTest {
         assertThat(event.accountHolderId()).isEqualTo(jointHolder.id());
         assertThat(event.occurredAt()).isNotNull();
       });
+
+    assertThat(bankAccount.pullEvents()).isEmpty();
   }
 
   @Test
@@ -58,10 +58,9 @@ class BankAccountAddJointAccountHolderTest {
 
     assertThatThrownBy(() ->
       bankAccount.addJointAccountHolder(
-        JOINT_ACCOUNT_HOLDER_1.getAccountHolderName(),
-        JOINT_ACCOUNT_HOLDER_1.getPassportNumber(),
-        JOINT_ACCOUNT_HOLDER_1.getDateOfBirth(),
-        JOINT_ACCOUNT_HOLDER_1.getEmail()
+        JOINT_ACCOUNT_HOLDER_1.personalInfo(),
+        JOINT_ACCOUNT_HOLDER_1.contactInfo(),
+        JOINT_ACCOUNT_HOLDER_1.address()
       ))
       .isInstanceOf(BankAccountNotActiveException.class);
   }
@@ -71,18 +70,16 @@ class BankAccountAddJointAccountHolderTest {
     var bankAccount = BankAccountTestFixture.openActiveAccount(PRIMARY_ACCOUNT_HOLDER);
 
     bankAccount.addJointAccountHolder(
-      JOINT_ACCOUNT_HOLDER_1.getAccountHolderName(),
-      JOINT_ACCOUNT_HOLDER_1.getPassportNumber(),
-      JOINT_ACCOUNT_HOLDER_1.getDateOfBirth(),
-      JOINT_ACCOUNT_HOLDER_1.getEmail()
+      JOINT_ACCOUNT_HOLDER_1.personalInfo(),
+      JOINT_ACCOUNT_HOLDER_1.contactInfo(),
+      JOINT_ACCOUNT_HOLDER_1.address()
     );
 
     assertThatThrownBy(() ->
       bankAccount.addJointAccountHolder(
-        JOINT_ACCOUNT_HOLDER_2.getAccountHolderName(),
-        JOINT_ACCOUNT_HOLDER_2.getPassportNumber(),
-        JOINT_ACCOUNT_HOLDER_2.getDateOfBirth(),
-        JOINT_ACCOUNT_HOLDER_2.getEmail()
+        JOINT_ACCOUNT_HOLDER_2.personalInfo(),
+        JOINT_ACCOUNT_HOLDER_2.contactInfo(),
+        JOINT_ACCOUNT_HOLDER_2.address()
       ))
       .isInstanceOf(MaxJointAccountHoldersExceededException.class);
   }

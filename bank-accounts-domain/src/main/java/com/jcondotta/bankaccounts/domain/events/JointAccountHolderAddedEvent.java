@@ -1,7 +1,6 @@
 package com.jcondotta.bankaccounts.domain.events;
 
 import com.jcondotta.bankaccounts.domain.events.types.DomainEventType;
-import com.jcondotta.bankaccounts.domain.validation.AccountHolderValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
@@ -22,7 +21,7 @@ public record JointAccountHolderAddedEvent(
   public JointAccountHolderAddedEvent {
     requireNonNull(eventId, DomainEventValidationErrors.EVENT_ID_NOT_NULL);
     requireNonNull(bankAccountId, BankAccountValidationErrors.ID_NOT_NULL);
-    requireNonNull(accountHolderId, AccountHolderValidationErrors.ID_NOT_NULL);
+    requireNonNull(accountHolderId, AccountHolderId.ACCOUNT_HOLDER_ID_NOT_PROVIDED);
     requireNonNull(occurredAt, DomainEventValidationErrors.EVENT_OCCURRED_AT_NOT_NULL);
   }
 

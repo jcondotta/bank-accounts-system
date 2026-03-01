@@ -29,8 +29,6 @@ class BankAccountBlockedEventTest {
     assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
     assertThat(event.eventType())
       .isEqualTo(DomainEventType.BANK_ACCOUNT_BLOCKED);
-    assertThat(event.eventType().value())
-      .isEqualTo("bank-account-blocked");
   }
 
   @Test

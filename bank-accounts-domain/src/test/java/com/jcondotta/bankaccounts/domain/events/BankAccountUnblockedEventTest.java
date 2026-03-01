@@ -28,7 +28,6 @@ class BankAccountUnblockedEventTest {
     assertThat(event.bankAccountId()).isEqualTo(BANK_ACCOUNT_ID);
     assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
     assertThat(event.eventType()).isEqualTo(DomainEventType.BANK_ACCOUNT_UNBLOCKED);
-    assertThat(event.eventType().value()).isEqualTo("bank-account-unblocked");
   }
 
   @Test

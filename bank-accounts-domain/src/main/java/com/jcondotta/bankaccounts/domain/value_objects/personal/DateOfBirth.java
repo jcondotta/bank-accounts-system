@@ -1,6 +1,7 @@
-package com.jcondotta.bankaccounts.domain.value_objects;
+package com.jcondotta.bankaccounts.domain.value_objects.personal;
 
 import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.bankaccounts.domain.validation.DomainPreconditions;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -11,9 +12,7 @@ public record DateOfBirth(LocalDate value) {
   public static final String DATE_OF_BIRTH_NOT_IN_PAST = "Date of birth must be in the past.";
 
   public DateOfBirth {
-    if (value == null) {
-      throw new DomainValidationException(DATE_OF_BIRTH_NOT_PROVIDED);
-    }
+    DomainPreconditions.required(value, DATE_OF_BIRTH_NOT_PROVIDED);
 
     if (value.isAfter(LocalDate.now(Clock.systemDefaultZone()))) {
       throw new DomainValidationException(DATE_OF_BIRTH_NOT_IN_PAST);

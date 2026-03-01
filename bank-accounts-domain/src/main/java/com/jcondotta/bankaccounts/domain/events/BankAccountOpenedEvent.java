@@ -1,9 +1,9 @@
 package com.jcondotta.bankaccounts.domain.events;
 
+import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.events.types.DomainEventType;
-import com.jcondotta.bankaccounts.domain.validation.AccountHolderValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
@@ -28,7 +28,7 @@ public record BankAccountOpenedEvent(
     requireNonNull(bankAccountId, BankAccountValidationErrors.ID_NOT_NULL);
     requireNonNull(accountType, BankAccountValidationErrors.ACCOUNT_TYPE_NOT_NULL);
     requireNonNull(currency, BankAccountValidationErrors.CURRENCY_NOT_NULL);
-    requireNonNull(primaryAccountHolderId, AccountHolderValidationErrors.ID_NOT_NULL);
+    requireNonNull(primaryAccountHolderId, AccountHolderId.ACCOUNT_HOLDER_ID_NOT_PROVIDED);
     requireNonNull(occurredAt, DomainEventValidationErrors.EVENT_OCCURRED_AT_NOT_NULL);
   }
 

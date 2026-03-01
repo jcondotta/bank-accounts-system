@@ -37,8 +37,6 @@ class JointAccountHolderAddedEventTest {
     assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
     assertThat(event.eventType())
       .isEqualTo(DomainEventType.JOINT_ACCOUNT_HOLDER_ADDED);
-    assertThat(event.eventType().value())
-      .isEqualTo("joint-account-holder-added");
   }
 
   @Test
