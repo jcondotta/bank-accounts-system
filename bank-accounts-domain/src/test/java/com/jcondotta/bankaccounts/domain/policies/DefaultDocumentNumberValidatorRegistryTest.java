@@ -42,7 +42,7 @@ class DefaultDocumentNumberValidatorRegistryTest {
   }
 
   @Test
-  void shouldThrowDomainValidationException_whenValidatorNotFound() {
+  void shouldThrowException_whenValidatorNotFound() {
     var registry = new DefaultDocumentNumberValidatorRegistry(List.of());
 
     assertThatThrownBy(() -> registry.resolve(DocumentCountry.SPAIN, DocumentType.PASSPORT))
