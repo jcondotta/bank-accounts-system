@@ -1,24 +1,23 @@
 package com.jcondotta.bankaccounts.application.usecase.addholder.model;
 
-import com.jcondotta.bankaccounts.domain.value_objects.*;
+import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
+import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
+import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
 
 import java.util.Objects;
 
 public record AddJointAccountHolderCommand(
   BankAccountId bankAccountId,
-  AccountHolderName name,
-  PassportNumber passportNumber,
-  DateOfBirth dateOfBirth,
-  Email email
+  PersonalInfo personalInfo,
+  ContactInfo contactInfo,
+  Address address
 ) {
 
   public AddJointAccountHolderCommand {
     Objects.requireNonNull(bankAccountId, "bankAccountId must not be null");
-    Objects.requireNonNull(name, "name must not be null");
-    Objects.requireNonNull(passportNumber, "passportNumber must not be null");
-    Objects.requireNonNull(dateOfBirth, "dateOfBirth must not be null");
-    Objects.requireNonNull(email, "email must not be null");
+    Objects.requireNonNull(personalInfo, "personalInfo must not be null");
+    Objects.requireNonNull(contactInfo, "contactInfo must not be null");
+    Objects.requireNonNull(address, "address must not be null");
   }
 }
-
-

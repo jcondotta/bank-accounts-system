@@ -1,6 +1,7 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
+import com.jcondotta.bankaccounts.application.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.AccountHolderDetails;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDetails;
 import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
@@ -17,32 +18,22 @@ class BankAccountDetailsMapperImplTest {
 
   private static final BankAccountDetailsMapper mapper = new BankAccountDetailsMapperImpl(new AccountHolderDetailsMapperImpl());
 
-  private static final Iban VALID_IBAN =
-    Iban.of("ES3801283316232166447417");
+  private static final Iban VALID_IBAN = Iban.of("ES3801283316232166447417");
 
   @Test
   void shouldMapBankAccount_whenOnlyPrimaryHolderIsPresent() {
+    BankAccount bankAccount = BankAccountTestFixture.openPendingAccount(AccountHolderFixtures.JEFFERSON);
 
-    BankAccount bankAccount = BankAccount.open(
-      AccountHolderFixtures.JEFFERSON.getAccountHolderName(),
-      AccountHolderFixtures.JEFFERSON.getPassportNumber(),
-      AccountHolderFixtures.JEFFERSON.getDateOfBirth(),
-      AccountHolderFixtures.JEFFERSON.getEmail(),
-      AccountType.CHECKING,
-      Currency.EUR,
-      VALID_IBAN
-    );
+    BankAccountDetails accountDetails = mapper.toDetails(bankAccount);
 
-    BankAccountDetails details = mapper.toDetails(bankAccount);
+    assertThat(accountDetails.bankAccountId()).isEqualTo(bankAccount.id());
+    assertThat(accountDetails.accountType()).isEqualTo(bankAccount.accountType());
+    assertThat(accountDetails.currency()).isEqualTo(bankAccount.currency());
+    assertThat(accountDetails.iban()).isEqualTo(bankAccount.iban());
+    assertThat(accountDetails.accountStatus()).isEqualTo(bankAccount.accountStatus());
+    assertThat(accountDetails.createdAt()).isNotNull();
 
-    assertThat(details.bankAccountId()).isEqualTo(bankAccount.id());
-    assertThat(details.accountType()).isEqualTo(bankAccount.accountType());
-    assertThat(details.currency()).isEqualTo(bankAccount.currency());
-    assertThat(details.iban()).isEqualTo(bankAccount.iban());
-    assertThat(details.accountStatus()).isEqualTo(bankAccount.accountStatus());
-    assertThat(details.createdAt()).isNotNull();
-
-    assertThat(details.accountHolders())
+    assertThat(accountDetails.accountHolders())
       .hasSize(1)
       .singleElement()
       .satisfies(accountHolderDetails -> {
@@ -52,23 +43,12 @@ class BankAccountDetailsMapperImplTest {
 
   @Test
   void shouldMapBankAccount_whenPrimaryAndJointHolderArePresent() {
-    BankAccount bankAccount = BankAccount.open(
-      AccountHolderFixtures.JEFFERSON.getAccountHolderName(),
-      AccountHolderFixtures.JEFFERSON.getPassportNumber(),
-      AccountHolderFixtures.JEFFERSON.getDateOfBirth(),
-      AccountHolderFixtures.JEFFERSON.getEmail(),
-      AccountType.CHECKING,
-      Currency.EUR,
-      VALID_IBAN
-    );
-
-    bankAccount.activate();
+    BankAccount bankAccount = BankAccountTestFixture.openActiveAccount(AccountHolderFixtures.JEFFERSON);
 
     bankAccount.addJointAccountHolder(
-      AccountHolderFixtures.PATRIZIO.getAccountHolderName(),
-      AccountHolderFixtures.PATRIZIO.getPassportNumber(),
-      AccountHolderFixtures.PATRIZIO.getDateOfBirth(),
-      AccountHolderFixtures.PATRIZIO.getEmail()
+      AccountHolderFixtures.PATRIZIO.personalInfo(),
+      AccountHolderFixtures.PATRIZIO.contactInfo(),
+      AccountHolderFixtures.PATRIZIO.address()
     );
 
     BankAccountDetails details = mapper.toDetails(bankAccount);
@@ -86,17 +66,31 @@ class BankAccountDetailsMapperImplTest {
   }
 
   private void assertMapping(AccountHolder source, AccountHolderDetails target) {
-    assertThat(target)
-      .usingRecursiveComparison()
-      .isEqualTo(new AccountHolderDetails(
-        source.id(),
-        source.name(),
-        source.passportNumber(),
-        source.dateOfBirth(),
-        source.email(),
-        source.accountHolderType(),
-        source.createdAt()
-      ));
+    assertThat(target.id()).isEqualTo(source.id().value());
+
+    assertThat(target.firstName())
+      .isEqualTo(source.personalInfo().holderName().firstName());
+
+    assertThat(target.lastName())
+      .isEqualTo(source.personalInfo().holderName().lastName());
+
+    assertThat(target.documentType())
+      .isEqualTo(source.personalInfo().identityDocument().type().name());
+
+    assertThat(target.documentNumber())
+      .isEqualTo(source.personalInfo().identityDocument().number().value());
+
+    assertThat(target.dateOfBirth())
+      .isEqualTo(source.personalInfo().dateOfBirth().value());
+
+    assertThat(target.email())
+      .isEqualTo(source.contactInfo().email().value());
+
+    assertThat(target.phoneNumber())
+      .isEqualTo(source.contactInfo().phoneNumber().value());
+
+    assertThat(target.accountHolderType()).isEqualTo(source.accountHolderType());
+    assertThat(target.createdAt()).isEqualTo(source.createdAt());
   }
 
   @Test

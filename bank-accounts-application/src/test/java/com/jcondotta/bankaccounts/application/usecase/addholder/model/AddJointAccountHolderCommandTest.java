@@ -1,65 +1,87 @@
 package com.jcondotta.bankaccounts.application.usecase.addholder.model;
 
-import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
-import com.jcondotta.bankaccounts.domain.value_objects.*;
+import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
+import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
+import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
 import org.junit.jupiter.api.Test;
 
+import static com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures.JEFFERSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AddJointAccountHolderCommandTest {
 
-  private static final AccountHolderName ACCOUNT_HOLDER_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName();
-  private static final PassportNumber PASSPORT_NUMBER = AccountHolderFixtures.JEFFERSON.getPassportNumber();
-  private static final DateOfBirth DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
-  private static final Email EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
+  private static final PersonalInfo PERSONAL_INFO = JEFFERSON.personalInfo();
+  private static final ContactInfo CONTACT_INFO = JEFFERSON.contactInfo();
+  private static final Address ADDRESS = JEFFERSON.address();
 
   @Test
   void shouldCreateCommand_whenAllFieldsAreProvided() {
     var bankAccountId = BankAccountId.newId();
 
-    var command = new AddJointAccountHolderCommand(bankAccountId, ACCOUNT_HOLDER_NAME, PASSPORT_NUMBER, DATE_OF_BIRTH, EMAIL);
+    var command = new AddJointAccountHolderCommand(
+      bankAccountId,
+      PERSONAL_INFO,
+      CONTACT_INFO,
+      ADDRESS
+    );
 
     assertThat(command.bankAccountId()).isEqualTo(bankAccountId);
-    assertThat(command.name()).isEqualTo(ACCOUNT_HOLDER_NAME);
-    assertThat(command.passportNumber()).isEqualTo(PASSPORT_NUMBER);
-    assertThat(command.dateOfBirth()).isEqualTo(DATE_OF_BIRTH);
-    assertThat(command.email()).isEqualTo(EMAIL);
+    assertThat(command.personalInfo()).isEqualTo(PERSONAL_INFO);
+    assertThat(command.contactInfo()).isEqualTo(CONTACT_INFO);
+    assertThat(command.address()).isEqualTo(ADDRESS);
   }
 
   @Test
   void shouldThrowNullPointerException_whenBankAccountIdIsNull() {
     assertThatThrownBy(
-      () -> new AddJointAccountHolderCommand(null, ACCOUNT_HOLDER_NAME, PASSPORT_NUMBER, DATE_OF_BIRTH, EMAIL))
+      () -> new AddJointAccountHolderCommand(
+        null,
+        PERSONAL_INFO,
+        CONTACT_INFO,
+        ADDRESS
+      ))
       .isInstanceOf(NullPointerException.class)
       .hasMessage("bankAccountId must not be null");
   }
 
   @Test
-  void shouldThrowNullPointerException_whenAccountHolderNameIsNull() {
-    assertThatThrownBy(() -> new AddJointAccountHolderCommand(BankAccountId.newId(), null, PASSPORT_NUMBER, DATE_OF_BIRTH, EMAIL))
+  void shouldThrowNullPointerException_whenPersonalInfoIsNull() {
+    assertThatThrownBy(
+      () -> new AddJointAccountHolderCommand(
+        BankAccountId.newId(),
+        null,
+        CONTACT_INFO,
+        ADDRESS
+      ))
       .isInstanceOf(NullPointerException.class)
-      .hasMessage("name must not be null");
+      .hasMessage("personalInfo must not be null");
   }
 
   @Test
-  void shouldThrowNullPointerException_whenPassportNumberIsNull() {
-    assertThatThrownBy(() -> new AddJointAccountHolderCommand(BankAccountId.newId(), ACCOUNT_HOLDER_NAME, null, DATE_OF_BIRTH, EMAIL))
+  void shouldThrowNullPointerException_whenContactInfoIsNull() {
+    assertThatThrownBy(
+      () -> new AddJointAccountHolderCommand(
+        BankAccountId.newId(),
+        PERSONAL_INFO,
+        null,
+        ADDRESS
+      ))
       .isInstanceOf(NullPointerException.class)
-      .hasMessage("passportNumber must not be null");
+      .hasMessage("contactInfo must not be null");
   }
 
   @Test
-  void shouldThrowNullPointerException_whenDateOfBirthIsNull() {
-    assertThatThrownBy(() -> new AddJointAccountHolderCommand(BankAccountId.newId(), ACCOUNT_HOLDER_NAME, PASSPORT_NUMBER, null, EMAIL))
+  void shouldThrowNullPointerException_whenAddressIsNull() {
+    assertThatThrownBy(
+      () -> new AddJointAccountHolderCommand(
+        BankAccountId.newId(),
+        PERSONAL_INFO,
+        CONTACT_INFO,
+        null
+      ))
       .isInstanceOf(NullPointerException.class)
-      .hasMessage("dateOfBirth must not be null");
-  }
-
-  @Test
-  void shouldThrowNullPointerException_whenEmailIsNull() {
-    assertThatThrownBy(() -> new AddJointAccountHolderCommand(BankAccountId.newId(), ACCOUNT_HOLDER_NAME, PASSPORT_NUMBER, DATE_OF_BIRTH, null))
-      .isInstanceOf(NullPointerException.class)
-      .hasMessage("email must not be null");
+      .hasMessage("address must not be null");
   }
 }

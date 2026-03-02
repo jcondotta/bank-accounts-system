@@ -1,22 +1,15 @@
 package com.jcondotta.bankaccounts.application.usecase.close;
 
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
-import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountClosedEventPublisher;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
+import com.jcondotta.bankaccounts.application.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.application.usecase.close.model.CloseBankAccountCommand;
-import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.events.BankAccountClosedEvent;
-import com.jcondotta.bankaccounts.domain.events.DomainEvent;
+import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
-import com.jcondotta.bankaccounts.domain.value_objects.*;
+import com.jcondotta.bankaccounts.domain.repository.BankAccountRepository;
+import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -29,85 +22,50 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CloseBankAccountUseCaseImplTest {
 
-  private static final BankAccountId BANK_ACCOUNT_ID = BankAccountId.newId();
-  private static final Iban VALID_IBAN = Iban.of("ES3801283316232166447417");
-
-  private static final AccountHolderName ACCOUNT_HOLDER_NAME = AccountHolderFixtures.JEFFERSON.getAccountHolderName();
-  private static final PassportNumber PASSPORT_NUMBER = AccountHolderFixtures.JEFFERSON.getPassportNumber();
-  private static final DateOfBirth DATE_OF_BIRTH = AccountHolderFixtures.JEFFERSON.getDateOfBirth();
-  private static final Email EMAIL = AccountHolderFixtures.JEFFERSON.getEmail();
-
   @Mock
-  private LookupBankAccountRepository lookupBankAccountRepository;
-
-  @Mock
-  private UpdateBankAccountRepository updateBankAccountRepository;
-
-  @Mock
-  private BankAccountClosedEventPublisher bankAccountClosedEventPublisher;
-
-  @Captor
-  private ArgumentCaptor<DomainEvent> eventArgumentCaptor;
+  private BankAccountRepository bankAccountRepository;
 
   private CloseBankAccountUseCase useCase;
 
   @BeforeEach
   void setUp() {
-    useCase = new CloseBankAccountUseCaseImpl(
-      lookupBankAccountRepository,
-      updateBankAccountRepository,
-      bankAccountClosedEventPublisher
-    );
+    useCase = new CloseBankAccountUseCaseImpl(bankAccountRepository);
   }
 
   @Test
   void shouldCloseBankAccount_whenCommandIsValid() {
-
-    BankAccount bankAccount = BankAccount.open(
-      ACCOUNT_HOLDER_NAME,
-      PASSPORT_NUMBER,
-      DATE_OF_BIRTH,
-      EMAIL,
-      AccountType.CHECKING,
-      Currency.USD,
-      VALID_IBAN
-    );
-
-    bankAccount.activate();
+    var bankAccount = BankAccountTestFixture.openActiveAccount(AccountHolderFixtures.JEFFERSON);
     bankAccount.pullEvents();
 
-    when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
+    when(bankAccountRepository.findById(bankAccount.id()))
       .thenReturn(Optional.of(bankAccount));
 
-    var command = new CloseBankAccountCommand(BANK_ACCOUNT_ID);
+    var command = new CloseBankAccountCommand(bankAccount.id());
 
     useCase.execute(command);
 
-    verify(updateBankAccountRepository).update(bankAccount);
-    verify(bankAccountClosedEventPublisher).publish(eventArgumentCaptor.capture());
-    verifyNoMoreInteractions(lookupBankAccountRepository, updateBankAccountRepository);
+    assertThat(bankAccount.accountStatus())
+      .isEqualTo(AccountStatus.CLOSED);
 
-    assertThat(eventArgumentCaptor.getValue())
-      .isInstanceOfSatisfying(BankAccountClosedEvent.class, event -> {
-        assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
-        assertThat(event.occurredAt()).isNotNull();
-      });
+    verify(bankAccountRepository).findById(bankAccount.id());
+    verify(bankAccountRepository).save(bankAccount);
+    verifyNoMoreInteractions(bankAccountRepository);
   }
 
   @Test
   void shouldThrowBankAccountNotFoundException_whenBankAccountDoesNotExist() {
+    var bankAccountId = BankAccountId.newId();
 
-    when(lookupBankAccountRepository.byId(BANK_ACCOUNT_ID))
+    when(bankAccountRepository.findById(bankAccountId))
       .thenReturn(Optional.empty());
 
-    var command = new CloseBankAccountCommand(BANK_ACCOUNT_ID);
+    var command = new CloseBankAccountCommand(bankAccountId);
 
     assertThatThrownBy(() -> useCase.execute(command))
       .isInstanceOf(BankAccountNotFoundException.class);
 
-    verify(lookupBankAccountRepository).byId(BANK_ACCOUNT_ID);
-    verifyNoInteractions(updateBankAccountRepository, bankAccountClosedEventPublisher);
-    verifyNoMoreInteractions(lookupBankAccountRepository);
+    verify(bankAccountRepository).findById(bankAccountId);
+    verifyNoMoreInteractions(bankAccountRepository);
   }
 
   @Test
@@ -117,10 +75,6 @@ class CloseBankAccountUseCaseImplTest {
       .isInstanceOf(NullPointerException.class)
       .hasMessage("command must not be null");
 
-    verifyNoInteractions(
-      lookupBankAccountRepository,
-      updateBankAccountRepository,
-      bankAccountClosedEventPublisher
-    );
+    verifyNoInteractions(bankAccountRepository);
   }
 }

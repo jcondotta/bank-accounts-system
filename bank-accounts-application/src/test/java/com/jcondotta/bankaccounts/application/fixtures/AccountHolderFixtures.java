@@ -1,66 +1,48 @@
 package com.jcondotta.bankaccounts.application.fixtures;
 
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
-import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
-import com.jcondotta.bankaccounts.domain.value_objects.Email;
-import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
-
-import java.time.LocalDate;
-import java.time.Month;
+import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
+import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
+import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
 
 public enum AccountHolderFixtures {
 
   JEFFERSON(
-    "Jefferson Condotta",
-    "FH254787",
-    LocalDate.of(1988, Month.JUNE, 24),
-    "jefferson.condotta@email.com"
+    PersonalInfoFixtures.JEFFERSON,
+    ContactInfoFixtures.JEFFERSON,
+    AddressFixtures.BARCELONA_APT
   ),
 
   VIRGINIO(
-    "Virginio Condotta",
-    "BC858683",
-    LocalDate.of(1917, Month.DECEMBER, 11),
-    "virginio.condotta@email.com"
+    PersonalInfoFixtures.VIRGINIO,
+    ContactInfoFixtures.VIRGINIO,
+    AddressFixtures.MADRID_OFFICE
   ),
 
   PATRIZIO(
-    "Patrizio Condotta",
-    "AA527570",
-    LocalDate.of(1889, Month.FEBRUARY, 18),
-    "patrizio.condotta@email.com"
+    PersonalInfoFixtures.PATRIZIO,
+    ContactInfoFixtures.PATRIZIO,
+    AddressFixtures.BERLIN_HOUSE
   );
 
-  AccountHolderFixtures(
-    String accountHolderName,
-    String passportNumber,
-    LocalDate dateOfBirth,
-    String email
-  ) {
-    this.accountHolderName = accountHolderName;
-    this.passportNumber = passportNumber;
-    this.dateOfBirth = dateOfBirth;
-    this.email = email;
+  private final PersonalInfoFixtures personalInfoFixture;
+  private final ContactInfoFixtures contactInfoFixture;
+  private final AddressFixtures addressFixtures;
+
+  AccountHolderFixtures(PersonalInfoFixtures personalInfoFixture, ContactInfoFixtures contactInfoFixture, AddressFixtures addressFixtures) {
+    this.personalInfoFixture = personalInfoFixture;
+    this.contactInfoFixture = contactInfoFixture;
+    this.addressFixtures = addressFixtures;
   }
 
-  private final String accountHolderName;
-  private final String passportNumber;
-  private final LocalDate dateOfBirth;
-  private final String email;
-
-  public AccountHolderName getAccountHolderName() {
-    return AccountHolderName.of(accountHolderName);
+  public PersonalInfo personalInfo() {
+    return personalInfoFixture.personalInfo();
   }
 
-  public DateOfBirth getDateOfBirth() {
-    return DateOfBirth.of(dateOfBirth);
+  public ContactInfo contactInfo() {
+    return contactInfoFixture.contactInfo();
   }
 
-  public PassportNumber getPassportNumber() {
-    return PassportNumber.of(passportNumber);
-  }
-
-  public Email getEmail() {
-    return Email.of(email);
+  public Address address() {
+    return addressFixtures.address();
   }
 }

@@ -2,28 +2,25 @@ package com.jcondotta.bankaccounts.application.usecase.open.model;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
-import com.jcondotta.bankaccounts.domain.value_objects.DateOfBirth;
-import com.jcondotta.bankaccounts.domain.value_objects.Email;
-import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
+import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
+import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
+import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
 
 import static java.util.Objects.requireNonNull;
 
 public record OpenBankAccountCommand(
-  AccountHolderName name,
-  PassportNumber passportNumber,
-  DateOfBirth dateOfBirth,
-  Email email,
+  PersonalInfo personalInfo,
+  ContactInfo contactInfo,
+  Address address,
   AccountType accountType,
   Currency currency
 ) {
 
   public OpenBankAccountCommand {
-    requireNonNull(name, "name must not be null");
-    requireNonNull(passportNumber, "passportNumber must not be null");
-    requireNonNull(dateOfBirth, "dateOfBirth must not be null");
+    requireNonNull(personalInfo, "personalInfo must not be null");
+    requireNonNull(contactInfo, "contactInfo must not be null");
+    requireNonNull(address, "address must not be null");
     requireNonNull(accountType, "accountType must not be null");
     requireNonNull(currency, "currency must not be null");
-    requireNonNull(email, "email must not be null");
   }
 }

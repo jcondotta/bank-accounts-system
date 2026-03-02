@@ -1,11 +1,10 @@
 package com.jcondotta.bankaccounts.application.usecase.open;
 
 import com.jcondotta.bankaccounts.application.ports.output.facade.IbanGeneratorFacade;
-import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountOpenedEventPublisher;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.OpenBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.open.model.OpenBankAccountCommand;
 import com.jcondotta.bankaccounts.application.usecase.open.model.OpenBankAccountResult;
 import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
+import com.jcondotta.bankaccounts.domain.repository.BankAccountRepository;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +17,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
 
-  private final OpenBankAccountRepository openBankAccountRepository;
+  private final BankAccountRepository bankAccountRepository;
   private final IbanGeneratorFacade ibanGeneratorFacade;
-  private final BankAccountOpenedEventPublisher bankAccountOpenedEventPublisher;
 
   @Override
   @Observed(
@@ -38,16 +36,15 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
     var iban = ibanGeneratorFacade.generate();
 
     BankAccount bankAccount = BankAccount.open(
-      command.name(),
-      command.passportNumber(),
-      command.dateOfBirth(),
-      command.email(),
+      command.personalInfo(),
+      command.contactInfo(),
+      command.address(),
       command.accountType(),
       command.currency(),
       iban
     );
 
-    openBankAccountRepository.create(bankAccount);
+    bankAccountRepository.save(bankAccount);
 
     log.atInfo()
       .setMessage("Bank account created successfully.")

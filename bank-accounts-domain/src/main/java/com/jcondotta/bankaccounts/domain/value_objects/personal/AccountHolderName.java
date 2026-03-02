@@ -8,11 +8,11 @@ public record AccountHolderName(String firstName, String lastName) {
 
   public static final int MAX_LENGTH = 255;
 
-  public static final String FIRST_NAME_MUST_NOT_BE_EMPTY = "First name must not be empty";
-  public static final String LAST_NAME_MUST_NOT_BE_EMPTY = "Last name must not be empty";
+  public static final String FIRST_NAME_MUST_NOT_BE_EMPTY = "First holderName must not be empty";
+  public static final String LAST_NAME_MUST_NOT_BE_EMPTY = "Last holderName must not be empty";
 
-  public static final String FIRST_NAME_MUST_NOT_EXCEED_LENGTH = "First name must not exceed %d characters";
-  public static final String LAST_NAME_MUST_NOT_EXCEED_LENGTH = "Last name must not exceed %d characters";
+  public static final String FIRST_NAME_MUST_NOT_EXCEED_LENGTH = "First holderName must not exceed %d characters";
+  public static final String LAST_NAME_MUST_NOT_EXCEED_LENGTH = "Last holderName must not exceed %d characters";
 
   public AccountHolderName {
     firstName = normalize(firstName);

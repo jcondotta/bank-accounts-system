@@ -30,7 +30,7 @@ class PersonalInfoTest {
 //      VALID_DATE_OF_BIRTH
 //    );
 //
-//    assertThat(personalInfo.name()).isEqualTo(VALID_NAME);
+//    assertThat(personalInfo.holderName()).isEqualTo(VALID_NAME);
 //    assertThat(personalInfo.identityDocument()).isEqualTo(VALID_IDENTITY_DOCUMENT);
 //    assertThat(personalInfo.dateOfBirth()).isEqualTo(VALID_DATE_OF_BIRTH);
 //  }

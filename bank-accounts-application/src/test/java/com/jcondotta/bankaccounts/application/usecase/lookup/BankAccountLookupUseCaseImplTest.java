@@ -1,25 +1,18 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup;
 
-import com.jcondotta.bankaccounts.application.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
-import com.jcondotta.bankaccounts.application.usecase.lookup.mapper.AccountHolderDetailsMapperImpl;
+import com.jcondotta.bankaccounts.application.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.application.usecase.lookup.mapper.BankAccountDetailsMapper;
-import com.jcondotta.bankaccounts.application.usecase.lookup.mapper.BankAccountDetailsMapperImpl;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDetails;
-import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
+import com.jcondotta.bankaccounts.domain.repository.BankAccountRepository;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.bankaccounts.domain.value_objects.Iban;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Clock;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,13 +22,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BankAccountLookupUseCaseImplTest {
 
-  private static final Iban VALID_IBAN =
-    Iban.of("ES3801283316232166447417");
-
-  private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
-
   @Mock
-  private LookupBankAccountRepository lookupBankAccountRepository;
+  private BankAccountRepository bankAccountRepository;
 
   @Mock
   private BankAccountDetailsMapper bankAccountDetailsMapper;
@@ -45,49 +33,46 @@ class BankAccountLookupUseCaseImplTest {
   @BeforeEach
   void setUp() {
     useCase = new BankAccountLookupUseCaseImpl(
-      lookupBankAccountRepository,
+      bankAccountRepository,
       bankAccountDetailsMapper
     );
   }
 
   @Test
-  void shouldReturnBankAccountLookupResult_whenBankAccountExists() {
-    BankAccountId bankAccountId = BankAccountId.newId();
-    BankAccount bankAccount = BankAccount.open(
-      AccountHolderFixtures.JEFFERSON.getAccountHolderName(),
-      AccountHolderFixtures.JEFFERSON.getPassportNumber(),
-      AccountHolderFixtures.JEFFERSON.getDateOfBirth(),
-      AccountHolderFixtures.JEFFERSON.getEmail(),
-      AccountType.CHECKING,
-      Currency.EUR,
-      VALID_IBAN
-    );
-    BankAccountDetails bankAccountDetails = new BankAccountDetailsMapperImpl(new AccountHolderDetailsMapperImpl()).toDetails(bankAccount);
+  void shouldReturnBankAccountDetails_whenBankAccountExists() {
+    var bankAccount = BankAccountTestFixture.openPendingAccount(AccountHolderFixtures.JEFFERSON);
 
-    when(lookupBankAccountRepository.byId(bankAccountId)).thenReturn(Optional.of(bankAccount));
+    var bankAccountId = bankAccount.id();
 
-    when(bankAccountDetailsMapper.toDetails(bankAccount)).thenReturn(bankAccountDetails);
+    var expectedDetails = mock(BankAccountDetails.class);
 
-    BankAccountDetails lookupResult = useCase.lookup(bankAccountId);
+    when(bankAccountRepository.findById(bankAccountId))
+      .thenReturn(Optional.of(bankAccount));
 
-    assertThat(lookupResult).isEqualTo(bankAccountDetails);
+    when(bankAccountDetailsMapper.toDetails(bankAccount))
+      .thenReturn(expectedDetails);
 
-    verify(lookupBankAccountRepository).byId(bankAccountId);
+    var result = useCase.lookup(bankAccountId);
+
+    assertThat(result).isEqualTo(expectedDetails);
+
+    verify(bankAccountRepository).findById(bankAccountId);
     verify(bankAccountDetailsMapper).toDetails(bankAccount);
-    verifyNoMoreInteractions(lookupBankAccountRepository, bankAccountDetailsMapper);
+    verifyNoMoreInteractions(bankAccountRepository, bankAccountDetailsMapper);
   }
 
   @Test
   void shouldThrowBankAccountNotFoundException_whenBankAccountDoesNotExist() {
-    BankAccountId bankAccountId = BankAccountId.newId();
+    var bankAccountId = BankAccountId.newId();
 
-    when(lookupBankAccountRepository.byId(bankAccountId)).thenReturn(Optional.empty());
+    when(bankAccountRepository.findById(bankAccountId))
+      .thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> useCase.lookup(bankAccountId))
       .isInstanceOf(BankAccountNotFoundException.class)
       .hasMessageContaining(bankAccountId.value().toString());
 
-    verify(lookupBankAccountRepository).byId(bankAccountId);
+    verify(bankAccountRepository).findById(bankAccountId);
     verifyNoInteractions(bankAccountDetailsMapper);
   }
 }

@@ -1,10 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.unblock;
 
-import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountUnblockedEventPublisher;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.LookupBankAccountRepository;
-import com.jcondotta.bankaccounts.application.ports.output.persistence.repository.UpdateBankAccountRepository;
 import com.jcondotta.bankaccounts.application.usecase.unblock.model.UnblockBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
+import com.jcondotta.bankaccounts.domain.repository.BankAccountRepository;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +15,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UnblockBankAccountUseCaseImpl implements UnblockBankAccountUseCase {
 
-  private final LookupBankAccountRepository lookupBankAccountRepository;
-  private final UpdateBankAccountRepository updateBankAccountRepository;
-  private final BankAccountUnblockedEventPublisher bankAccountUnblockedEventPublisher;
+  private final BankAccountRepository bankAccountRepository;
 
   @Override
   @Observed(
@@ -40,16 +36,12 @@ public class UnblockBankAccountUseCaseImpl implements UnblockBankAccountUseCase 
       command.bankAccountId().value()
     );
 
-    var bankAccount = lookupBankAccountRepository.byId(command.bankAccountId())
+    var bankAccount = bankAccountRepository.findById(command.bankAccountId())
         .orElseThrow(() -> new BankAccountNotFoundException(command.bankAccountId()));
 
     bankAccount.unblock();
 
-    updateBankAccountRepository.update(bankAccount);
-
-//    bankAccount
-//        .pullEvents()
-//        .forEach(bankAccountUnblockedEventPublisher::publish);
+    bankAccountRepository.save(bankAccount);
 
     log.info(
       "Bank account unblocked successfully [bankAccountId={}]",

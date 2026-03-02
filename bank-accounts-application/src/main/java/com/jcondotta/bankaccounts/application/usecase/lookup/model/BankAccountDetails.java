@@ -20,13 +20,14 @@ public record BankAccountDetails(
   Instant createdAt,
   List<AccountHolderDetails> accountHolders
 ) {
+
   public BankAccountDetails {
-    requireNonNull(bankAccountId, "bankAccountId");
-    requireNonNull(accountType, "accountType");
-    requireNonNull(currency, "currency");
-    requireNonNull(iban, "iban");
-    requireNonNull(accountStatus, "accountStatus");
-    requireNonNull(createdAt, "createdAt");
-    requireNonNull(accountHolders, "accountHolders");
+    requireNonNull(bankAccountId, "bankAccountId must not be null");
+    requireNonNull(accountType, "accountType must not be null");
+    requireNonNull(currency, "currency must not be null");
+    requireNonNull(iban, "iban must not be null");
+    requireNonNull(accountStatus, "accountStatus must not be null");
+    requireNonNull(createdAt, "createdAt must not be null");
+    requireNonNull(accountHolders, "accountHolders must not be null");
   }
 }
