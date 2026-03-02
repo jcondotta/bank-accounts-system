@@ -7,9 +7,6 @@ import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDe
 import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
 import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.value_objects.Iban;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,8 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BankAccountDetailsMapperImplTest {
 
   private static final BankAccountDetailsMapper mapper = new BankAccountDetailsMapperImpl(new AccountHolderDetailsMapperImpl());
-
-  private static final Iban VALID_IBAN = Iban.of("ES3801283316232166447417");
 
   @Test
   void shouldMapBankAccount_whenOnlyPrimaryHolderIsPresent() {
