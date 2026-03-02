@@ -11,6 +11,7 @@ public final class DocumentNumberValidationPolicy {
   public static final String COUNTRY_NOT_PROVIDED = "Document country must be provided";
   public static final String TYPE_NOT_PROVIDED = "Document type must be provided";
   public static final String NUMBER_NOT_PROVIDED = "Document number must be provided";
+
   public static final String REGISTRY_NOT_PROVIDED = "Validator registry must be provided";
 
   private final DocumentNumberValidatorRegistry registry;

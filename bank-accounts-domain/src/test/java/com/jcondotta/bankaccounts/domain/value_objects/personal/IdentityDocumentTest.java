@@ -12,18 +12,8 @@ class IdentityDocumentTest {
 
   private static final DocumentCountry SPAIN = DocumentCountry.SPAIN;
 
-  private static final DocumentNumber VALID_SPANISH_PASSPORT = DocumentNumber.of("QWE000123");
   private static final DocumentNumber VALID_SPANISH_DNI = DocumentNumber.of("12345678Z");
   private static final DocumentNumber VALID_SPANISH_NIE = DocumentNumber.of("X1234567L");
-
-  @Test
-  void shouldCreateIdentityDocument_whenSpanishPassportIsValid() {
-    var identityDocument = IdentityDocument.of(SPAIN, DocumentType.PASSPORT, VALID_SPANISH_PASSPORT);
-
-    assertThat(identityDocument.country()).isEqualTo(SPAIN);
-    assertThat(identityDocument.type()).isEqualTo(DocumentType.PASSPORT);
-    assertThat(identityDocument.number()).isEqualTo(VALID_SPANISH_PASSPORT);
-  }
 
   @Test
   void shouldCreateIdentityDocument_whenSpanishDniIsValid() {
@@ -45,21 +35,21 @@ class IdentityDocumentTest {
 
   @Test
   void shouldThrowException_whenDocumentCountryIsNull() {
-    assertThatThrownBy(() -> IdentityDocument.of(null, DocumentType.PASSPORT, VALID_SPANISH_PASSPORT))
+    assertThatThrownBy(() -> IdentityDocument.of(null, DocumentType.NATIONAL_ID, VALID_SPANISH_DNI))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(IdentityDocument.DOCUMENT_COUNTRY_NOT_PROVIDED);
   }
 
   @Test
   void shouldThrowException_whenDocumentTypeIsNull() {
-    assertThatThrownBy(() -> IdentityDocument.of(SPAIN, null, VALID_SPANISH_PASSPORT))
+    assertThatThrownBy(() -> IdentityDocument.of(SPAIN, null, VALID_SPANISH_DNI))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(IdentityDocument.DOCUMENT_TYPE_NOT_PROVIDED);
   }
 
   @Test
   void shouldThrowException_whenDocumentNumberIsNull() {
-    assertThatThrownBy(() -> IdentityDocument.of(SPAIN, DocumentType.PASSPORT, null))
+    assertThatThrownBy(() -> IdentityDocument.of(SPAIN, DocumentType.NATIONAL_ID, null))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(IdentityDocument.DOCUMENT_NUMBER_NOT_PROVIDED);
   }

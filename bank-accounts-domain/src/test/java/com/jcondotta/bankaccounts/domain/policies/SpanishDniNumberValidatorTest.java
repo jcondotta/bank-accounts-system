@@ -12,8 +12,7 @@ import static org.assertj.core.api.Assertions.*;
 
 class SpanishDniNumberValidatorTest {
 
-  private final SpanishDniNumberValidator validator =
-    new SpanishDniNumberValidator();
+  private final SpanishDniNumberValidator validator = new SpanishDniNumberValidator();
 
   @Test
   void shouldSupportSpainAsCountry() {

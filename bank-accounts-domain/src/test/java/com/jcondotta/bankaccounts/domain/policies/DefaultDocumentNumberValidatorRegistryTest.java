@@ -7,47 +7,37 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DefaultDocumentNumberValidatorRegistryTest {
 
+  private final DocumentNumberValidator spanishDniNumberValidator = new SpanishDniNumberValidator();
+  private final DocumentNumberValidator spanishNieNumberValidator = new SpanishNieNumberValidator();
+
+  private final List<DocumentNumberValidator> documentNumberValidators = List.of(
+    spanishDniNumberValidator,
+    spanishNieNumberValidator
+  );
+
   @Test
   void shouldResolveValidator_whenValidatorExists() {
-    var passportValidator = new SpanishPassportNumberValidator();
-    var registry = new DefaultDocumentNumberValidatorRegistry(
-      List.of(passportValidator)
-    );
+    var registry = new DefaultDocumentNumberValidatorRegistry(documentNumberValidators);
 
-    var resolved = registry.resolve(
-      DocumentCountry.SPAIN,
-      DocumentType.PASSPORT
-    );
+    assertThat(registry.resolve(DocumentCountry.SPAIN, DocumentType.NATIONAL_ID))
+      .isSameAs(spanishDniNumberValidator);
 
-    assertThat(resolved).isSameAs(passportValidator);
-  }
-
-  @Test
-  void shouldResolveDifferentValidators_whenMultipleAreRegistered() {
-    var passport = new SpanishPassportNumberValidator();
-    var dni = new SpanishDniNumberValidator();
-    var nie = new SpanishNieNumberValidator();
-
-    var registry = new DefaultDocumentNumberValidatorRegistry(
-      List.of(passport, dni, nie)
-    );
-
-    assertThat(registry.resolve(DocumentCountry.SPAIN, DocumentType.PASSPORT)).isSameAs(passport);
-    assertThat(registry.resolve(DocumentCountry.SPAIN, DocumentType.NATIONAL_ID)).isSameAs(dni);
-    assertThat(registry.resolve(DocumentCountry.SPAIN, DocumentType.FOREIGNER_ID)).isSameAs(nie);
+    assertThat(registry.resolve(DocumentCountry.SPAIN, DocumentType.FOREIGNER_ID))
+      .isSameAs(spanishNieNumberValidator);
   }
 
   @Test
   void shouldThrowException_whenValidatorNotFound() {
-    var registry = new DefaultDocumentNumberValidatorRegistry(List.of());
+    var registry = new DefaultDocumentNumberValidatorRegistry(List.of(spanishDniNumberValidator));
 
-    assertThatThrownBy(() -> registry.resolve(DocumentCountry.SPAIN, DocumentType.PASSPORT))
+    assertThatThrownBy(() -> registry.resolve(DocumentCountry.SPAIN, DocumentType.FOREIGNER_ID))
       .isInstanceOf(DomainValidationException.class)
-      .hasMessage("No document validator found for SPAIN - PASSPORT");
+      .hasMessage("No document validator found for SPAIN - FOREIGNER_ID");
   }
 
   @Test
@@ -61,7 +51,7 @@ class DefaultDocumentNumberValidatorRegistryTest {
   void shouldThrowException_whenCountryIsNull() {
     var registry = new DefaultDocumentNumberValidatorRegistry(List.of());
 
-    assertThatThrownBy(() -> registry.resolve(null, DocumentType.PASSPORT))
+    assertThatThrownBy(() -> registry.resolve(null, DocumentType.NATIONAL_ID))
       .isInstanceOf(NullPointerException.class)
       .hasMessage("country must be provided");
   }

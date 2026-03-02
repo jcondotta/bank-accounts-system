@@ -26,8 +26,8 @@ class DocumentNumberValidationPolicyTest {
   private DocumentNumberValidationPolicy policy;
 
   private final DocumentCountry COUNTRY = DocumentCountry.SPAIN;
-  private final DocumentType TYPE = DocumentType.PASSPORT;
-  private final DocumentNumber NUMBER = DocumentNumber.of("ABC123456");
+  private final DocumentType TYPE = DocumentType.NATIONAL_ID;
+  private final DocumentNumber NUMBER = DocumentNumber.of("X1234567L");
 
   @BeforeEach
   void setUp() {

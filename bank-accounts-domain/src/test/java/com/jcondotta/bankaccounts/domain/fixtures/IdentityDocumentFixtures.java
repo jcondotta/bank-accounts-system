@@ -19,10 +19,10 @@ public enum IdentityDocumentFixtures {
     "X7566995H"
   ),
 
-  SPANISH_PASSPORT(
+  SPANISH_NIE_2(
     DocumentCountry.SPAIN,
-    DocumentType.PASSPORT,
-    "QWE000123"
+    DocumentType.FOREIGNER_ID,
+    "X9999999Z"
   );
 
   private final DocumentCountry country;

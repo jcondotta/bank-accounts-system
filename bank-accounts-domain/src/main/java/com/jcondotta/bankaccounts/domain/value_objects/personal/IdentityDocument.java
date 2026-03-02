@@ -2,7 +2,10 @@ package com.jcondotta.bankaccounts.domain.value_objects.personal;
 
 import com.jcondotta.bankaccounts.domain.enums.DocumentCountry;
 import com.jcondotta.bankaccounts.domain.enums.DocumentType;
-import com.jcondotta.bankaccounts.domain.policies.*;
+import com.jcondotta.bankaccounts.domain.policies.DefaultDocumentNumberValidatorRegistry;
+import com.jcondotta.bankaccounts.domain.policies.DocumentNumberValidationPolicy;
+import com.jcondotta.bankaccounts.domain.policies.SpanishDniNumberValidator;
+import com.jcondotta.bankaccounts.domain.policies.SpanishNieNumberValidator;
 
 import java.util.List;
 
@@ -17,7 +20,6 @@ public record IdentityDocument(DocumentCountry country, DocumentType type, Docum
   private static final DocumentNumberValidationPolicy VALIDATION_POLICY = new DocumentNumberValidationPolicy(
     new DefaultDocumentNumberValidatorRegistry(
       List.of(
-        new SpanishPassportNumberValidator(),
         new SpanishDniNumberValidator(),
         new SpanishNieNumberValidator()
       )

@@ -27,7 +27,7 @@ public enum PersonalInfoFixtures {
   PATRIZIO(
     "Patrizio",
     "Condotta",
-    IdentityDocumentFixtures.SPANISH_PASSPORT.identityDocument(),
+    IdentityDocumentFixtures.SPANISH_NIE_2.identityDocument(),
     LocalDate.of(1889, Month.FEBRUARY, 18)
   );
 
