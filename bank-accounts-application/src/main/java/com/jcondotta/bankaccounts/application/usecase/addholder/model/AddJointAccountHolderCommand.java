@@ -15,7 +15,7 @@ public record AddJointAccountHolderCommand(
 ) {
 
   public AddJointAccountHolderCommand {
-    Objects.requireNonNull(bankAccountId, "bankAccountId must not be null");
+    Objects.requireNonNull(bankAccountId, "id must not be null");
     Objects.requireNonNull(personalInfo, "personalInfo must not be null");
     Objects.requireNonNull(contactInfo, "contactInfo must not be null");
     Objects.requireNonNull(address, "address must not be null");

@@ -7,7 +7,6 @@ import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import com.jcondotta.bankaccounts.domain.repository.BankAccountRepository;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.bankaccounts.domain.value_objects.Iban;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,18 +36,18 @@ class AddJointAccountHolderUseCaseImplTest {
   void shouldAddJointAccountHolder_whenCommandIsValid() {
     BankAccount bankAccount = BankAccountTestFixture.openActiveAccount(AccountHolderFixtures.JEFFERSON);
 
-    when(bankAccountRepository.findById(bankAccount.id()))
+    when(bankAccountRepository.findById(bankAccount.getId()))
       .thenReturn(Optional.of(bankAccount));
 
     var command = new AddJointAccountHolderCommand(
-      bankAccount.id(),
+      bankAccount.getId(),
       AccountHolderFixtures.VIRGINIO.personalInfo(),
       AccountHolderFixtures.VIRGINIO.contactInfo(),
       AccountHolderFixtures.VIRGINIO.address()
     );
 
     useCase.execute(command);
-    verify(bankAccountRepository).findById(bankAccount.id());
+    verify(bankAccountRepository).findById(bankAccount.getId());
     verify(bankAccountRepository).save(bankAccount);
     verifyNoMoreInteractions(bankAccountRepository);
 

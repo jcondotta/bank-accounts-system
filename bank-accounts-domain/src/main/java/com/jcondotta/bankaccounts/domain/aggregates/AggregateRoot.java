@@ -15,7 +15,7 @@ public abstract class AggregateRoot<ID extends AggregateId> {
     this.id = id;
   }
 
-  public ID id() {
+  public ID getId() {
     return id;
   }
 

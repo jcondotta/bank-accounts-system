@@ -49,14 +49,14 @@ class BankAccountRestoreTest {
     );
 
     assertThat(bankAccount).isNotNull();
-    assertThat(bankAccount.id()).isEqualTo(bankAccountId);
-    assertThat(bankAccount.accountType()).isEqualTo(accountType);
-    assertThat(bankAccount.currency()).isEqualTo(currency);
-    assertThat(bankAccount.iban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
-    assertThat(bankAccount.accountStatus().isActive()).isTrue();
-    assertThat(bankAccount.createdAt()).isEqualTo(ACCOUNT_CREATED_AT);
+    assertThat(bankAccount.getId()).isEqualTo(bankAccountId);
+    assertThat(bankAccount.getAccountType()).isEqualTo(accountType);
+    assertThat(bankAccount.getCurrency()).isEqualTo(currency);
+    assertThat(bankAccount.getIban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
+    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
+    assertThat(bankAccount.getCreatedAt()).isEqualTo(ACCOUNT_CREATED_AT);
     assertThat(bankAccount.pullEvents()).isEmpty();
-    assertThat(bankAccount.accountHolders())
+    assertThat(bankAccount.getAccountHolders())
       .hasSize(1)
       .containsExactly(primaryAccountHolder);
   }
@@ -79,14 +79,14 @@ class BankAccountRestoreTest {
     );
 
     assertThat(bankAccount).isNotNull();
-    assertThat(bankAccount.id()).isEqualTo(bankAccountId);
-    assertThat(bankAccount.accountType()).isEqualTo(accountType);
-    assertThat(bankAccount.currency()).isEqualTo(currency);
-    assertThat(bankAccount.iban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
-    assertThat(bankAccount.accountStatus().isActive()).isTrue();
-    assertThat(bankAccount.createdAt()).isEqualTo(ACCOUNT_CREATED_AT);
+    assertThat(bankAccount.getId()).isEqualTo(bankAccountId);
+    assertThat(bankAccount.getAccountType()).isEqualTo(accountType);
+    assertThat(bankAccount.getCurrency()).isEqualTo(currency);
+    assertThat(bankAccount.getIban()).isEqualTo(BankAccountTestFixture.VALID_IBAN);
+    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
+    assertThat(bankAccount.getCreatedAt()).isEqualTo(ACCOUNT_CREATED_AT);
     assertThat(bankAccount.pullEvents()).isEmpty();
-    assertThat(bankAccount.accountHolders())
+    assertThat(bankAccount.getAccountHolders())
       .hasSize(2)
       .containsExactlyInAnyOrder(primaryAccountHolder, jointAccountHolder);
   }

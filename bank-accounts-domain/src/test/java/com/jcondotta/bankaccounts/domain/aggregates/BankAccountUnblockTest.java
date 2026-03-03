@@ -38,7 +38,7 @@ class BankAccountUnblockTest {
 
     bankAccount.unblock();
 
-    assertThat(bankAccount.accountStatus().isActive()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
 
     var events = bankAccount.pullEvents();
 
@@ -46,7 +46,7 @@ class BankAccountUnblockTest {
       .hasSize(1)
       .singleElement()
       .isInstanceOfSatisfying(BankAccountUnblockedEvent.class, event -> {
-        assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
+        assertThat(event.bankAccountId()).isEqualTo(bankAccount.getId());
         assertThat(event.occurredAt()).isNotNull();
       });
   }
@@ -59,7 +59,7 @@ class BankAccountUnblockTest {
     bankAccount.unblock();
     bankAccount.unblock();
 
-    assertThat(bankAccount.accountStatus().isActive()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
   }
 
   @ParameterizedTest

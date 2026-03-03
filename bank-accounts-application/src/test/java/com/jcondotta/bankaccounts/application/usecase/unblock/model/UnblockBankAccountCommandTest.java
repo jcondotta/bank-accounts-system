@@ -21,6 +21,6 @@ class UnblockBankAccountCommandTest {
   void shouldThrowNullPointerException_whenBankAccountIdIsNull() {
     assertThatThrownBy(() -> new UnblockBankAccountCommand(null))
       .isInstanceOf(NullPointerException.class)
-      .hasMessage("bankAccountId must not be null");
+      .hasMessage("id must not be null");
   }
 }

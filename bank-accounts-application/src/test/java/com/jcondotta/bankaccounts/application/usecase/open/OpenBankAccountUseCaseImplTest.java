@@ -1,10 +1,12 @@
 package com.jcondotta.bankaccounts.application.usecase.open;
 
 import com.jcondotta.bankaccounts.application.argument_provider.AccountTypeAndCurrencyArgumentsProvider;
+import com.jcondotta.bankaccounts.application.command.open.OpenBankAccountUseCase;
+import com.jcondotta.bankaccounts.application.command.open.OpenBankAccountUseCaseImpl;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.application.ports.output.facade.IbanGeneratorFacade;
-import com.jcondotta.bankaccounts.application.usecase.open.model.OpenBankAccountCommand;
+import com.jcondotta.bankaccounts.application.command.open.model.OpenBankAccountCommand;
 import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
@@ -73,23 +75,23 @@ class OpenBankAccountUseCaseImplTest {
 
     assertThat(bankAccountCaptor.getValue())
       .satisfies(bankAccount -> {
-        assertThat(bankAccount.id()).isNotNull();
-        assertThat(bankAccount.accountType()).isEqualTo(accountType);
-        assertThat(bankAccount.currency()).isEqualTo(currency);
-        assertThat(bankAccount.iban()).isEqualTo(GENERATED_IBAN);
-        assertThat(bankAccount.accountStatus()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
-        assertThat(bankAccount.createdAt()).isNotNull();
-        assertThat(bankAccount.accountHolders())
+        assertThat(bankAccount.getId()).isNotNull();
+        assertThat(bankAccount.getAccountType()).isEqualTo(accountType);
+        assertThat(bankAccount.getCurrency()).isEqualTo(currency);
+        assertThat(bankAccount.getIban()).isEqualTo(GENERATED_IBAN);
+        assertThat(bankAccount.getAccountStatus()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
+        assertThat(bankAccount.getCreatedAt()).isNotNull();
+        assertThat(bankAccount.getAccountHolders())
           .hasSize(1)
           .singleElement()
           .satisfies(accountHolder -> {
-            assertThat(accountHolder.id()).isNotNull();
+            assertThat(accountHolder.getId()).isNotNull();
 
-            assertThat(accountHolder.personalInfo()).isEqualTo(personalInfo);
-            assertThat(accountHolder.contactInfo()).isEqualTo(contactInfo);
-            assertThat(accountHolder.address()).isEqualTo(address);
+            assertThat(accountHolder.getPersonalInfo()).isEqualTo(personalInfo);
+            assertThat(accountHolder.getContactInfo()).isEqualTo(contactInfo);
+            assertThat(accountHolder.getAddress()).isEqualTo(address);
             assertThat(accountHolder.isPrimary()).isTrue();
-            assertThat(accountHolder.createdAt()).isNotNull();
+            assertThat(accountHolder.getCreatedAt()).isNotNull();
           });
       });
   }

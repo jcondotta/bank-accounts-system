@@ -37,7 +37,7 @@ class BankAccountCloseTest {
 
     bankAccount.close();
 
-    assertThat(bankAccount.accountStatus().isClosed()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isClosed()).isTrue();
 
     var events = bankAccount.pullEvents();
 
@@ -46,7 +46,7 @@ class BankAccountCloseTest {
       .singleElement()
       .isInstanceOfSatisfying(BankAccountClosedEvent.class, event -> {
         assertThat(event.eventId()).isNotNull();
-        assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
+        assertThat(event.bankAccountId()).isEqualTo(bankAccount.getId());
         assertThat(event.occurredAt()).isNotNull();
       });
   }
@@ -58,7 +58,7 @@ class BankAccountCloseTest {
     bankAccount.close();
     bankAccount.close();
 
-    assertThat(bankAccount.accountStatus().isClosed()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isClosed()).isTrue();
   }
 
   @ParameterizedTest

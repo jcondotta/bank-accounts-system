@@ -32,7 +32,7 @@ class AccountHolderCreateTest {
     );
 
     assertHolderMatchesFixture(accountHolder, PRIMARY_ACCOUNT_HOLDER);
-    assertThat(accountHolder.accountHolderType()).isEqualTo(accountHolderType);
+    assertThat(accountHolder.getAccountHolderType()).isEqualTo(accountHolderType);
     assertThat(accountHolder.isPrimary()).isEqualTo(accountHolderType.isPrimary());
     assertThat(accountHolder.isJoint()).isEqualTo(accountHolderType.isJoint());
   }
@@ -126,9 +126,9 @@ class AccountHolderCreateTest {
   }
 
   private void assertHolderMatchesFixture(AccountHolder actual, AccountHolderFixtures expected) {
-    assertThat(actual.personalInfo()).isEqualTo(expected.personalInfo());
-    assertThat(actual.contactInfo()).isEqualTo(expected.contactInfo());
-    assertThat(actual.address()).isEqualTo(expected.address());
-    assertThat(actual.createdAt()).isEqualTo(CREATED_AT);
+    assertThat(actual.getPersonalInfo()).isEqualTo(expected.personalInfo());
+    assertThat(actual.getContactInfo()).isEqualTo(expected.contactInfo());
+    assertThat(actual.getAddress()).isEqualTo(expected.address());
+    assertThat(actual.getCreatedAt()).isEqualTo(CREATED_AT);
   }
 }

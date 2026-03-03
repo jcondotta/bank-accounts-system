@@ -87,10 +87,10 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     bankAccount.registerEvent(
       new BankAccountOpenedEvent(
         EventId.newId(),
-        bankAccount.id(),
-        bankAccount.accountType(),
-        bankAccount.currency(),
-        primaryHolder.id(),
+        bankAccount.getId(),
+        bankAccount.getAccountType(),
+        bankAccount.getCurrency(),
+        primaryHolder.getId(),
         now
       )
     );
@@ -139,7 +139,7 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     }
 
     this.accountStatus = AccountStatus.ACTIVE;
-    registerEvent(new BankAccountActivatedEvent(EventId.newId(), this.id(), Instant.now()));
+    registerEvent(new BankAccountActivatedEvent(EventId.newId(), this.getId(), Instant.now()));
   }
 
   public void block() {
@@ -155,7 +155,7 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     }
 
     this.accountStatus = AccountStatus.BLOCKED;
-    registerEvent(new BankAccountBlockedEvent(EventId.newId(), this.id(), Instant.now()));
+    registerEvent(new BankAccountBlockedEvent(EventId.newId(), this.getId(), Instant.now()));
   }
 
   public void unblock() {
@@ -168,7 +168,7 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     }
 
     this.accountStatus = AccountStatus.ACTIVE;
-    registerEvent(new BankAccountUnblockedEvent(EventId.newId(), this.id(), Instant.now()));
+    registerEvent(new BankAccountUnblockedEvent(EventId.newId(), this.getId(), Instant.now()));
   }
 
   public void addJointAccountHolder(PersonalInfo personalInfo, ContactInfo contactInfo, Address address) {
@@ -188,7 +188,7 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     var accountHolder = AccountHolder.createJoint(personalInfo, contactInfo, address, now);
     accountHolders.add(accountHolder);
 
-    this.registerEvent(new JointAccountHolderAddedEvent(EventId.newId(), this.id(), accountHolder.id(), now));
+    this.registerEvent(new JointAccountHolderAddedEvent(EventId.newId(), this.getId(), accountHolder.getId(), now));
   }
 
   public void close() {
@@ -202,7 +202,7 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
 
     this.accountStatus = AccountStatus.CLOSED;
 
-    registerEvent(new BankAccountClosedEvent(EventId.newId(), this.id(), Instant.now()));
+    registerEvent(new BankAccountClosedEvent(EventId.newId(), this.getId(), Instant.now()));
   }
 
   public AccountHolder primaryAccountHolder() {
@@ -218,27 +218,27 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
       .toList();
   }
 
-  public AccountType accountType() {
+  public AccountType getAccountType() {
     return accountType;
   }
 
-  public Currency currency() {
+  public Currency getCurrency() {
     return currency;
   }
 
-  public Iban iban() {
+  public Iban getIban() {
     return iban;
   }
 
-  public AccountStatus accountStatus() {
+  public AccountStatus getAccountStatus() {
     return accountStatus;
   }
 
-  public Instant createdAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public List<AccountHolder> accountHolders() {
+  public List<AccountHolder> getAccountHolders() {
     return Collections.unmodifiableList(accountHolders);
   }
 

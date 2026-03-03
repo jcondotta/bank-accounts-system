@@ -1,11 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.addholder;
 
 import com.jcondotta.bankaccounts.application.usecase.addholder.model.AddJointAccountHolderCommand;
-import com.jcondotta.bankaccounts.domain.enums.DocumentType;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
 import com.jcondotta.bankaccounts.domain.repository.BankAccountRepository;
-import com.jcondotta.bankaccounts.domain.value_objects.personal.DocumentNumber;
-import com.jcondotta.bankaccounts.domain.value_objects.personal.IdentityDocument;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +42,7 @@ public class AddJointAccountHolderUseCaseImpl implements AddJointAccountHolderUs
     bankAccountRepository.save(bankAccount);
 
     log.info(
-      "Joint account holder added successfully [bankAccountId={}]", bankAccount.id().value()
+      "Joint account holder added successfully [id={}]", bankAccount.getId().value()
     );
   }
 }

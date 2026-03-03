@@ -3,6 +3,7 @@ package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.AccountHolderDetails;
+import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -12,45 +13,67 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AccountHolderDetailsMapperTest {
 
-  private final AccountHolderDetailsMapper mapper = Mappers.getMapper(AccountHolderDetailsMapper.class);
+  private final AccountHolderDetailsMapper mapper = new AccountHolderDetailsMapperImpl(
+    Mappers.getMapper(PersonalInfoDetailsMapper.class),
+    Mappers.getMapper(ContactInfoDetailsMapper.class),
+    Mappers.getMapper(AddressDetailsMapper.class)
+  );
 
   @Test
   void shouldMapAccountHolderToDetails_whenAllFieldsArePresent() {
     var accountHolder = BankAccountTestFixture.createPrimaryHolder(AccountHolderFixtures.JEFFERSON, Instant.now());
 
-    AccountHolderDetails accountHolderDetails = mapper.toDetails(accountHolder);
+    AccountHolderDetails details = mapper.toDetails(accountHolder);
 
-    assertThat(accountHolderDetails.id()).isEqualTo(accountHolder.id().value());
+    assertThat(details)
+      .satisfies(holderDetails -> {
+        assertThat(holderDetails.id()).isEqualTo(accountHolder.getId().value());
+        assertThat(holderDetails.accountHolderType()).isEqualTo(accountHolder.getAccountHolderType());
+        assertThat(holderDetails.createdAt()).isEqualTo(accountHolder.getCreatedAt());
 
-    assertThat(accountHolderDetails.firstName()).isEqualTo(accountHolder.personalInfo().holderName().firstName());
-
-    assertThat(accountHolderDetails.lastName()).isEqualTo(accountHolder.personalInfo().holderName().lastName());
-
-    assertThat(accountHolderDetails.documentType())
-      .isEqualTo(accountHolder.personalInfo().identityDocument().type().toString());
-
-    assertThat(accountHolderDetails.documentNumber())
-      .isEqualTo(accountHolder.personalInfo().identityDocument().number().value());
-
-    assertThat(accountHolderDetails.dateOfBirth())
-      .isEqualTo(accountHolder.personalInfo().dateOfBirth().value());
-
-    assertThat(accountHolderDetails.email())
-      .isEqualTo(accountHolder.contactInfo().email().value());
-
-    assertThat(accountHolderDetails.phoneNumber())
-      .isEqualTo(accountHolder.contactInfo().phoneNumber().value());
-
-    assertThat(accountHolderDetails.accountHolderType())
-      .isEqualTo(accountHolder.accountHolderType());
-
-    assertThat(accountHolderDetails.createdAt())
-      .isEqualTo(accountHolder.createdAt());
+        assertPersonalInfo(holderDetails, accountHolder);
+        assertContactInfo(holderDetails, accountHolder);
+        assertAddress(holderDetails, accountHolder);
+      });
   }
 
   @Test
   void shouldReturnNull_whenAccountHolderIsNull() {
-    AccountHolderDetails result = mapper.toDetails(null);
-    assertThat(result).isNull();
+    assertThat(mapper.toDetails(null)).isNull();
+  }
+
+  private void assertPersonalInfo(AccountHolderDetails details, AccountHolder accountHolder) {
+    var personalInfo = details.personalInfo();
+    var source = accountHolder.getPersonalInfo();
+
+    assertThat(personalInfo.firstName()).isEqualTo(source.holderName().firstName());
+    assertThat(personalInfo.lastName()).isEqualTo(source.holderName().lastName());
+    assertThat(personalInfo.dateOfBirth()).isEqualTo(source.dateOfBirth().value());
+
+    assertThat(personalInfo.identityDocument().country())
+      .isEqualTo(source.identityDocument().country().name());
+    assertThat(personalInfo.identityDocument().type())
+      .isEqualTo(source.identityDocument().type().name());
+    assertThat(personalInfo.identityDocument().number())
+      .isEqualTo(source.identityDocument().number().value());
+  }
+
+  private void assertContactInfo(AccountHolderDetails details, AccountHolder accountHolder) {
+    var contactInfo = details.contactInfo();
+    var source = accountHolder.getContactInfo();
+
+    assertThat(contactInfo.email()).isEqualTo(source.email().value());
+    assertThat(contactInfo.phoneNumber()).isEqualTo(source.phoneNumber().value());
+  }
+
+  private void assertAddress(AccountHolderDetails details, AccountHolder accountHolder) {
+    var address = details.address();
+    var source = accountHolder.getAddress();
+
+    assertThat(address.street()).isEqualTo(source.street().value());
+    assertThat(address.streetNumber()).isEqualTo(source.streetNumber().value());
+    assertThat(address.addressComplement()).isEqualTo(source.complement().value());
+    assertThat(address.postalCode()).isEqualTo(source.postalCode().value());
+    assertThat(address.city()).isEqualTo(source.city().value());
   }
 }

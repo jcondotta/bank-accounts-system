@@ -43,7 +43,7 @@ class AddJointAccountHolderCommandTest {
         ADDRESS
       ))
       .isInstanceOf(NullPointerException.class)
-      .hasMessage("bankAccountId must not be null");
+      .hasMessage("id must not be null");
   }
 
   @Test

@@ -37,16 +37,16 @@ class ActivateBankAccountUseCaseImplTest {
     var bankAccount = BankAccountTestFixture.openPendingAccount(AccountHolderFixtures.JEFFERSON);
     bankAccount.pullEvents();
 
-    when(bankAccountRepository.findById(bankAccount.id()))
+    when(bankAccountRepository.findById(bankAccount.getId()))
       .thenReturn(Optional.of(bankAccount));
 
-    var command = new ActivateBankAccountCommand(bankAccount.id());
+    var command = new ActivateBankAccountCommand(bankAccount.getId());
 
     useCase.execute(command);
 
-    assertThat(bankAccount.accountStatus()).isEqualTo(AccountStatus.ACTIVE);
+    assertThat(bankAccount.getAccountStatus()).isEqualTo(AccountStatus.ACTIVE);
 
-    verify(bankAccountRepository).findById(bankAccount.id());
+    verify(bankAccountRepository).findById(bankAccount.getId());
     verify(bankAccountRepository).save(bankAccount);
     verifyNoMoreInteractions(bankAccountRepository);
   }

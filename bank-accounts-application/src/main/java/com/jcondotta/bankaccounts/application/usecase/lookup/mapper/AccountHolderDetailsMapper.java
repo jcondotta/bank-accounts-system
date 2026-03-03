@@ -5,18 +5,19 @@ import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+  uses = {
+    PersonalInfoDetailsMapper.class,
+    ContactInfoDetailsMapper.class,
+    AddressDetailsMapper.class
+  },
+  injectionStrategy = org.mapstruct.InjectionStrategy.CONSTRUCTOR)
 public interface AccountHolderDetailsMapper {
-
-  @Mapping(target = "id", expression = "java(accountHolder.id().value())")
-  @Mapping(target = "firstName", expression = "java(accountHolder.personalInfo().holderName().firstName())")
-  @Mapping(target = "lastName", expression = "java(accountHolder.personalInfo().holderName().lastName())")
-  @Mapping(target = "documentType", expression = "java(accountHolder.personalInfo().identityDocument().type().name())")
-  @Mapping(target = "documentNumber", expression = "java(accountHolder.personalInfo().identityDocument().number().value())")
-  @Mapping(target = "dateOfBirth", expression = "java(accountHolder.personalInfo().dateOfBirth().value())")
-  @Mapping(target = "email", expression = "java(accountHolder.contactInfo().email().value())")
-  @Mapping(target = "phoneNumber", expression = "java(accountHolder.contactInfo().phoneNumber().value())")
-  @Mapping(target = "accountHolderType", expression = "java(accountHolder.accountHolderType())")
-  @Mapping(target = "createdAt", expression = "java(accountHolder.createdAt())")
+  @Mapping(target = "id", source = "id.value")
+  @Mapping(target = "personalInfo", source = "personalInfo")
+  @Mapping(target = "contactInfo", source = "contactInfo")
+  @Mapping(target = "address", source = "address")
+  @Mapping(target = "accountHolderType", source = "accountHolderType")
+  @Mapping(target = "createdAt", source = "createdAt")
   AccountHolderDetails toDetails(AccountHolder accountHolder);
 }

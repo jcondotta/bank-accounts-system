@@ -36,7 +36,7 @@ class BankAccountActivateTest {
     bankAccount.pullEvents();
 
     bankAccount.activate();
-    assertThat(bankAccount.accountStatus().isActive()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
 
     var events = bankAccount.pullEvents();
 
@@ -44,7 +44,7 @@ class BankAccountActivateTest {
       .hasSize(1)
       .singleElement()
       .isInstanceOfSatisfying(BankAccountActivatedEvent.class, event -> {
-        assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
+        assertThat(event.bankAccountId()).isEqualTo(bankAccount.getId());
         assertThat(event.occurredAt()).isNotNull();
       });
   }
@@ -56,7 +56,7 @@ class BankAccountActivateTest {
     bankAccount.activate();
     bankAccount.activate();
 
-    assertThat(bankAccount.accountStatus().isActive()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
   }
 
   @ParameterizedTest

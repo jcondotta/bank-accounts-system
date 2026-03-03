@@ -37,17 +37,17 @@ class BlockBankAccountUseCaseImplTest {
     var bankAccount = BankAccountTestFixture.openActiveAccount(AccountHolderFixtures.JEFFERSON);
     bankAccount.pullEvents();
 
-    when(bankAccountRepository.findById(bankAccount.id()))
+    when(bankAccountRepository.findById(bankAccount.getId()))
       .thenReturn(Optional.of(bankAccount));
 
-    var command = new BlockBankAccountCommand(bankAccount.id());
+    var command = new BlockBankAccountCommand(bankAccount.getId());
 
     useCase.execute(command);
 
-    assertThat(bankAccount.accountStatus())
+    assertThat(bankAccount.getAccountStatus())
       .isEqualTo(AccountStatus.BLOCKED);
 
-    verify(bankAccountRepository).findById(bankAccount.id());
+    verify(bankAccountRepository).findById(bankAccount.getId());
     verify(bankAccountRepository).save(bankAccount);
     verifyNoMoreInteractions(bankAccountRepository);
   }

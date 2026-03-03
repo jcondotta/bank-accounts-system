@@ -26,17 +26,17 @@ class BankAccountAddJointAccountHolderTest {
       JOINT_ACCOUNT_HOLDER_1.address()
     );
 
-    assertThat(bankAccount.accountHolders())
+    assertThat(bankAccount.getAccountHolders())
       .hasSize(2)
       .filteredOn(AccountHolder::isJoint)
       .hasSize(1);
 
     var jointHolder = bankAccount.jointAccountHolders().getFirst();
 
-    assertThat(jointHolder.personalInfo()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.personalInfo());
-    assertThat(jointHolder.contactInfo()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.contactInfo());
-    assertThat(jointHolder.address()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.address());
-    assertThat(jointHolder.createdAt()).isNotNull();
+    assertThat(jointHolder.getPersonalInfo()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.personalInfo());
+    assertThat(jointHolder.getContactInfo()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.contactInfo());
+    assertThat(jointHolder.getAddress()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.address());
+    assertThat(jointHolder.getCreatedAt()).isNotNull();
 
     var events = bankAccount.pullEvents();
 
@@ -44,8 +44,8 @@ class BankAccountAddJointAccountHolderTest {
       .hasSize(1)
       .singleElement()
       .isInstanceOfSatisfying(JointAccountHolderAddedEvent.class, event -> {
-        assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
-        assertThat(event.accountHolderId()).isEqualTo(jointHolder.id());
+        assertThat(event.bankAccountId()).isEqualTo(bankAccount.getId());
+        assertThat(event.accountHolderId()).isEqualTo(jointHolder.getId());
         assertThat(event.occurredAt()).isNotNull();
       });
 

@@ -7,6 +7,6 @@ import java.util.Objects;
 public record UnblockBankAccountCommand(BankAccountId bankAccountId) {
 
   public UnblockBankAccountCommand {
-    Objects.requireNonNull(bankAccountId, "bankAccountId must not be null");
+    Objects.requireNonNull(bankAccountId, "id must not be null");
   }
 }

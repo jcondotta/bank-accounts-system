@@ -32,7 +32,7 @@ public class UnblockBankAccountUseCaseImpl implements UnblockBankAccountUseCase 
     Objects.requireNonNull(command, "command must not be null");
 
     log.info(
-      "Unblocking bank account [bankAccountId={}]",
+      "Unblocking bank account [id={}]",
       command.bankAccountId().value()
     );
 
@@ -44,8 +44,8 @@ public class UnblockBankAccountUseCaseImpl implements UnblockBankAccountUseCase 
     bankAccountRepository.save(bankAccount);
 
     log.info(
-      "Bank account unblocked successfully [bankAccountId={}]",
-      bankAccount.id().value()
+      "Bank account unblocked successfully [id={}]",
+      bankAccount.getId().value()
     );
   }
 }

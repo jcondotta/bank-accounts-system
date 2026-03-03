@@ -1,8 +1,8 @@
-package com.jcondotta.bankaccounts.application.usecase.open;
+package com.jcondotta.bankaccounts.application.command.open;
 
 import com.jcondotta.bankaccounts.application.ports.output.facade.IbanGeneratorFacade;
-import com.jcondotta.bankaccounts.application.usecase.open.model.OpenBankAccountCommand;
-import com.jcondotta.bankaccounts.application.usecase.open.model.OpenBankAccountResult;
+import com.jcondotta.bankaccounts.application.command.open.model.OpenBankAccountCommand;
+import com.jcondotta.bankaccounts.application.command.open.model.OpenBankAccountResult;
 import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import com.jcondotta.bankaccounts.domain.repository.BankAccountRepository;
 import io.micrometer.observation.annotation.Observed;
@@ -48,9 +48,9 @@ public class OpenBankAccountUseCaseImpl implements OpenBankAccountUseCase {
 
     log.atInfo()
       .setMessage("Bank account created successfully.")
-      .addKeyValue("bankAccountId", bankAccount.id())
+      .addKeyValue("id", bankAccount.getId())
       .log();
 
-    return new OpenBankAccountResult(bankAccount.id(), bankAccount.createdAt());
+    return new OpenBankAccountResult(bankAccount.getId(), bankAccount.getCreatedAt());
   }
 }

@@ -65,27 +65,27 @@ public final class AccountHolder {
     return new AccountHolder(accountHolderId, personalInfo, contactInfo, address, accountHolderType, createdAt);
   }
 
-  public AccountHolderId id() {
+  public AccountHolderId getId() {
     return id;
   }
 
-  public PersonalInfo personalInfo() {
+  public PersonalInfo getPersonalInfo() {
     return personalInfo;
   }
 
-  public ContactInfo contactInfo() {
+  public ContactInfo getContactInfo() {
     return contactInfo;
   }
 
-  public Address address() {
+  public Address getAddress() {
     return address;
   }
 
-  public AccountHolderType accountHolderType() {
+  public AccountHolderType getAccountHolderType() {
     return accountHolderType;
   }
 
-  public Instant createdAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 

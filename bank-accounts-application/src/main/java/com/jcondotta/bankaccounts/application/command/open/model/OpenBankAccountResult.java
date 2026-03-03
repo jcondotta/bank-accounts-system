@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.application.usecase.open.model;
+package com.jcondotta.bankaccounts.application.command.open.model;
 
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 

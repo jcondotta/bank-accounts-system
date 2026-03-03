@@ -4,35 +4,46 @@ import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.AccountHolderDetails;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDetails;
-import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
 import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BankAccountDetailsMapperImplTest {
 
-  private static final BankAccountDetailsMapper mapper = new BankAccountDetailsMapperImpl(new AccountHolderDetailsMapperImpl());
+  private BankAccountDetailsMapper bankAccountMapper;
+
+  @BeforeEach
+  void setUp() {
+    var accountHolderMapper = new AccountHolderDetailsMapperImpl(
+      new PersonalInfoDetailsMapperImpl(new IdentityDocumentDetailsMapper() {
+      }),
+      new ContactInfoDetailsMapper() {
+      },
+      new AddressDetailsMapper() {}
+    );
+
+    bankAccountMapper = new BankAccountDetailsMapperImpl(accountHolderMapper);
+  }
 
   @Test
   void shouldMapBankAccount_whenOnlyPrimaryHolderIsPresent() {
     BankAccount bankAccount = BankAccountTestFixture.openPendingAccount(AccountHolderFixtures.JEFFERSON);
 
-    BankAccountDetails accountDetails = mapper.toDetails(bankAccount);
+    BankAccountDetails bankAccountDetails = bankAccountMapper.toDetails(bankAccount);
 
-    assertThat(accountDetails.bankAccountId()).isEqualTo(bankAccount.id());
-    assertThat(accountDetails.accountType()).isEqualTo(bankAccount.accountType());
-    assertThat(accountDetails.currency()).isEqualTo(bankAccount.currency());
-    assertThat(accountDetails.iban()).isEqualTo(bankAccount.iban());
-    assertThat(accountDetails.accountStatus()).isEqualTo(bankAccount.accountStatus());
-    assertThat(accountDetails.createdAt()).isNotNull();
+    assertThat(bankAccountDetails.id()).isEqualTo(bankAccount.getId().value());
+    assertThat(bankAccountDetails.accountType()).isEqualTo(bankAccount.getAccountType());
+    assertThat(bankAccountDetails.currency()).isEqualTo(bankAccount.getCurrency());
+    assertThat(bankAccountDetails.iban()).isEqualTo(bankAccount.getIban().value());
+    assertThat(bankAccountDetails.accountStatus()).isEqualTo(bankAccount.getAccountStatus());
+    assertThat(bankAccountDetails.createdAt()).isNotNull();
 
-    assertThat(accountDetails.accountHolders())
-      .hasSize(1)
-      .singleElement()
-      .satisfies(accountHolderDetails ->
-        assertMapping(bankAccount.primaryAccountHolder(), accountHolderDetails));
+    assertThat(bankAccountDetails.accountHolders())
+      .extracting(AccountHolderDetails::accountHolderType)
+      .containsExactly(AccountHolderType.PRIMARY);
   }
 
   @Test
@@ -45,50 +56,15 @@ class BankAccountDetailsMapperImplTest {
       AccountHolderFixtures.PATRIZIO.address()
     );
 
-    BankAccountDetails details = mapper.toDetails(bankAccount);
-    assertThat(details.accountHolders()).hasSize(2);
-
+    BankAccountDetails details = bankAccountMapper.toDetails(bankAccount);
     assertThat(details.accountHolders())
-      .filteredOn(holder -> holder.accountHolderType() == AccountHolderType.PRIMARY)
-      .singleElement()
-      .satisfies(primaryHolder -> assertMapping(bankAccount.primaryAccountHolder(), primaryHolder));
-
-    assertThat(details.accountHolders())
-      .filteredOn(holder -> holder.accountHolderType() == AccountHolderType.JOINT)
-      .singleElement()
-      .satisfies(jointHolder -> assertMapping(bankAccount.jointAccountHolders().getFirst(), jointHolder));
-  }
-
-  private void assertMapping(AccountHolder source, AccountHolderDetails target) {
-    assertThat(target.id()).isEqualTo(source.id().value());
-
-    assertThat(target.firstName())
-      .isEqualTo(source.personalInfo().holderName().firstName());
-
-    assertThat(target.lastName())
-      .isEqualTo(source.personalInfo().holderName().lastName());
-
-    assertThat(target.documentType())
-      .isEqualTo(source.personalInfo().identityDocument().type().name());
-
-    assertThat(target.documentNumber())
-      .isEqualTo(source.personalInfo().identityDocument().number().value());
-
-    assertThat(target.dateOfBirth())
-      .isEqualTo(source.personalInfo().dateOfBirth().value());
-
-    assertThat(target.email())
-      .isEqualTo(source.contactInfo().email().value());
-
-    assertThat(target.phoneNumber())
-      .isEqualTo(source.contactInfo().phoneNumber().value());
-
-    assertThat(target.accountHolderType()).isEqualTo(source.accountHolderType());
-    assertThat(target.createdAt()).isEqualTo(source.createdAt());
+      .hasSize(2)
+      .extracting(AccountHolderDetails::accountHolderType)
+      .containsExactlyInAnyOrder(AccountHolderType.PRIMARY, AccountHolderType.JOINT);
   }
 
   @Test
   void shouldReturnNull_whenBankAccountIsNull() {
-    assertThat(mapper.toDetails(null)).isNull();
+    assertThat(bankAccountMapper.toDetails(null)).isNull();
   }
 }

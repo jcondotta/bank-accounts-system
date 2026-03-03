@@ -30,7 +30,7 @@ public class ActivateBankAccountUseCaseImpl implements ActivateBankAccountUseCas
   public void execute(ActivateBankAccountCommand command) {
     Objects.requireNonNull(command, "command must not be null");
 
-    log.info("Activating bank account [bankAccountId={}]", command.bankAccountId().value());
+    log.info("Activating bank account [id={}]", command.bankAccountId().value());
 
     var bankAccount = bankAccountRepository.findById(command.bankAccountId())
       .orElseThrow(() -> new BankAccountNotFoundException(command.bankAccountId()));
@@ -39,7 +39,7 @@ public class ActivateBankAccountUseCaseImpl implements ActivateBankAccountUseCas
     bankAccountRepository.save(bankAccount);
 
     log.info(
-      "Bank account activated successfully [bankAccountId={}]", bankAccount.id().value()
+      "Bank account activated successfully [id={}]", bankAccount.getId().value()
     );
   }
 }

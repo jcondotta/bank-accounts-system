@@ -37,17 +37,17 @@ class CloseBankAccountUseCaseImplTest {
     var bankAccount = BankAccountTestFixture.openActiveAccount(AccountHolderFixtures.JEFFERSON);
     bankAccount.pullEvents();
 
-    when(bankAccountRepository.findById(bankAccount.id()))
+    when(bankAccountRepository.findById(bankAccount.getId()))
       .thenReturn(Optional.of(bankAccount));
 
-    var command = new CloseBankAccountCommand(bankAccount.id());
+    var command = new CloseBankAccountCommand(bankAccount.getId());
 
     useCase.execute(command);
 
-    assertThat(bankAccount.accountStatus())
+    assertThat(bankAccount.getAccountStatus())
       .isEqualTo(AccountStatus.CLOSED);
 
-    verify(bankAccountRepository).findById(bankAccount.id());
+    verify(bankAccountRepository).findById(bankAccount.getId());
     verify(bankAccountRepository).save(bankAccount);
     verifyNoMoreInteractions(bankAccountRepository);
   }

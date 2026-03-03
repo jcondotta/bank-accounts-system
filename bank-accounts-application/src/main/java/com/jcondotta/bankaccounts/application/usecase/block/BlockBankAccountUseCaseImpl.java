@@ -31,7 +31,7 @@ public class BlockBankAccountUseCaseImpl implements BlockBankAccountUseCase {
     Objects.requireNonNull(command, "command must not be null");
 
     log.info(
-      "Blocking bank account [bankAccountId={}]", command.bankAccountId().value()
+      "Blocking bank account [id={}]", command.bankAccountId().value()
     );
 
     var bankAccount = bankAccountRepository.findById(command.bankAccountId())
@@ -42,7 +42,7 @@ public class BlockBankAccountUseCaseImpl implements BlockBankAccountUseCase {
     bankAccountRepository.save(bankAccount);
 
     log.info(
-      "Bank account blocked successfully [bankAccountId={}]", bankAccount.id().value()
+      "Bank account blocked successfully [id={}]", bankAccount.getId().value()
     );
   }
 }

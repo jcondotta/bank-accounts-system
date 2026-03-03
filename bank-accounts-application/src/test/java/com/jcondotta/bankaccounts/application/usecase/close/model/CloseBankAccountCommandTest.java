@@ -20,6 +20,6 @@ class CloseBankAccountCommandTest {
   void shouldThrowNullPointerException_whenBankAccountIdIsNull() {
     assertThatThrownBy(() -> new CloseBankAccountCommand(null))
       .isInstanceOf(NullPointerException.class)
-      .hasMessage("bankAccountId must not be null");
+      .hasMessage("id must not be null");
   }
 }

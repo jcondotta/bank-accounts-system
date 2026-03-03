@@ -33,12 +33,12 @@ class AccountHolderRestoreTest {
       CREATED_AT
     );
 
-    assertThat(accountHolder.id()).isEqualTo(accountHolderId);
-    assertThat(accountHolder.personalInfo()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.personalInfo());
-    assertThat(accountHolder.contactInfo()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.contactInfo());
-    assertThat(accountHolder.address()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.address());
-    assertThat(accountHolder.accountHolderType()).isEqualTo(accountHolderType);
-    assertThat(accountHolder.createdAt()).isEqualTo(CREATED_AT);
+    assertThat(accountHolder.getId()).isEqualTo(accountHolderId);
+    assertThat(accountHolder.getPersonalInfo()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.personalInfo());
+    assertThat(accountHolder.getContactInfo()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.contactInfo());
+    assertThat(accountHolder.getAddress()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.address());
+    assertThat(accountHolder.getAccountHolderType()).isEqualTo(accountHolderType);
+    assertThat(accountHolder.getCreatedAt()).isEqualTo(CREATED_AT);
     assertThat(accountHolder.isPrimary()).isEqualTo(accountHolderType.isPrimary());
     assertThat(accountHolder.isJoint()).isEqualTo(accountHolderType.isJoint());
   }

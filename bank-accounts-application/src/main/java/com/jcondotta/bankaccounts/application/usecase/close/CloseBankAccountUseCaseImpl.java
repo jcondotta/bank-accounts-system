@@ -32,7 +32,7 @@ public class CloseBankAccountUseCaseImpl implements CloseBankAccountUseCase {
     Objects.requireNonNull(command, "command must not be null");
 
     log.info(
-      "Closing bank account [bankAccountId={}]",
+      "Closing bank account [id={}]",
       command.bankAccountId().value()
     );
 
@@ -44,8 +44,8 @@ public class CloseBankAccountUseCaseImpl implements CloseBankAccountUseCase {
     bankAccountRepository.save(bankAccount);
 
     log.info(
-      "Bank account closed successfully [bankAccountId={}]",
-      bankAccount.id().value()
+      "Bank account closed successfully [id={}]",
+      bankAccount.getId().value()
     );
   }
 }

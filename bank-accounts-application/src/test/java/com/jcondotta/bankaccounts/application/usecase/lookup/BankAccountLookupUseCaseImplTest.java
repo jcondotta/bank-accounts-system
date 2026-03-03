@@ -42,7 +42,7 @@ class BankAccountLookupUseCaseImplTest {
   void shouldReturnBankAccountDetails_whenBankAccountExists() {
     var bankAccount = BankAccountTestFixture.openPendingAccount(AccountHolderFixtures.JEFFERSON);
 
-    var bankAccountId = bankAccount.id();
+    var bankAccountId = bankAccount.getId();
 
     var expectedDetails = mock(BankAccountDetails.class);
 

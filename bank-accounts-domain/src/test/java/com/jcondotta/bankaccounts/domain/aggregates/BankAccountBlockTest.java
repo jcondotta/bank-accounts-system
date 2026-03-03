@@ -37,7 +37,7 @@ class BankAccountBlockTest {
 
     bankAccount.block();
 
-    assertThat(bankAccount.accountStatus().isBlocked()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isBlocked()).isTrue();
 
     var events = bankAccount.pullEvents();
 
@@ -45,7 +45,7 @@ class BankAccountBlockTest {
       .hasSize(1)
       .singleElement()
       .isInstanceOfSatisfying(BankAccountBlockedEvent.class, event -> {
-        assertThat(event.bankAccountId()).isEqualTo(bankAccount.id());
+        assertThat(event.bankAccountId()).isEqualTo(bankAccount.getId());
         assertThat(event.occurredAt()).isNotNull();
       });
   }
@@ -57,7 +57,7 @@ class BankAccountBlockTest {
     bankAccount.block();
     bankAccount.block();
 
-    assertThat(bankAccount.accountStatus().isBlocked()).isTrue();
+    assertThat(bankAccount.getAccountStatus().isBlocked()).isTrue();
   }
 
   @ParameterizedTest
