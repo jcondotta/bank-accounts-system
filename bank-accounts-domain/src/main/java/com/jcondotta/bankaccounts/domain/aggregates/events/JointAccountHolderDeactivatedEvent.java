@@ -1,24 +1,25 @@
-package com.jcondotta.bankaccounts.domain.events;
+package com.jcondotta.bankaccounts.domain.aggregates.events;
 
-import com.jcondotta.bankaccounts.domain.events.types.DomainEventType;
+import com.jcondotta.bankaccounts.domain.events.BankAccountEvent;
+import com.jcondotta.bankaccounts.domain.events.DomainEventType;
 import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.bankaccounts.domain.value_objects.EventId;
+import com.jcondotta.domain.events.EventId;
 
 import java.time.Instant;
 
 import static java.util.Objects.requireNonNull;
 
-public record JointAccountHolderAddedEvent(
+public record JointAccountHolderDeactivatedEvent(
   EventId eventId,
   BankAccountId bankAccountId,
   AccountHolderId accountHolderId,
   Instant occurredAt
 ) implements BankAccountEvent {
 
-  public JointAccountHolderAddedEvent {
+  public JointAccountHolderDeactivatedEvent {
     requireNonNull(eventId, DomainEventValidationErrors.EVENT_ID_NOT_NULL);
     requireNonNull(bankAccountId, BankAccountValidationErrors.ID_NOT_NULL);
     requireNonNull(accountHolderId, AccountHolderId.ACCOUNT_HOLDER_ID_NOT_PROVIDED);
@@ -27,6 +28,6 @@ public record JointAccountHolderAddedEvent(
 
   @Override
   public DomainEventType eventType() {
-    return DomainEventType.JOINT_ACCOUNT_HOLDER_ADDED;
+    return DomainEventType.JOINT_ACCOUNT_HOLDER_DEACTIVATED;
   }
 }

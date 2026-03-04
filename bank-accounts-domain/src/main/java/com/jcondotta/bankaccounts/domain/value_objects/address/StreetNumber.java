@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.domain.value_objects.address;
 
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.domain.exception.DomainValidationException;
 
-import static com.jcondotta.bankaccounts.domain.validation.DomainPreconditions.requiredNotBlank;
+import static com.jcondotta.domain.validation.DomainPreconditions.requiredNotBlank;
 
 public record StreetNumber(String value) {
 

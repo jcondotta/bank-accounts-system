@@ -1,14 +1,14 @@
-package com.jcondotta.bankaccounts.domain.events;
+package com.jcondotta.bankaccounts.domain.aggregates.events;
 
-import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.events.types.DomainEventType;
+import com.jcondotta.bankaccounts.domain.events.BankAccountEvent;
+import com.jcondotta.bankaccounts.domain.events.DomainEventType;
 import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.bankaccounts.domain.value_objects.EventId;
+import com.jcondotta.domain.events.EventId;
 
 import java.time.Instant;
 

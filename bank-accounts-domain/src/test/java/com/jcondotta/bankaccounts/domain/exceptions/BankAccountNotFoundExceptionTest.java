@@ -1,6 +1,7 @@
 package com.jcondotta.bankaccounts.domain.exceptions;
 
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.domain.exception.DomainNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

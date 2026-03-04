@@ -1,6 +1,6 @@
-package com.jcondotta.bankaccounts.domain.validation;
+package com.jcondotta.domain.validation;
 
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.domain.exception.DomainValidationException;
 
 public final class DomainPreconditions {
 

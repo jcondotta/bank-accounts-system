@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.domain.events.types;
+package com.jcondotta.bankaccounts.domain.events;
 
 public enum DomainEventType {
 
@@ -7,5 +7,6 @@ public enum DomainEventType {
   BANK_ACCOUNT_BLOCKED,
   BANK_ACCOUNT_UNBLOCKED,
   BANK_ACCOUNT_CLOSED,
-  JOINT_ACCOUNT_HOLDER_ADDED;
+  JOINT_ACCOUNT_HOLDER_ADDED,
+  JOINT_ACCOUNT_HOLDER_DEACTIVATED;
 }

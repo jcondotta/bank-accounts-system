@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.domain.exception.DomainValidationException;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;

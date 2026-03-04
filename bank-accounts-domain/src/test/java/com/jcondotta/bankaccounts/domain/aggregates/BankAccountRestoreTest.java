@@ -1,6 +1,7 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.arguments_provider.AccountTypeAndCurrencyArgumentsProvider;
+import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
@@ -75,7 +76,7 @@ class BankAccountRestoreTest {
       BankAccountTestFixture.VALID_IBAN,
       AccountStatus.ACTIVE,
       ACCOUNT_CREATED_AT,
-      List.of(primaryAccountHolder, jointAccountHolder)
+      List.of(jointAccountHolder, primaryAccountHolder)
     );
 
     assertThat(bankAccount).isNotNull();
@@ -88,7 +89,30 @@ class BankAccountRestoreTest {
     assertThat(bankAccount.pullEvents()).isEmpty();
     assertThat(bankAccount.getAccountHolders())
       .hasSize(2)
-      .containsExactlyInAnyOrder(primaryAccountHolder, jointAccountHolder);
+      .containsExactly(primaryAccountHolder, jointAccountHolder)
+      .extracting(AccountHolder::getAccountHolderType)
+      .containsExactly(AccountHolderType.PRIMARY, AccountHolderType.JOINT);
+  }
+
+  @Test
+  void shouldReturnOnlyActiveAccountHolders_whenAnyAccountHolderIsDeactivated() {
+    var primaryAccountHolder = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
+    var jointAccountHolder = BankAccountTestFixture.createJointHolder(JOINT_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
+
+    var bankAccount = BankAccount.restore(
+      BankAccountId.newId(),
+      AccountType.CHECKING,
+      Currency.EUR,
+      BankAccountTestFixture.VALID_IBAN,
+      AccountStatus.ACTIVE,
+      ACCOUNT_CREATED_AT,
+      List.of(primaryAccountHolder, jointAccountHolder)
+    );
+
+    jointAccountHolder.deactivate();
+
+    assertThat(bankAccount.getAccountHolders())
+      .containsExactly(primaryAccountHolder);
   }
 
   @Test

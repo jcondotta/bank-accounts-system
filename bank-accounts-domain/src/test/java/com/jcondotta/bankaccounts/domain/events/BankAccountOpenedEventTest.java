@@ -1,12 +1,12 @@
 package com.jcondotta.bankaccounts.domain.events;
 
+import com.jcondotta.bankaccounts.domain.aggregates.events.BankAccountOpenedEvent;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.events.types.DomainEventType;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.bankaccounts.domain.value_objects.EventId;
+import com.jcondotta.domain.events.EventId;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;

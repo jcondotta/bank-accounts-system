@@ -2,7 +2,7 @@ package com.jcondotta.bankaccounts.domain.policies;
 
 import com.jcondotta.bankaccounts.domain.enums.DocumentCountry;
 import com.jcondotta.bankaccounts.domain.enums.DocumentType;
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.domain.exception.DomainValidationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.domain.value_objects.personal;
 
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.domain.exception.DomainValidationException;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

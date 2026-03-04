@@ -3,7 +3,7 @@ package com.jcondotta.bankaccounts.domain.aggregates;
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.events.BankAccountClosedEvent;
+import com.jcondotta.bankaccounts.domain.aggregates.events.BankAccountClosedEvent;
 import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountStateTransitionException;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;

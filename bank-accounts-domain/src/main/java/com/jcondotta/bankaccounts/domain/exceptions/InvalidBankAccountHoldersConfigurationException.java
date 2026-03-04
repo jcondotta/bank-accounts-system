@@ -1,5 +1,7 @@
 package com.jcondotta.bankaccounts.domain.exceptions;
 
+import com.jcondotta.domain.exception.DomainRuleValidationException;
+
 public class InvalidBankAccountHoldersConfigurationException extends DomainRuleValidationException {
 
   public InvalidBankAccountHoldersConfigurationException(int actual, int min, int max) {

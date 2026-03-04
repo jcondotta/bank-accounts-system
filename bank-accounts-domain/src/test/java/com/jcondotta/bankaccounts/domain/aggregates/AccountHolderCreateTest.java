@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.domain.exception.DomainValidationException;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
 import org.junit.jupiter.api.Test;
@@ -35,6 +35,8 @@ class AccountHolderCreateTest {
     assertThat(accountHolder.getAccountHolderType()).isEqualTo(accountHolderType);
     assertThat(accountHolder.isPrimary()).isEqualTo(accountHolderType.isPrimary());
     assertThat(accountHolder.isJoint()).isEqualTo(accountHolderType.isJoint());
+    assertThat(accountHolder.isActive()).isTrue();
+    assertThat(accountHolder.getDeactivatedAt()).isNull();
   }
 
   @Test
@@ -49,6 +51,7 @@ class AccountHolderCreateTest {
     assertHolderMatchesFixture(accountHolder, PRIMARY_ACCOUNT_HOLDER);
     assertThat(accountHolder.isPrimary()).isTrue();
     assertThat(accountHolder.isJoint()).isFalse();
+    assertThat(accountHolder.isActive()).isTrue();
   }
 
   @Test
@@ -63,6 +66,7 @@ class AccountHolderCreateTest {
     assertHolderMatchesFixture(accountHolder, JOINT_ACCOUNT_HOLDER);
     assertThat(accountHolder.isJoint()).isTrue();
     assertThat(accountHolder.isPrimary()).isFalse();
+    assertThat(accountHolder.isActive()).isTrue();
   }
 
   @Test

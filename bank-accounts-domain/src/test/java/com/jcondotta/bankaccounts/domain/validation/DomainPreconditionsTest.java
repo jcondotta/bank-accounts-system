@@ -1,6 +1,7 @@
 package com.jcondotta.bankaccounts.domain.validation;
 
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.domain.exception.DomainValidationException;
+import com.jcondotta.domain.validation.DomainPreconditions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;

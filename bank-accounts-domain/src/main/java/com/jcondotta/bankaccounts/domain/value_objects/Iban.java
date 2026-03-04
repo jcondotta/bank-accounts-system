@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.domain.value_objects;
 
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.domain.exception.DomainValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.checkdigit.IBANCheckDigit;
 

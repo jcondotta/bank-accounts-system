@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.domain.value_objects.contact;
 
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
-import com.jcondotta.bankaccounts.domain.validation.DomainPreconditions;
+import com.jcondotta.domain.exception.DomainValidationException;
+import com.jcondotta.domain.validation.DomainPreconditions;
 
 public record PhoneNumber(String value) {
 

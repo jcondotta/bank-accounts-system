@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.domain.value_objects.address;
 
 import com.jcondotta.bankaccounts.domain.arguments_provider.BlankValuesArgumentProvider;
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.domain.exception.DomainValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;

@@ -1,22 +1,23 @@
-package com.jcondotta.bankaccounts.domain.events;
+package com.jcondotta.bankaccounts.domain.aggregates.events;
 
-import com.jcondotta.bankaccounts.domain.events.types.DomainEventType;
+import com.jcondotta.bankaccounts.domain.events.BankAccountEvent;
+import com.jcondotta.bankaccounts.domain.events.DomainEventType;
 import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.bankaccounts.domain.value_objects.EventId;
+import com.jcondotta.domain.events.EventId;
 
 import java.time.Instant;
 
 import static java.util.Objects.requireNonNull;
 
-public record BankAccountClosedEvent(
+public record BankAccountUnblockedEvent(
   EventId eventId,
   BankAccountId bankAccountId,
   Instant occurredAt
 ) implements BankAccountEvent {
 
-  public BankAccountClosedEvent {
+  public BankAccountUnblockedEvent {
     requireNonNull(eventId, DomainEventValidationErrors.EVENT_ID_NOT_NULL);
     requireNonNull(bankAccountId, BankAccountValidationErrors.ID_NOT_NULL);
     requireNonNull(occurredAt, DomainEventValidationErrors.EVENT_OCCURRED_AT_NOT_NULL);
@@ -24,6 +25,6 @@ public record BankAccountClosedEvent(
 
   @Override
   public DomainEventType eventType() {
-    return DomainEventType.BANK_ACCOUNT_CLOSED;
+    return DomainEventType.BANK_ACCOUNT_UNBLOCKED;
   }
 }

@@ -1,6 +1,6 @@
-package com.jcondotta.bankaccounts.domain.value_objects;
+package com.jcondotta.domain.events;
 
-import com.jcondotta.bankaccounts.domain.validation.DomainPreconditions;
+import com.jcondotta.domain.validation.DomainPreconditions;
 
 import java.util.UUID;
 

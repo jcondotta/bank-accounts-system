@@ -1,6 +1,7 @@
-package com.jcondotta.bankaccounts.domain.exceptions;
+package com.jcondotta.domain.exception;
 
 public class DomainValidationException extends DomainException {
+
   public DomainValidationException(String message) {
     super(message);
   }

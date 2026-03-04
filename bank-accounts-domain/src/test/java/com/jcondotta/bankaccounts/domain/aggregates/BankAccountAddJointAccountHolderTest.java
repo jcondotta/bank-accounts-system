@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
-import com.jcondotta.bankaccounts.domain.events.JointAccountHolderAddedEvent;
+import com.jcondotta.bankaccounts.domain.aggregates.events.JointAccountHolderAddedEvent;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotActiveException;
 import com.jcondotta.bankaccounts.domain.exceptions.MaxJointAccountHoldersExceededException;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;

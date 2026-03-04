@@ -1,10 +1,11 @@
 package com.jcondotta.bankaccounts.domain.value_objects;
 
-import com.jcondotta.bankaccounts.domain.validation.DomainPreconditions;
+import com.jcondotta.domain.model.EntityId;
+import com.jcondotta.domain.validation.DomainPreconditions;
 
 import java.util.UUID;
 
-public record AccountHolderId(UUID value) {
+public record AccountHolderId(UUID value) implements EntityId<UUID> {
 
   public static final String ACCOUNT_HOLDER_ID_NOT_PROVIDED = "Account holder id must be provided.";
 

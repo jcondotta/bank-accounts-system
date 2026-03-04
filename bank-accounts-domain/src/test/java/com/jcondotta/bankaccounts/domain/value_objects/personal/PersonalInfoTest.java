@@ -1,12 +1,5 @@
 package com.jcondotta.bankaccounts.domain.value_objects.personal;
 
-import com.jcondotta.bankaccounts.domain.enums.DocumentType;
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.time.Month;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

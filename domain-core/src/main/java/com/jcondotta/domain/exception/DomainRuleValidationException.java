@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.domain.exceptions;
+package com.jcondotta.domain.exception;
 
 public abstract class DomainRuleValidationException extends DomainException {
 

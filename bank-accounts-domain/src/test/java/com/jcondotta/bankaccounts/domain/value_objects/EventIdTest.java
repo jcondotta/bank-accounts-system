@@ -1,6 +1,7 @@
 package com.jcondotta.bankaccounts.domain.value_objects;
 
-import com.jcondotta.bankaccounts.domain.exceptions.DomainValidationException;
+import com.jcondotta.domain.events.EventId;
+import com.jcondotta.domain.exception.DomainValidationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

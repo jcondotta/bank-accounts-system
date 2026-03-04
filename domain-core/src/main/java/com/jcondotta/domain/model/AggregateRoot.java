@@ -1,22 +1,16 @@
-package com.jcondotta.bankaccounts.domain.aggregates;
+package com.jcondotta.domain.model;
 
-import com.jcondotta.bankaccounts.domain.events.DomainEvent;
-import com.jcondotta.bankaccounts.domain.value_objects.AggregateId;
+import com.jcondotta.domain.events.DomainEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AggregateRoot<ID extends AggregateId> {
+public abstract class AggregateRoot<ID extends EntityId<?>> extends Entity<ID> {
 
-  private final ID id;
   private final List<DomainEvent> events = new ArrayList<>();
 
   protected AggregateRoot(ID id) {
-    this.id = id;
-  }
-
-  public ID getId() {
-    return id;
+    super(id);
   }
 
   protected void registerEvent(DomainEvent event) {

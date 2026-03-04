@@ -1,6 +1,7 @@
 package com.jcondotta.bankaccounts.domain.exceptions;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
+import com.jcondotta.domain.exception.DomainRuleValidationException;
 
 public final class BankAccountNotActiveException extends DomainRuleValidationException {
 

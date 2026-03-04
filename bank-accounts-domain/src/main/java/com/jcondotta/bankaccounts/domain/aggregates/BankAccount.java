@@ -1,19 +1,17 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
+import com.jcondotta.bankaccounts.domain.aggregates.events.*;
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.events.*;
-import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotActiveException;
-import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountHoldersConfigurationException;
-import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountStateTransitionException;
-import com.jcondotta.bankaccounts.domain.exceptions.MaxJointAccountHoldersExceededException;
+import com.jcondotta.bankaccounts.domain.exceptions.*;
+import com.jcondotta.domain.model.AggregateRoot;
 import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.bankaccounts.domain.value_objects.EventId;
+import com.jcondotta.domain.events.EventId;
 import com.jcondotta.bankaccounts.domain.value_objects.Iban;
 import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
 import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
@@ -21,10 +19,10 @@ import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import static com.jcondotta.bankaccounts.domain.validation.DomainPreconditions.required;
+import static com.jcondotta.domain.validation.DomainPreconditions.required;
 
 public final class BankAccount extends AggregateRoot<BankAccountId> {
 
@@ -191,6 +189,16 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     this.registerEvent(new JointAccountHolderAddedEvent(EventId.newId(), this.getId(), accountHolder.getId(), now));
   }
 
+  public void deactivateAccountHolder(AccountHolderId accountHolderId) {
+    var accountHolder = findAccountHolder(accountHolderId);
+
+    if (accountHolder.isPrimary()) {
+      throw new CannotDeactivatePrimaryAccountHolderException();
+    }
+
+    accountHolder.deactivate();
+  }
+
   public void close() {
     if (accountStatus == AccountStatus.CLOSED) {
       return;
@@ -218,6 +226,13 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
       .toList();
   }
 
+  private AccountHolder findAccountHolder(AccountHolderId accountHolderId) {
+    return accountHolders.stream()
+      .filter(holder -> holder.getId().equals(accountHolderId))
+      .findFirst()
+      .orElseThrow(() -> new AccountHolderNotFoundException(accountHolderId));
+  }
+
   public AccountType getAccountType() {
     return accountType;
   }
@@ -239,7 +254,12 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
   }
 
   public List<AccountHolder> getAccountHolders() {
-    return Collections.unmodifiableList(accountHolders);
+    return accountHolders.stream()
+      .filter(AccountHolder::isActive)
+      .sorted(Comparator.comparing(
+        holder -> holder.getAccountHolderType() == AccountHolderType.PRIMARY ? 0 : 1
+      ))
+      .toList();
   }
 
   private void validateAccountHoldersConfiguration(List<AccountHolder> holders) {
