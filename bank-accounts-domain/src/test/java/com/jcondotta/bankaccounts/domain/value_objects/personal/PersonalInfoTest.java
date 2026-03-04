@@ -1,8 +1,5 @@
 package com.jcondotta.bankaccounts.domain.value_objects.personal;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 class PersonalInfoTest {
 
 //  private static final AccountHolderName VALID_NAME = AccountHolderName.of("Jefferson", "Condotta");

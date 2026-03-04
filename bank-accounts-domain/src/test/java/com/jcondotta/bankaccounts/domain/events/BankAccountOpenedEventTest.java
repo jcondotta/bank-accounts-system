@@ -1,6 +1,5 @@
 package com.jcondotta.bankaccounts.domain.events;
 
-import com.jcondotta.bankaccounts.domain.aggregates.events.BankAccountOpenedEvent;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;

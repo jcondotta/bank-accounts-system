@@ -1,14 +1,14 @@
-package com.jcondotta.bankaccounts.domain.aggregates.events;
+package com.jcondotta.bankaccounts.domain.events;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.events.BankAccountEvent;
-import com.jcondotta.bankaccounts.domain.events.DomainEventType;
 import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.domain.events.DomainEvent;
 import com.jcondotta.domain.events.EventId;
+import com.jcondotta.domain.model.EntityId;
 
 import java.time.Instant;
 
@@ -21,7 +21,7 @@ public record BankAccountOpenedEvent(
   Currency currency,
   AccountHolderId primaryAccountHolderId,
   Instant occurredAt
-) implements BankAccountEvent {
+) implements DomainEvent {
 
   public BankAccountOpenedEvent {
     requireNonNull(eventId, DomainEventValidationErrors.EVENT_ID_NOT_NULL);
@@ -33,7 +33,7 @@ public record BankAccountOpenedEvent(
   }
 
   @Override
-  public DomainEventType eventType() {
-    return DomainEventType.BANK_ACCOUNT_OPENED;
+  public EntityId<?> aggregateId() {
+    return bankAccountId;
   }
 }

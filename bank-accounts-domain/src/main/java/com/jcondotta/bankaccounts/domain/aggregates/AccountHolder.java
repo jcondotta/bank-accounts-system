@@ -1,11 +1,11 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
-import com.jcondotta.domain.model.Entity;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
 import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
 import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
+import com.jcondotta.domain.model.Entity;
 
 import java.time.Instant;
 

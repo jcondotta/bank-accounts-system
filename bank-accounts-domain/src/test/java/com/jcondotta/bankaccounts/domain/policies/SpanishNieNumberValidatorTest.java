@@ -2,8 +2,8 @@ package com.jcondotta.bankaccounts.domain.policies;
 
 import com.jcondotta.bankaccounts.domain.enums.DocumentCountry;
 import com.jcondotta.bankaccounts.domain.enums.DocumentType;
-import com.jcondotta.domain.exception.DomainValidationException;
 import com.jcondotta.bankaccounts.domain.value_objects.personal.DocumentNumber;
+import com.jcondotta.domain.exception.DomainValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

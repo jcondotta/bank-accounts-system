@@ -1,30 +1,30 @@
-package com.jcondotta.bankaccounts.domain.aggregates.events;
+package com.jcondotta.bankaccounts.domain.events;
 
-import com.jcondotta.bankaccounts.domain.events.BankAccountEvent;
-import com.jcondotta.bankaccounts.domain.events.DomainEventType;
 import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.domain.events.DomainEvent;
 import com.jcondotta.domain.events.EventId;
+import com.jcondotta.domain.model.EntityId;
 
 import java.time.Instant;
 
 import static java.util.Objects.requireNonNull;
 
-public record BankAccountActivatedEvent(
+public record BankAccountClosedEvent(
   EventId eventId,
   BankAccountId bankAccountId,
   Instant occurredAt
-) implements BankAccountEvent {
+) implements DomainEvent {
 
-  public BankAccountActivatedEvent {
+  public BankAccountClosedEvent {
     requireNonNull(eventId, DomainEventValidationErrors.EVENT_ID_NOT_NULL);
     requireNonNull(bankAccountId, BankAccountValidationErrors.ID_NOT_NULL);
     requireNonNull(occurredAt, DomainEventValidationErrors.EVENT_OCCURRED_AT_NOT_NULL);
   }
 
   @Override
-  public DomainEventType eventType() {
-    return DomainEventType.BANK_ACCOUNT_ACTIVATED;
+  public EntityId<?> aggregateId() {
+    return bankAccountId;
   }
 }

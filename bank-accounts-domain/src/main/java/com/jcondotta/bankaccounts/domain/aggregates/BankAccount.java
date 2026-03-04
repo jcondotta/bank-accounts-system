@@ -1,21 +1,21 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
-import com.jcondotta.bankaccounts.domain.aggregates.events.*;
 import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
+import com.jcondotta.bankaccounts.domain.events.*;
 import com.jcondotta.bankaccounts.domain.exceptions.*;
-import com.jcondotta.domain.model.AggregateRoot;
 import com.jcondotta.bankaccounts.domain.validation.BankAccountValidationErrors;
 import com.jcondotta.bankaccounts.domain.validation.DomainValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.domain.events.EventId;
 import com.jcondotta.bankaccounts.domain.value_objects.Iban;
 import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
 import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
 import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
+import com.jcondotta.domain.events.EventId;
+import com.jcondotta.domain.model.AggregateRoot;
 
 import java.time.Instant;
 import java.util.ArrayList;

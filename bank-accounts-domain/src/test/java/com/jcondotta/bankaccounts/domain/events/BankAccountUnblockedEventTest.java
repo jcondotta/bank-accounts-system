@@ -1,6 +1,5 @@
 package com.jcondotta.bankaccounts.domain.events;
 
-import com.jcondotta.bankaccounts.domain.aggregates.events.BankAccountUnblockedEvent;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.domain.events.EventId;

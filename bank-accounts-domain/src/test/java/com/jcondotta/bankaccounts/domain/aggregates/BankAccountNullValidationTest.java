@@ -6,8 +6,6 @@ import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.domain.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.domain.value_objects.Iban;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 class BankAccountNullValidationTest {
 
   private static final AccountHolderFixtures PRIMARY_ACCOUNT_HOLDER = AccountHolderFixtures.JEFFERSON;
