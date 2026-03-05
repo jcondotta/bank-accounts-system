@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
-import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
+import com.jcondotta.bankaccounts.domain.enums.HolderType;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
@@ -20,8 +20,8 @@ class AccountHolderRestoreTest {
   private static final Instant CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
 
   @ParameterizedTest
-  @EnumSource(AccountHolderType.class)
-  void shouldRestoreAccountHolderWithAllAttributes(AccountHolderType accountHolderType) {
+  @EnumSource(HolderType.class)
+  void shouldRestoreAccountHolderWithAllAttributes(HolderType holderType) {
     var accountHolderId = AccountHolderId.newId();
 
     var accountHolder = AccountHolder.restore(
@@ -29,7 +29,7 @@ class AccountHolderRestoreTest {
       PRIMARY_ACCOUNT_HOLDER.personalInfo(),
       PRIMARY_ACCOUNT_HOLDER.contactInfo(),
       PRIMARY_ACCOUNT_HOLDER.address(),
-      accountHolderType,
+      holderType,
       CREATED_AT
     );
 
@@ -37,10 +37,10 @@ class AccountHolderRestoreTest {
     assertThat(accountHolder.getPersonalInfo()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.personalInfo());
     assertThat(accountHolder.getContactInfo()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.contactInfo());
     assertThat(accountHolder.getAddress()).isEqualTo(PRIMARY_ACCOUNT_HOLDER.address());
-    assertThat(accountHolder.getAccountHolderType()).isEqualTo(accountHolderType);
+    assertThat(accountHolder.getAccountHolderType()).isEqualTo(holderType);
     assertThat(accountHolder.getCreatedAt()).isEqualTo(CREATED_AT);
-    assertThat(accountHolder.isPrimary()).isEqualTo(accountHolderType.isPrimary());
-    assertThat(accountHolder.isJoint()).isEqualTo(accountHolderType.isJoint());
+    assertThat(accountHolder.isPrimary()).isEqualTo(holderType.isPrimary());
+    assertThat(accountHolder.isJoint()).isEqualTo(holderType.isJoint());
   }
 
   @Test
@@ -50,7 +50,7 @@ class AccountHolderRestoreTest {
       PRIMARY_ACCOUNT_HOLDER.personalInfo(),
       PRIMARY_ACCOUNT_HOLDER.contactInfo(),
       PRIMARY_ACCOUNT_HOLDER.address(),
-      AccountHolderType.PRIMARY,
+      HolderType.PRIMARY,
       CREATED_AT
     ))
       .isInstanceOf(DomainValidationException.class)
@@ -64,7 +64,7 @@ class AccountHolderRestoreTest {
       null,
       PRIMARY_ACCOUNT_HOLDER.contactInfo(),
       PRIMARY_ACCOUNT_HOLDER.address(),
-      AccountHolderType.PRIMARY,
+      HolderType.PRIMARY,
       CREATED_AT
     ))
       .isInstanceOf(DomainValidationException.class)
@@ -78,7 +78,7 @@ class AccountHolderRestoreTest {
       PRIMARY_ACCOUNT_HOLDER.personalInfo(),
       null,
       PRIMARY_ACCOUNT_HOLDER.address(),
-      AccountHolderType.PRIMARY,
+      HolderType.PRIMARY,
       CREATED_AT
     ))
       .isInstanceOf(DomainValidationException.class)
@@ -92,7 +92,7 @@ class AccountHolderRestoreTest {
       PRIMARY_ACCOUNT_HOLDER.personalInfo(),
       PRIMARY_ACCOUNT_HOLDER.contactInfo(),
       null,
-      AccountHolderType.PRIMARY,
+      HolderType.PRIMARY,
       CREATED_AT
     ))
       .isInstanceOf(DomainValidationException.class)
@@ -120,7 +120,7 @@ class AccountHolderRestoreTest {
       PRIMARY_ACCOUNT_HOLDER.personalInfo(),
       PRIMARY_ACCOUNT_HOLDER.contactInfo(),
       PRIMARY_ACCOUNT_HOLDER.address(),
-      AccountHolderType.PRIMARY,
+      HolderType.PRIMARY,
       null
     ))
       .isInstanceOf(DomainValidationException.class)

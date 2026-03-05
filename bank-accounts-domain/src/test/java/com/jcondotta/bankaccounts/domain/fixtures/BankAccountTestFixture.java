@@ -2,7 +2,7 @@ package com.jcondotta.bankaccounts.domain.fixtures;
 
 import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
 import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
-import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
+import com.jcondotta.bankaccounts.domain.enums.HolderType;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
@@ -53,7 +53,7 @@ public final class BankAccountTestFixture {
       fixtures.personalInfo(),
       fixtures.contactInfo(),
       fixtures.address(),
-      AccountHolderType.PRIMARY,
+      HolderType.PRIMARY,
       createdAt
     );
   }
@@ -68,7 +68,7 @@ public final class BankAccountTestFixture {
       fixtures.personalInfo(),
       fixtures.contactInfo(),
       fixtures.address(),
-      AccountHolderType.JOINT,
+      HolderType.JOINT,
       createdAt
     );
   }

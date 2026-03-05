@@ -1,17 +1,18 @@
 package com.jcondotta.domain.events;
 
 
-import com.jcondotta.domain.model.EntityId;
+import com.jcondotta.domain.identity.EventId;
+import com.jcondotta.domain.identity.AggregateId;
 
 import java.time.Instant;
 
-public interface DomainEvent {
+public interface DomainEvent<A extends AggregateId<?>> {
 
   EventId eventId();
-  EntityId<?> aggregateId();
+  A aggregateId();
   Instant occurredAt();
 
-  default String eventName() {
-    return this.getClass().getSimpleName();
+  default int version() {
+    return 1;
   }
 }

@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountHoldersConfigurationException;
-import com.jcondotta.bankaccounts.domain.exceptions.MaxJointAccountHoldersExceededException;
+import com.jcondotta.bankaccounts.domain.exceptions.MaxJointHoldersExceededException;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.domain.fixtures.BankAccountTestFixture;
 import com.jcondotta.domain.exception.DomainValidationException;
@@ -53,7 +53,7 @@ class AccountHoldersCreateTest {
     var joint2 = BankAccountTestFixture.createJointHolder(JOINT_ACCOUNT_HOLDER_2);
 
     assertThatThrownBy(() -> AccountHolders.of(primary, joint1, joint2))
-      .isInstanceOf(MaxJointAccountHoldersExceededException.class);
+      .isInstanceOf(MaxJointHoldersExceededException.class);
   }
 
   @Test

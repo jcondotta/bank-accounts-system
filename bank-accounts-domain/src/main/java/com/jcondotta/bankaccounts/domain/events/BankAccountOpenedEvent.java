@@ -7,33 +7,27 @@ import com.jcondotta.bankaccounts.domain.validation.DomainEventValidationErrors;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.domain.events.DomainEvent;
-import com.jcondotta.domain.events.EventId;
-import com.jcondotta.domain.model.EntityId;
+import com.jcondotta.domain.identity.EventId;
 
 import java.time.Instant;
 
-import static java.util.Objects.requireNonNull;
+import static com.jcondotta.domain.support.DomainPreconditions.required;
 
 public record BankAccountOpenedEvent(
   EventId eventId,
-  BankAccountId bankAccountId,
+  BankAccountId aggregateId,
   AccountType accountType,
   Currency currency,
   AccountHolderId primaryAccountHolderId,
   Instant occurredAt
-) implements DomainEvent {
+) implements DomainEvent<BankAccountId> {
 
   public BankAccountOpenedEvent {
-    requireNonNull(eventId, DomainEventValidationErrors.EVENT_ID_NOT_NULL);
-    requireNonNull(bankAccountId, BankAccountValidationErrors.ID_NOT_NULL);
-    requireNonNull(accountType, BankAccountValidationErrors.ACCOUNT_TYPE_NOT_NULL);
-    requireNonNull(currency, BankAccountValidationErrors.CURRENCY_NOT_NULL);
-    requireNonNull(primaryAccountHolderId, AccountHolderId.ACCOUNT_HOLDER_ID_NOT_PROVIDED);
-    requireNonNull(occurredAt, DomainEventValidationErrors.EVENT_OCCURRED_AT_NOT_NULL);
-  }
-
-  @Override
-  public EntityId<?> aggregateId() {
-    return bankAccountId;
+    required(eventId, DomainEventValidationErrors.EVENT_ID_NOT_NULL);
+    required(aggregateId, DomainEventValidationErrors.AGGREGATE_ID_NOT_NULL);
+    required(accountType, BankAccountValidationErrors.ACCOUNT_TYPE_NOT_NULL);
+    required(currency, BankAccountValidationErrors.CURRENCY_NOT_NULL);
+    required(primaryAccountHolderId, AccountHolderId.ACCOUNT_HOLDER_ID_NOT_PROVIDED);
+    required(occurredAt, DomainEventValidationErrors.EVENT_OCCURRED_AT_NOT_NULL);
   }
 }

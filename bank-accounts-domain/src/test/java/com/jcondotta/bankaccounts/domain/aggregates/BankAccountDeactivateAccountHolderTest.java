@@ -4,7 +4,7 @@ import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.exceptions.AccountHolderNotFoundException;
-import com.jcondotta.bankaccounts.domain.exceptions.CannotDeactivatePrimaryAccountHolderException;
+import com.jcondotta.bankaccounts.domain.exceptions.CannotDeactivatePrimaryHolderException;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.domain.fixtures.BankAccountTestFixture;
@@ -13,7 +13,6 @@ import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -40,7 +39,7 @@ class BankAccountDeactivateAccountHolderTest {
       AccountHolders.of(primary, joint)
     );
 
-    bankAccount.deactivateAccountHolder(joint.getId());
+    bankAccount.deactivateHolder(joint.getId());
 
     assertThat(joint.isActive()).isFalse();
   }
@@ -59,9 +58,9 @@ class BankAccountDeactivateAccountHolderTest {
       AccountHolders.of(primary)
     );
 
-    assertThatThrownBy(() -> bankAccount.deactivateAccountHolder(primary.getId()))
-      .isInstanceOf(CannotDeactivatePrimaryAccountHolderException.class)
-      .hasMessage(CannotDeactivatePrimaryAccountHolderException.PRIMARY_ACCOUNT_HOLDER_CANNOT_BE_DEACTIVATED);
+    assertThatThrownBy(() -> bankAccount.deactivateHolder(primary.getId()))
+      .isInstanceOf(CannotDeactivatePrimaryHolderException.class)
+      .hasMessage(CannotDeactivatePrimaryHolderException.PRIMARY_ACCOUNT_HOLDER_CANNOT_BE_DEACTIVATED);
   }
 
   @Test
@@ -78,7 +77,7 @@ class BankAccountDeactivateAccountHolderTest {
       AccountHolders.of(primary)
     );
 
-    assertThatThrownBy(() -> bankAccount.deactivateAccountHolder(AccountHolderId.newId()))
+    assertThatThrownBy(() -> bankAccount.deactivateHolder(AccountHolderId.newId()))
       .isInstanceOf(AccountHolderNotFoundException.class);
   }
 }

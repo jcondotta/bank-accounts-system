@@ -1,12 +1,12 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.arguments_provider.AccountTypeAndCurrencyArgumentsProvider;
-import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
+import com.jcondotta.bankaccounts.domain.enums.HolderType;
 import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
 import com.jcondotta.bankaccounts.domain.enums.AccountType;
 import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountHoldersConfigurationException;
-import com.jcondotta.bankaccounts.domain.exceptions.MaxJointAccountHoldersExceededException;
+import com.jcondotta.bankaccounts.domain.exceptions.MaxJointHoldersExceededException;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.domain.fixtures.BankAccountTestFixture;
@@ -56,7 +56,7 @@ class BankAccountRestoreTest {
     assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
     assertThat(bankAccount.getCreatedAt()).isEqualTo(ACCOUNT_CREATED_AT);
     assertThat(bankAccount.pullEvents()).isEmpty();
-    assertThat(bankAccount.getActiveAccountHolders())
+    assertThat(bankAccount.getActiveHolders())
       .hasSize(1)
       .containsExactly(primaryAccountHolder);
   }
@@ -86,11 +86,11 @@ class BankAccountRestoreTest {
     assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
     assertThat(bankAccount.getCreatedAt()).isEqualTo(ACCOUNT_CREATED_AT);
     assertThat(bankAccount.pullEvents()).isEmpty();
-    assertThat(bankAccount.getActiveAccountHolders())
+    assertThat(bankAccount.getActiveHolders())
       .hasSize(2)
       .containsExactly(primaryAccountHolder, jointAccountHolder)
       .extracting(AccountHolder::getAccountHolderType)
-      .containsExactly(AccountHolderType.PRIMARY, AccountHolderType.JOINT);
+      .containsExactly(HolderType.PRIMARY, HolderType.JOINT);
   }
 
   @Test
@@ -110,7 +110,7 @@ class BankAccountRestoreTest {
 
     jointAccountHolder.deactivate();
 
-    assertThat(bankAccount.getActiveAccountHolders())
+    assertThat(bankAccount.getActiveHolders())
       .containsExactly(primaryAccountHolder);
   }
 
@@ -180,6 +180,6 @@ class BankAccountRestoreTest {
         ACCOUNT_CREATED_AT,
         AccountHolders.of(primaryAccountHolder, jointAccountHolder1, jointAccountHolder2)
       ))
-      .isInstanceOf(MaxJointAccountHoldersExceededException.class);
+      .isInstanceOf(MaxJointHoldersExceededException.class);
   }
 }

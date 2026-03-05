@@ -1,4 +1,4 @@
-package com.jcondotta.domain.model;
+package com.jcondotta.domain.identity;
 
 public interface EntityId<T> {
   T value();

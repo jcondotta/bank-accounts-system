@@ -1,4 +1,4 @@
-package com.jcondotta.domain.validation;
+package com.jcondotta.domain.support;
 
 import com.jcondotta.domain.exception.DomainValidationException;
 

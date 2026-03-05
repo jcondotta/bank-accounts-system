@@ -1,13 +1,16 @@
-package com.jcondotta.domain.model;
+package com.jcondotta.domain.core;
 
-import java.util.Objects;
+import com.jcondotta.domain.identity.EntityId;
+import com.jcondotta.domain.support.DomainPreconditions;
 
 public abstract class Entity<ID extends EntityId<?>> {
+
+  protected static final String ID_NOT_PROVIDED = "id must be provided.";
 
   private final ID id;
 
   protected Entity(ID id) {
-    this.id = Objects.requireNonNull(id, "Entity id must not be null");
+    this.id = DomainPreconditions.required(id, ID_NOT_PROVIDED);
   }
 
   public ID getId() {

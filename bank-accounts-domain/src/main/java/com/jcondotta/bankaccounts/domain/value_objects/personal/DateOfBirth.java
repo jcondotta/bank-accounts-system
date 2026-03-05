@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.domain.value_objects.personal;
 
 import com.jcondotta.domain.exception.DomainValidationException;
-import com.jcondotta.domain.validation.DomainPreconditions;
+import com.jcondotta.domain.support.DomainPreconditions;
 
 import java.time.Clock;
 import java.time.LocalDate;

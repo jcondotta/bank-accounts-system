@@ -14,13 +14,13 @@ import com.jcondotta.bankaccounts.domain.value_objects.Iban;
 import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
 import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
 import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
-import com.jcondotta.domain.events.EventId;
-import com.jcondotta.domain.model.AggregateRoot;
+import com.jcondotta.domain.identity.EventId;
+import com.jcondotta.domain.core.AggregateRoot;
 
 import java.time.Instant;
 import java.util.List;
 
-import static com.jcondotta.domain.validation.DomainPreconditions.required;
+import static com.jcondotta.domain.support.DomainPreconditions.required;
 
 public final class BankAccount extends AggregateRoot<BankAccountId> {
 
@@ -158,10 +158,10 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     var accountHolder = AccountHolder.createJoint(personalInfo, contactInfo, address, now);
     accountHolders.add(accountHolder);
 
-    this.registerEvent(new JointAccountHolderAddedEvent(EventId.newId(), this.getId(), accountHolder.getId(), now));
+    this.registerEvent(new BankAccountJointHolderAddedEvent(EventId.newId(), this.getId(), accountHolder.getId(), now));
   }
 
-  public void deactivateAccountHolder(AccountHolderId accountHolderId) {
+  public void deactivateHolder(AccountHolderId accountHolderId) {
     accountHolders.deactivate(accountHolderId);
   }
 
@@ -179,11 +179,11 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     registerEvent(new BankAccountClosedEvent(EventId.newId(), this.getId(), Instant.now()));
   }
 
-  public AccountHolder getPrimaryAccountHolder() {
+  public AccountHolder getPrimaryHolder() {
     return accountHolders.primary();
   }
 
-  public List<AccountHolder> getJointAccountHolders() {
+  public List<AccountHolder> getJointHolders() {
     return accountHolders.joint();
   }
 
@@ -207,7 +207,7 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
     return createdAt;
   }
 
-  public List<AccountHolder> getActiveAccountHolders() {
+  public List<AccountHolder> getActiveHolders() {
     return accountHolders.active();
   }
 }

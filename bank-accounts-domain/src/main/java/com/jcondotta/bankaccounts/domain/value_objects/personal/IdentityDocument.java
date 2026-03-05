@@ -9,7 +9,7 @@ import com.jcondotta.bankaccounts.domain.policies.SpanishNieNumberValidator;
 
 import java.util.List;
 
-import static com.jcondotta.domain.validation.DomainPreconditions.required;
+import static com.jcondotta.domain.support.DomainPreconditions.required;
 
 public record IdentityDocument(DocumentCountry country, DocumentType type, DocumentNumber number) {
 

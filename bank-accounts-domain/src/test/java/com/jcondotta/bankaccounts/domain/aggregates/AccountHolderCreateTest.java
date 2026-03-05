@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
-import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
+import com.jcondotta.bankaccounts.domain.enums.HolderType;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
 import com.jcondotta.domain.exception.DomainValidationException;
@@ -21,20 +21,20 @@ class AccountHolderCreateTest {
   private static final Instant CREATED_AT = Instant.now(ClockTestFactory.FIXED_CLOCK);
 
   @ParameterizedTest
-  @EnumSource(AccountHolderType.class)
-  void shouldCreateAccountHolder_whenValuesAreValid(AccountHolderType accountHolderType) {
+  @EnumSource(HolderType.class)
+  void shouldCreateAccountHolder_whenValuesAreValid(HolderType holderType) {
     var accountHolder = AccountHolder.create(
       PRIMARY_ACCOUNT_HOLDER.personalInfo(),
       PRIMARY_ACCOUNT_HOLDER.contactInfo(),
       PRIMARY_ACCOUNT_HOLDER.address(),
-      accountHolderType,
+      holderType,
       CREATED_AT
     );
 
     assertHolderMatchesFixture(accountHolder, PRIMARY_ACCOUNT_HOLDER);
-    assertThat(accountHolder.getAccountHolderType()).isEqualTo(accountHolderType);
-    assertThat(accountHolder.isPrimary()).isEqualTo(accountHolderType.isPrimary());
-    assertThat(accountHolder.isJoint()).isEqualTo(accountHolderType.isJoint());
+    assertThat(accountHolder.getAccountHolderType()).isEqualTo(holderType);
+    assertThat(accountHolder.isPrimary()).isEqualTo(holderType.isPrimary());
+    assertThat(accountHolder.isJoint()).isEqualTo(holderType.isJoint());
     assertThat(accountHolder.isActive()).isTrue();
     assertThat(accountHolder.getDeactivatedAt()).isNull();
   }
@@ -75,7 +75,7 @@ class AccountHolderCreateTest {
       null,
       PRIMARY_ACCOUNT_HOLDER.contactInfo(),
       PRIMARY_ACCOUNT_HOLDER.address(),
-      AccountHolderType.PRIMARY,
+      HolderType.PRIMARY,
       CREATED_AT))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(AccountHolder.PERSONAL_INFO_MUST_BE_PROVIDED);
@@ -87,7 +87,7 @@ class AccountHolderCreateTest {
       PRIMARY_ACCOUNT_HOLDER.personalInfo(),
       null,
       PRIMARY_ACCOUNT_HOLDER.address(),
-      AccountHolderType.PRIMARY,
+      HolderType.PRIMARY,
       CREATED_AT))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(AccountHolder.CONTACT_INFO_MUST_BE_PROVIDED);
@@ -99,7 +99,7 @@ class AccountHolderCreateTest {
       PRIMARY_ACCOUNT_HOLDER.personalInfo(),
       PRIMARY_ACCOUNT_HOLDER.contactInfo(),
       null,
-      AccountHolderType.PRIMARY,
+      HolderType.PRIMARY,
       CREATED_AT))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(AccountHolder.ADDRESS_MUST_BE_PROVIDED);
@@ -123,7 +123,7 @@ class AccountHolderCreateTest {
       PRIMARY_ACCOUNT_HOLDER.personalInfo(),
       PRIMARY_ACCOUNT_HOLDER.contactInfo(),
       PRIMARY_ACCOUNT_HOLDER.address(),
-      AccountHolderType.PRIMARY,
+      HolderType.PRIMARY,
       null))
       .isInstanceOf(DomainValidationException.class)
       .hasMessage(AccountHolder.CREATED_AT_MUST_BE_PROVIDED);

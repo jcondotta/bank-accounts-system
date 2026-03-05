@@ -2,7 +2,8 @@ package com.jcondotta.bankaccounts.domain.events;
 
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.domain.events.EventId;
+import com.jcondotta.domain.identity.EventId;
+import com.jcondotta.domain.exception.DomainValidationException;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -20,34 +21,28 @@ class BankAccountActivatedEventTest {
 
   @Test
   void shouldCreateBankAccountActivatedEvent_whenAllArgumentsAreValid() {
-    BankAccountActivatedEvent event =
-      new BankAccountActivatedEvent(EVENT_ID, BANK_ACCOUNT_ID, OCCURRED_AT);
+    var event = new BankAccountActivatedEvent(EVENT_ID, BANK_ACCOUNT_ID, OCCURRED_AT);
 
     assertThat(event.eventId()).isEqualTo(EVENT_ID);
-    assertThat(event.bankAccountId()).isEqualTo(BANK_ACCOUNT_ID);
+    assertThat(event.aggregateId()).isEqualTo(BANK_ACCOUNT_ID);
     assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
-//    assertThat(event.eventType())
-//      .isEqualTo(DomainEventType.BANK_ACCOUNT_ACTIVATED);
   }
 
   @Test
-  void shouldThrowNullPointerException_whenEventIdIsNull() {
-    assertThatThrownBy(() ->
-      new BankAccountActivatedEvent(null, BANK_ACCOUNT_ID, OCCURRED_AT)
-    ).isInstanceOf(NullPointerException.class);
+  void shouldThrowException_whenEventIdIsNull() {
+    assertThatThrownBy(() -> new BankAccountActivatedEvent(null, BANK_ACCOUNT_ID, OCCURRED_AT))
+      .isInstanceOf(DomainValidationException.class);
   }
 
   @Test
-  void shouldThrowNullPointerException_whenBankAccountIdIsNull() {
-    assertThatThrownBy(() ->
-      new BankAccountActivatedEvent(EVENT_ID, null, OCCURRED_AT)
-    ).isInstanceOf(NullPointerException.class);
+  void shouldThrowException_whenBankAccountIdIsNull() {
+    assertThatThrownBy(() -> new BankAccountActivatedEvent(EVENT_ID, null, OCCURRED_AT))
+      .isInstanceOf(DomainValidationException.class);
   }
 
   @Test
-  void shouldThrowNullPointerException_whenOccurredAtIsNull() {
-    assertThatThrownBy(() ->
-      new BankAccountActivatedEvent(EVENT_ID, BANK_ACCOUNT_ID, null)
-    ).isInstanceOf(NullPointerException.class);
+  void shouldThrowException_whenOccurredAtIsNull() {
+    assertThatThrownBy(() -> new BankAccountActivatedEvent(EVENT_ID, BANK_ACCOUNT_ID, null))
+      .isInstanceOf(DomainValidationException.class);
   }
 }

@@ -3,7 +3,8 @@ package com.jcondotta.bankaccounts.domain.events;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.domain.events.EventId;
+import com.jcondotta.domain.identity.EventId;
+import com.jcondotta.domain.exception.DomainValidationException;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -12,7 +13,7 @@ import java.time.Instant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class JointAccountHolderAddedEventTest {
+class BankAccountJointHolderAddedEventTest {
 
   private static final EventId EVENT_ID = EventId.newId();
   private static final BankAccountId BANK_ACCOUNT_ID = BankAccountId.newId();
@@ -22,8 +23,7 @@ class JointAccountHolderAddedEventTest {
 
   @Test
   void shouldCreateJointAccountHolderAddedEvent_whenAllArgumentsAreValid() {
-    JointAccountHolderAddedEvent event =
-      new JointAccountHolderAddedEvent(
+    var event = new BankAccountJointHolderAddedEvent(
         EVENT_ID,
         BANK_ACCOUNT_ID,
         ACCOUNT_HOLDER_ID,
@@ -31,58 +31,56 @@ class JointAccountHolderAddedEventTest {
       );
 
     assertThat(event.eventId()).isEqualTo(EVENT_ID);
-    assertThat(event.bankAccountId()).isEqualTo(BANK_ACCOUNT_ID);
+    assertThat(event.aggregateId()).isEqualTo(BANK_ACCOUNT_ID);
     assertThat(event.accountHolderId()).isEqualTo(ACCOUNT_HOLDER_ID);
     assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
-//    assertThat(event.eventType())
-//      .isEqualTo(DomainEventType.JOINT_ACCOUNT_HOLDER_ADDED);
   }
 
   @Test
-  void shouldThrowNullPointerException_whenEventIdIsNull() {
+  void shouldThrowException_whenEventIdIsNull() {
     assertThatThrownBy(() ->
-      new JointAccountHolderAddedEvent(
+      new BankAccountJointHolderAddedEvent(
         null,
         BANK_ACCOUNT_ID,
         ACCOUNT_HOLDER_ID,
         OCCURRED_AT
       )
-    ).isInstanceOf(NullPointerException.class);
+    ).isInstanceOf(DomainValidationException.class);
   }
 
   @Test
-  void shouldThrowNullPointerException_whenBankAccountIdIsNull() {
+  void shouldThrowException_whenBankAccountIdIsNull() {
     assertThatThrownBy(() ->
-      new JointAccountHolderAddedEvent(
+      new BankAccountJointHolderAddedEvent(
         EVENT_ID,
         null,
         ACCOUNT_HOLDER_ID,
         OCCURRED_AT
       )
-    ).isInstanceOf(NullPointerException.class);
+    ).isInstanceOf(DomainValidationException.class);
   }
 
   @Test
-  void shouldThrowNullPointerException_whenAccountHolderIdIsNull() {
+  void shouldThrowException_whenAccountHolderIdIsNull() {
     assertThatThrownBy(() ->
-      new JointAccountHolderAddedEvent(
+      new BankAccountJointHolderAddedEvent(
         EVENT_ID,
         BANK_ACCOUNT_ID,
         null,
         OCCURRED_AT
       )
-    ).isInstanceOf(NullPointerException.class);
+    ).isInstanceOf(DomainValidationException.class);
   }
 
   @Test
-  void shouldThrowNullPointerException_whenOccurredAtIsNull() {
+  void shouldThrowException_whenOccurredAtIsNull() {
     assertThatThrownBy(() ->
-      new JointAccountHolderAddedEvent(
+      new BankAccountJointHolderAddedEvent(
         EVENT_ID,
         BANK_ACCOUNT_ID,
         ACCOUNT_HOLDER_ID,
         null
       )
-    ).isInstanceOf(NullPointerException.class);
+    ).isInstanceOf(DomainValidationException.class);
   }
 }

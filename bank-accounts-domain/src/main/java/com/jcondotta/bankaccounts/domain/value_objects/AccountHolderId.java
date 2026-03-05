@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.domain.value_objects;
 
-import com.jcondotta.domain.model.EntityId;
-import com.jcondotta.domain.validation.DomainPreconditions;
+import com.jcondotta.domain.identity.EntityId;
+import com.jcondotta.domain.support.DomainPreconditions;
 
 import java.util.UUID;
 

@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.domain.enums;
 
-public enum AccountHolderType {
+public enum HolderType {
     PRIMARY, JOINT;
 
     public boolean isPrimary() {

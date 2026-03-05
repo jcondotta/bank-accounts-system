@@ -2,7 +2,7 @@ package com.jcondotta.bankaccounts.domain.validation;
 
 public interface BankAccountValidationErrors extends DomainValidationErrors {
 
-  String ID_NOT_NULL = "bankAccountId must not be null";
+  String ID_NOT_NULL = "aggregateId must not be null";
   String ACCOUNT_TYPE_NOT_NULL = "accountType must not be null";
   String CURRENCY_NOT_NULL = "currency must not be null";
   String ACCOUNT_STATUS_NOT_NULL = "account status must not be null";

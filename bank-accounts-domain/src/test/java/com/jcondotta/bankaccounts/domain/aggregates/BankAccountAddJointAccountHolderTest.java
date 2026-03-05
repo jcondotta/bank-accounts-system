@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
-import com.jcondotta.bankaccounts.domain.events.JointAccountHolderAddedEvent;
+import com.jcondotta.bankaccounts.domain.events.BankAccountJointHolderAddedEvent;
 import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotActiveException;
-import com.jcondotta.bankaccounts.domain.exceptions.MaxJointAccountHoldersExceededException;
+import com.jcondotta.bankaccounts.domain.exceptions.MaxJointHoldersExceededException;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.domain.fixtures.BankAccountTestFixture;
 import org.junit.jupiter.api.Test;
@@ -26,12 +26,12 @@ class BankAccountAddJointAccountHolderTest {
       JOINT_ACCOUNT_HOLDER_1.address()
     );
 
-    assertThat(bankAccount.getActiveAccountHolders())
+    assertThat(bankAccount.getActiveHolders())
       .hasSize(2)
       .filteredOn(AccountHolder::isJoint)
       .hasSize(1);
 
-    var jointHolder = bankAccount.getJointAccountHolders().getFirst();
+    var jointHolder = bankAccount.getJointHolders().getFirst();
 
     assertThat(jointHolder.getPersonalInfo()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.personalInfo());
     assertThat(jointHolder.getContactInfo()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.contactInfo());
@@ -43,8 +43,8 @@ class BankAccountAddJointAccountHolderTest {
     assertThat(events)
       .hasSize(1)
       .singleElement()
-      .isInstanceOfSatisfying(JointAccountHolderAddedEvent.class, event -> {
-        assertThat(event.bankAccountId()).isEqualTo(bankAccount.getId());
+      .isInstanceOfSatisfying(BankAccountJointHolderAddedEvent.class, event -> {
+        assertThat(event.aggregateId()).isEqualTo(bankAccount.getId());
         assertThat(event.accountHolderId()).isEqualTo(jointHolder.getId());
         assertThat(event.occurredAt()).isNotNull();
       });
@@ -81,6 +81,6 @@ class BankAccountAddJointAccountHolderTest {
         JOINT_ACCOUNT_HOLDER_2.contactInfo(),
         JOINT_ACCOUNT_HOLDER_2.address()
       ))
-      .isInstanceOf(MaxJointAccountHoldersExceededException.class);
+      .isInstanceOf(MaxJointHoldersExceededException.class);
   }
 }

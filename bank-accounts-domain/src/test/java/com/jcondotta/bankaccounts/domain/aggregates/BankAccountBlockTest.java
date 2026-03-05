@@ -15,7 +15,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.time.Instant;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -45,7 +44,7 @@ class BankAccountBlockTest {
       .hasSize(1)
       .singleElement()
       .isInstanceOfSatisfying(BankAccountBlockedEvent.class, event -> {
-        assertThat(event.bankAccountId()).isEqualTo(bankAccount.getId());
+        assertThat(event.aggregateId()).isEqualTo(bankAccount.getId());
         assertThat(event.occurredAt()).isNotNull();
       });
   }

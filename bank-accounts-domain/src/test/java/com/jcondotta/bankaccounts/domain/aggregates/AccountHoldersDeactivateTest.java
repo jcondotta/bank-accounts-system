@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
 import com.jcondotta.bankaccounts.domain.exceptions.AccountHolderNotFoundException;
-import com.jcondotta.bankaccounts.domain.exceptions.CannotDeactivatePrimaryAccountHolderException;
+import com.jcondotta.bankaccounts.domain.exceptions.CannotDeactivatePrimaryHolderException;
 import com.jcondotta.bankaccounts.domain.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.domain.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
@@ -44,6 +44,6 @@ class AccountHoldersDeactivateTest {
     var accountHolders = AccountHolders.of(primaryHolder);
 
     assertThatThrownBy(() -> accountHolders.deactivate(primaryHolder.getId()))
-      .isInstanceOf(CannotDeactivatePrimaryAccountHolderException.class);
+      .isInstanceOf(CannotDeactivatePrimaryHolderException.class);
   }
 }

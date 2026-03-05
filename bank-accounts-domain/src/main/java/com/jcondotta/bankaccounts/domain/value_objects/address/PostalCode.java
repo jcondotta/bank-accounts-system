@@ -2,7 +2,7 @@ package com.jcondotta.bankaccounts.domain.value_objects.address;
 
 import com.jcondotta.domain.exception.DomainValidationException;
 
-import static com.jcondotta.domain.validation.DomainPreconditions.requiredNotBlank;
+import static com.jcondotta.domain.support.DomainPreconditions.requiredNotBlank;
 
 public record PostalCode(String value) {
 

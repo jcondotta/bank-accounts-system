@@ -1,6 +1,6 @@
-package com.jcondotta.domain.events;
+package com.jcondotta.domain.identity;
 
-import com.jcondotta.domain.validation.DomainPreconditions;
+import com.jcondotta.domain.support.DomainPreconditions;
 
 import java.util.UUID;
 

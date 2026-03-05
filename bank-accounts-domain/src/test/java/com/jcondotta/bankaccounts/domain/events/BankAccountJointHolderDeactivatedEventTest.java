@@ -1,7 +1,5 @@
 package com.jcondotta.bankaccounts.domain.events;
 
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
@@ -15,43 +13,34 @@ import java.time.Instant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class BankAccountOpenedEventTest {
+class BankAccountJointHolderDeactivatedEventTest {
 
   private static final EventId EVENT_ID = EventId.newId();
   private static final BankAccountId BANK_ACCOUNT_ID = BankAccountId.newId();
   private static final AccountHolderId ACCOUNT_HOLDER_ID = AccountHolderId.newId();
-  private static final AccountType ACCOUNT_TYPE = AccountType.CHECKING;
-  private static final Currency CURRENCY = Currency.USD;
   private static final Clock FIXED_CLOCK = ClockTestFactory.FIXED_CLOCK;
   private static final Instant OCCURRED_AT = Instant.now(FIXED_CLOCK);
 
   @Test
-  void shouldCreateBankAccountOpenedEvent_whenAllArgumentsAreValid() {
-    var event = new BankAccountOpenedEvent(
+  void shouldCreateJointAccountHolderDeactivatedEvent_whenAllArgumentsAreValid() {
+    var event = new BankAccountJointHolderDeactivatedEvent(
       EVENT_ID,
       BANK_ACCOUNT_ID,
-      ACCOUNT_TYPE,
-      CURRENCY,
       ACCOUNT_HOLDER_ID,
       OCCURRED_AT
     );
 
     assertThat(event.eventId()).isEqualTo(EVENT_ID);
     assertThat(event.aggregateId()).isEqualTo(BANK_ACCOUNT_ID);
-    assertThat(event.accountType()).isEqualTo(ACCOUNT_TYPE);
-    assertThat(event.currency()).isEqualTo(CURRENCY);
-    assertThat(event.primaryAccountHolderId()).isEqualTo(ACCOUNT_HOLDER_ID);
+    assertThat(event.accountHolderId()).isEqualTo(ACCOUNT_HOLDER_ID);
     assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
   }
 
   @Test
   void shouldThrowException_whenEventIdIsNull() {
-    assertThatThrownBy(() ->
-      new BankAccountOpenedEvent(
+    assertThatThrownBy(() -> new BankAccountJointHolderDeactivatedEvent(
         null,
         BANK_ACCOUNT_ID,
-        ACCOUNT_TYPE,
-        CURRENCY,
         ACCOUNT_HOLDER_ID,
         OCCURRED_AT
       )
@@ -61,38 +50,8 @@ class BankAccountOpenedEventTest {
   @Test
   void shouldThrowException_whenBankAccountIdIsNull() {
     assertThatThrownBy(() ->
-      new BankAccountOpenedEvent(
+      new BankAccountJointHolderDeactivatedEvent(
         EVENT_ID,
-        null,
-        ACCOUNT_TYPE,
-        CURRENCY,
-        ACCOUNT_HOLDER_ID,
-        OCCURRED_AT
-      )
-    ).isInstanceOf(DomainValidationException.class);
-  }
-
-  @Test
-  void shouldThrowException_whenAccountTypeIsNull() {
-    assertThatThrownBy(() ->
-      new BankAccountOpenedEvent(
-        EVENT_ID,
-        BANK_ACCOUNT_ID,
-        null,
-        CURRENCY,
-        ACCOUNT_HOLDER_ID,
-        OCCURRED_AT
-      )
-    ).isInstanceOf(DomainValidationException.class);
-  }
-
-  @Test
-  void shouldThrowException_whenCurrencyIsNull() {
-    assertThatThrownBy(() ->
-      new BankAccountOpenedEvent(
-        EVENT_ID,
-        BANK_ACCOUNT_ID,
-        ACCOUNT_TYPE,
         null,
         ACCOUNT_HOLDER_ID,
         OCCURRED_AT
@@ -101,13 +60,11 @@ class BankAccountOpenedEventTest {
   }
 
   @Test
-  void shouldThrowException_whenPrimaryAccountHolderIdIsNull() {
+  void shouldThrowException_whenAccountHolderIdIsNull() {
     assertThatThrownBy(() ->
-      new BankAccountOpenedEvent(
+      new BankAccountJointHolderDeactivatedEvent(
         EVENT_ID,
         BANK_ACCOUNT_ID,
-        ACCOUNT_TYPE,
-        CURRENCY,
         null,
         OCCURRED_AT
       )
@@ -117,11 +74,9 @@ class BankAccountOpenedEventTest {
   @Test
   void shouldThrowException_whenOccurredAtIsNull() {
     assertThatThrownBy(() ->
-      new BankAccountOpenedEvent(
+      new BankAccountJointHolderDeactivatedEvent(
         EVENT_ID,
         BANK_ACCOUNT_ID,
-        ACCOUNT_TYPE,
-        CURRENCY,
         ACCOUNT_HOLDER_ID,
         null
       )

@@ -1,15 +1,15 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
-import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
+import com.jcondotta.bankaccounts.domain.enums.HolderType;
 import com.jcondotta.bankaccounts.domain.exceptions.AccountHolderNotFoundException;
-import com.jcondotta.bankaccounts.domain.exceptions.CannotDeactivatePrimaryAccountHolderException;
+import com.jcondotta.bankaccounts.domain.exceptions.CannotDeactivatePrimaryHolderException;
 import com.jcondotta.bankaccounts.domain.exceptions.InvalidBankAccountHoldersConfigurationException;
-import com.jcondotta.bankaccounts.domain.exceptions.MaxJointAccountHoldersExceededException;
+import com.jcondotta.bankaccounts.domain.exceptions.MaxJointHoldersExceededException;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 
 import java.util.*;
 
-import static com.jcondotta.domain.validation.DomainPreconditions.required;
+import static com.jcondotta.domain.support.DomainPreconditions.required;
 
 public final class AccountHolders {
 
@@ -56,7 +56,7 @@ public final class AccountHolders {
     int jointCount = jointCount();
 
     if (jointCount > MAX_JOINT) {
-      throw new MaxJointAccountHoldersExceededException(jointCount);
+      throw new MaxJointHoldersExceededException(jointCount);
     }
   }
 
@@ -64,7 +64,7 @@ public final class AccountHolders {
     return holders.stream()
       .filter(AccountHolder::isActive)
       .sorted(Comparator.comparing(
-        holder -> holder.getAccountHolderType() == AccountHolderType.PRIMARY ? 0 : 1
+        holder -> holder.getAccountHolderType() == HolderType.PRIMARY ? 0 : 1
       ))
       .toList();
   }
@@ -95,7 +95,7 @@ public final class AccountHolders {
     }
 
     if (jointCount() >= MAX_JOINT) {
-      throw new MaxJointAccountHoldersExceededException(jointCount());
+      throw new MaxJointHoldersExceededException(jointCount());
     }
 
     holders.add(holder);
@@ -106,7 +106,7 @@ public final class AccountHolders {
       .orElseThrow(() -> new AccountHolderNotFoundException(accountHolderId));
 
     if (holder.isPrimary()) {
-      throw new CannotDeactivatePrimaryAccountHolderException();
+      throw new CannotDeactivatePrimaryHolderException();
     }
 
     holder.deactivate();
@@ -117,35 +117,4 @@ public final class AccountHolders {
       .filter(holder -> holder.getId().equals(accountHolderId))
       .findFirst();
   }
-
-//  private void validateConfiguration() {
-//    validatePrimary();
-//    validateJoint();
-//  }
-//
-//  private void validatePrimary() {
-//    int primaryCount = (int) holders.stream()
-//      .filter(AccountHolder::isPrimary)
-//      .count();
-//
-//    if (primaryCount < MIN_PRIMARY || primaryCount > MAX_PRIMARY) {
-//      throw new InvalidBankAccountHoldersConfigurationException(
-//        primaryCount,
-//        MIN_PRIMARY,
-//        MAX_PRIMARY
-//      );
-//    }
-//  }
-//
-//  private void validateJoint() {
-//    int jointCount = jointCount();
-//
-//    if (jointCount > MAX_JOINT) {
-//      throw new MaxJointAccountHoldersExceededException(jointCount);
-//    }
-//  }
-//
-//  public List<AccountHolder> all() {
-//    return List.copyOf(holders);
-//  }
 }

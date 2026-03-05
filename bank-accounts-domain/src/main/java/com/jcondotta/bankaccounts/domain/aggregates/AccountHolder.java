@@ -1,15 +1,15 @@
 package com.jcondotta.bankaccounts.domain.aggregates;
 
-import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
+import com.jcondotta.bankaccounts.domain.enums.HolderType;
 import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
 import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
 import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
 import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
-import com.jcondotta.domain.model.Entity;
+import com.jcondotta.domain.core.Entity;
 
 import java.time.Instant;
 
-import static com.jcondotta.domain.validation.DomainPreconditions.required;
+import static com.jcondotta.domain.support.DomainPreconditions.required;
 
 public final class AccountHolder extends Entity<AccountHolderId> {
 
@@ -23,7 +23,7 @@ public final class AccountHolder extends Entity<AccountHolderId> {
   private final PersonalInfo personalInfo;
   private final ContactInfo contactInfo;
   private final Address address;
-  private final AccountHolderType accountHolderType;
+  private final HolderType holderType;
   private final Instant createdAt;
 
   private Instant deactivatedAt;
@@ -33,27 +33,27 @@ public final class AccountHolder extends Entity<AccountHolderId> {
     PersonalInfo personalInfo,
     ContactInfo contactInfo,
     Address address,
-    AccountHolderType accountHolderType,
+    HolderType holderType,
     Instant createdAt
   ) {
     super(required(id, ID_MUST_BE_PROVIDED));
     this.personalInfo = required(personalInfo, PERSONAL_INFO_MUST_BE_PROVIDED);
     this.contactInfo = required(contactInfo, CONTACT_INFO_MUST_BE_PROVIDED);
     this.address = required(address, ADDRESS_MUST_BE_PROVIDED);
-    this.accountHolderType = required(accountHolderType, ACCOUNT_HOLDER_TYPE_MUST_BE_PROVIDED);
+    this.holderType = required(holderType, ACCOUNT_HOLDER_TYPE_MUST_BE_PROVIDED);
     this.createdAt = required(createdAt, CREATED_AT_MUST_BE_PROVIDED);
   }
 
   static AccountHolder createPrimary(PersonalInfo personalInfo, ContactInfo contactInfo, Address address, Instant createdAt) {
-    return create(personalInfo, contactInfo, address, AccountHolderType.PRIMARY, createdAt);
+    return create(personalInfo, contactInfo, address, HolderType.PRIMARY, createdAt);
   }
 
   static AccountHolder createJoint(PersonalInfo personalInfo, ContactInfo contactInfo, Address address, Instant createdAt) {
-    return create(personalInfo, contactInfo, address, AccountHolderType.JOINT, createdAt);
+    return create(personalInfo, contactInfo, address, HolderType.JOINT, createdAt);
   }
 
-  static AccountHolder create(PersonalInfo personalInfo, ContactInfo contactInfo, Address address, AccountHolderType accountHolderType, Instant createdAt) {
-    return new AccountHolder(AccountHolderId.newId(), personalInfo, contactInfo, address, accountHolderType, createdAt);
+  static AccountHolder create(PersonalInfo personalInfo, ContactInfo contactInfo, Address address, HolderType holderType, Instant createdAt) {
+    return new AccountHolder(AccountHolderId.newId(), personalInfo, contactInfo, address, holderType, createdAt);
   }
 
   public static AccountHolder restore(
@@ -61,10 +61,10 @@ public final class AccountHolder extends Entity<AccountHolderId> {
     PersonalInfo personalInfo,
     ContactInfo contactInfo,
     Address address,
-    AccountHolderType accountHolderType,
+    HolderType holderType,
     Instant createdAt) {
 
-    return new AccountHolder(accountHolderId, personalInfo, contactInfo, address, accountHolderType, createdAt);
+    return new AccountHolder(accountHolderId, personalInfo, contactInfo, address, holderType, createdAt);
   }
 
   void deactivate() {
@@ -91,8 +91,8 @@ public final class AccountHolder extends Entity<AccountHolderId> {
     return address;
   }
 
-  public AccountHolderType getAccountHolderType() {
-    return accountHolderType;
+  public HolderType getAccountHolderType() {
+    return holderType;
   }
 
   public Instant getCreatedAt() {
@@ -104,10 +104,10 @@ public final class AccountHolder extends Entity<AccountHolderId> {
   }
 
   public boolean isPrimary() {
-    return accountHolderType.isPrimary();
+    return holderType.isPrimary();
   }
 
   public boolean isJoint() {
-    return accountHolderType.isJoint();
+    return holderType.isJoint();
   }
 }

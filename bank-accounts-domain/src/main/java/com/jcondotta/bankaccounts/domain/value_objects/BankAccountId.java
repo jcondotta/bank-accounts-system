@@ -1,11 +1,11 @@
 package com.jcondotta.bankaccounts.domain.value_objects;
 
-import com.jcondotta.domain.model.EntityId;
-import com.jcondotta.domain.validation.DomainPreconditions;
+import com.jcondotta.domain.identity.AggregateId;
+import com.jcondotta.domain.support.DomainPreconditions;
 
 import java.util.UUID;
 
-public record BankAccountId(UUID value) implements EntityId<UUID> {
+public record BankAccountId(UUID value) implements AggregateId<UUID> {
 
   public static final String BANK_ACCOUNT_ID_NOT_PROVIDED = "Bank account id must be provided.";
 

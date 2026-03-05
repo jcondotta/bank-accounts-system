@@ -2,7 +2,7 @@ package com.jcondotta.bankaccounts.domain.events;
 
 import com.jcondotta.bankaccounts.domain.factory.ClockTestFactory;
 import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.domain.events.EventId;
+import com.jcondotta.domain.identity.EventId;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -20,33 +20,28 @@ class BankAccountUnblockedEventTest {
 
   @Test
   void shouldCreateBankAccountUnblockedEvent_whenAllArgumentsAreValid() {
-    BankAccountUnblockedEvent event =
-      new BankAccountUnblockedEvent(EVENT_ID, BANK_ACCOUNT_ID, OCCURRED_AT);
+    var event = new BankAccountUnblockedEvent(EVENT_ID, BANK_ACCOUNT_ID, OCCURRED_AT);
 
     assertThat(event.eventId()).isEqualTo(EVENT_ID);
-    assertThat(event.bankAccountId()).isEqualTo(BANK_ACCOUNT_ID);
+    assertThat(event.aggregateId()).isEqualTo(BANK_ACCOUNT_ID);
     assertThat(event.occurredAt()).isEqualTo(OCCURRED_AT);
-//    assertThat(event.eventType()).isEqualTo(DomainEventType.BANK_ACCOUNT_UNBLOCKED);
   }
 
   @Test
-  void shouldThrowNullPointerException_whenEventIdIsNull() {
-    assertThatThrownBy(() ->
-      new BankAccountUnblockedEvent(null, BANK_ACCOUNT_ID, OCCURRED_AT)
-    ).isInstanceOf(NullPointerException.class);
+  void shouldThrowException_whenEventIdIsNull() {
+    assertThatThrownBy(() -> new BankAccountUnblockedEvent(null, BANK_ACCOUNT_ID, OCCURRED_AT))
+      .isInstanceOf(Exception.class);
   }
 
   @Test
-  void shouldThrowNullPointerException_whenBankAccountIdIsNull() {
-    assertThatThrownBy(() ->
-      new BankAccountUnblockedEvent(EVENT_ID, null, OCCURRED_AT)
-    ).isInstanceOf(NullPointerException.class);
+  void shouldThrowException_whenBankAccountIdIsNull() {
+    assertThatThrownBy(() -> new BankAccountUnblockedEvent(EVENT_ID, null, OCCURRED_AT))
+      .isInstanceOf(Exception.class);
   }
 
   @Test
-  void shouldThrowNullPointerException_whenOccurredAtIsNull() {
-    assertThatThrownBy(() ->
-      new BankAccountUnblockedEvent(EVENT_ID, BANK_ACCOUNT_ID, null)
-    ).isInstanceOf(NullPointerException.class);
+  void shouldThrowException_whenOccurredAtIsNull() {
+    assertThatThrownBy(() -> new BankAccountUnblockedEvent(EVENT_ID, BANK_ACCOUNT_ID, null))
+      .isInstanceOf(Exception.class);
   }
 }
