@@ -15,7 +15,6 @@ public final class BankAccountTestFixture {
   public static final Iban VALID_IBAN = Iban.of("ES3801283316232166447417");
 
   public static final AccountType DEFAULT_ACCOUNT_TYPE = AccountType.CHECKING;
-
   public static final Currency DEFAULT_CURRENCY = Currency.EUR;
 
   private BankAccountTestFixture() {
@@ -49,7 +48,7 @@ public final class BankAccountTestFixture {
   }
 
   public static AccountHolder createPrimaryHolder(AccountHolderFixtures fixtures, Instant createdAt) {
-    return BankAccount.restoreAccountHolder(
+    return AccountHolder.restore(
       AccountHolderId.newId(),
       fixtures.personalInfo(),
       fixtures.contactInfo(),
@@ -59,8 +58,12 @@ public final class BankAccountTestFixture {
     );
   }
 
+  public static AccountHolder createPrimaryHolder(AccountHolderFixtures fixtures) {
+    return createPrimaryHolder(fixtures, Instant.now());
+  }
+
   public static AccountHolder createJointHolder(AccountHolderFixtures fixtures, Instant createdAt) {
-    return BankAccount.restoreAccountHolder(
+    return AccountHolder.restore(
       AccountHolderId.newId(),
       fixtures.personalInfo(),
       fixtures.contactInfo(),
@@ -68,5 +71,9 @@ public final class BankAccountTestFixture {
       AccountHolderType.JOINT,
       createdAt
     );
+  }
+
+  public static AccountHolder createJointHolder(AccountHolderFixtures fixtures) {
+    return createJointHolder(fixtures, Instant.now());
   }
 }

@@ -31,13 +31,13 @@ class BankAccountDeactivateAccountHolderTest {
     var joint = BankAccountTestFixture.createJointHolder(JOINT_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     var bankAccount = BankAccount.restore(
-        BankAccountId.newId(),
-        AccountType.CHECKING,
-        Currency.EUR,
-        BankAccountTestFixture.VALID_IBAN,
-        AccountStatus.ACTIVE,
-        ACCOUNT_CREATED_AT,
-        List.of(primary, joint)
+      BankAccountId.newId(),
+      AccountType.CHECKING,
+      Currency.EUR,
+      BankAccountTestFixture.VALID_IBAN,
+      AccountStatus.ACTIVE,
+      ACCOUNT_CREATED_AT,
+      AccountHolders.of(primary, joint)
     );
 
     bankAccount.deactivateAccountHolder(joint.getId());
@@ -50,13 +50,13 @@ class BankAccountDeactivateAccountHolderTest {
     var primary = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     var bankAccount = BankAccount.restore(
-        BankAccountId.newId(),
-        AccountType.CHECKING,
-        Currency.EUR,
-        BankAccountTestFixture.VALID_IBAN,
-        AccountStatus.ACTIVE,
-        ACCOUNT_CREATED_AT,
-        List.of(primary)
+      BankAccountId.newId(),
+      AccountType.CHECKING,
+      Currency.EUR,
+      BankAccountTestFixture.VALID_IBAN,
+      AccountStatus.ACTIVE,
+      ACCOUNT_CREATED_AT,
+      AccountHolders.of(primary)
     );
 
     assertThatThrownBy(() -> bankAccount.deactivateAccountHolder(primary.getId()))
@@ -69,13 +69,13 @@ class BankAccountDeactivateAccountHolderTest {
     var primary = BankAccountTestFixture.createPrimaryHolder(PRIMARY_ACCOUNT_HOLDER, ACCOUNT_CREATED_AT);
 
     var bankAccount = BankAccount.restore(
-        BankAccountId.newId(),
-        AccountType.CHECKING,
-        Currency.EUR,
-        BankAccountTestFixture.VALID_IBAN,
-        AccountStatus.ACTIVE,
-        ACCOUNT_CREATED_AT,
-        List.of(primary)
+      BankAccountId.newId(),
+      AccountType.CHECKING,
+      Currency.EUR,
+      BankAccountTestFixture.VALID_IBAN,
+      AccountStatus.ACTIVE,
+      ACCOUNT_CREATED_AT,
+      AccountHolders.of(primary)
     );
 
     assertThatThrownBy(() -> bankAccount.deactivateAccountHolder(AccountHolderId.newId()))

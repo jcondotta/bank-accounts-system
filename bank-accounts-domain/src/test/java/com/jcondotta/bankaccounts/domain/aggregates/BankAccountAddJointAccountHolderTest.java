@@ -26,12 +26,12 @@ class BankAccountAddJointAccountHolderTest {
       JOINT_ACCOUNT_HOLDER_1.address()
     );
 
-    assertThat(bankAccount.getAccountHolders())
+    assertThat(bankAccount.getActiveAccountHolders())
       .hasSize(2)
       .filteredOn(AccountHolder::isJoint)
       .hasSize(1);
 
-    var jointHolder = bankAccount.jointAccountHolders().getFirst();
+    var jointHolder = bankAccount.getJointAccountHolders().getFirst();
 
     assertThat(jointHolder.getPersonalInfo()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.personalInfo());
     assertThat(jointHolder.getContactInfo()).isEqualTo(JOINT_ACCOUNT_HOLDER_1.contactInfo());

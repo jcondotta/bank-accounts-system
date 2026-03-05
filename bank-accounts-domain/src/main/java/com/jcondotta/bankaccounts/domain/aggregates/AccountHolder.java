@@ -56,7 +56,7 @@ public final class AccountHolder extends Entity<AccountHolderId> {
     return new AccountHolder(AccountHolderId.newId(), personalInfo, contactInfo, address, accountHolderType, createdAt);
   }
 
-  static AccountHolder restore(
+  public static AccountHolder restore(
     AccountHolderId accountHolderId,
     PersonalInfo personalInfo,
     ContactInfo contactInfo,

@@ -17,7 +17,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.time.Instant;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -46,7 +45,7 @@ class BankAccountRestoreTest {
       VALID_IBAN,
       AccountStatus.ACTIVE,
       ACCOUNT_CREATED_AT,
-      List.of(primaryAccountHolder)
+      AccountHolders.of(primaryAccountHolder)
     );
 
     assertThat(bankAccount).isNotNull();
@@ -57,7 +56,7 @@ class BankAccountRestoreTest {
     assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
     assertThat(bankAccount.getCreatedAt()).isEqualTo(ACCOUNT_CREATED_AT);
     assertThat(bankAccount.pullEvents()).isEmpty();
-    assertThat(bankAccount.getAccountHolders())
+    assertThat(bankAccount.getActiveAccountHolders())
       .hasSize(1)
       .containsExactly(primaryAccountHolder);
   }
@@ -76,7 +75,7 @@ class BankAccountRestoreTest {
       BankAccountTestFixture.VALID_IBAN,
       AccountStatus.ACTIVE,
       ACCOUNT_CREATED_AT,
-      List.of(jointAccountHolder, primaryAccountHolder)
+      AccountHolders.of(jointAccountHolder, primaryAccountHolder)
     );
 
     assertThat(bankAccount).isNotNull();
@@ -87,7 +86,7 @@ class BankAccountRestoreTest {
     assertThat(bankAccount.getAccountStatus().isActive()).isTrue();
     assertThat(bankAccount.getCreatedAt()).isEqualTo(ACCOUNT_CREATED_AT);
     assertThat(bankAccount.pullEvents()).isEmpty();
-    assertThat(bankAccount.getAccountHolders())
+    assertThat(bankAccount.getActiveAccountHolders())
       .hasSize(2)
       .containsExactly(primaryAccountHolder, jointAccountHolder)
       .extracting(AccountHolder::getAccountHolderType)
@@ -106,12 +105,12 @@ class BankAccountRestoreTest {
       BankAccountTestFixture.VALID_IBAN,
       AccountStatus.ACTIVE,
       ACCOUNT_CREATED_AT,
-      List.of(primaryAccountHolder, jointAccountHolder)
+      AccountHolders.of(primaryAccountHolder, jointAccountHolder)
     );
 
     jointAccountHolder.deactivate();
 
-    assertThat(bankAccount.getAccountHolders())
+    assertThat(bankAccount.getActiveAccountHolders())
       .containsExactly(primaryAccountHolder);
   }
 
@@ -125,7 +124,7 @@ class BankAccountRestoreTest {
         BankAccountTestFixture.VALID_IBAN,
         AccountStatus.ACTIVE,
         ACCOUNT_CREATED_AT,
-        List.of()
+        AccountHolders.of()
       ))
       .isInstanceOf(InvalidBankAccountHoldersConfigurationException.class);
   }
@@ -142,7 +141,7 @@ class BankAccountRestoreTest {
         BankAccountTestFixture.VALID_IBAN,
         AccountStatus.ACTIVE,
         ACCOUNT_CREATED_AT,
-        List.of(jointAccountHolder)
+        AccountHolders.of(jointAccountHolder)
       ))
       .isInstanceOf(InvalidBankAccountHoldersConfigurationException.class);
   }
@@ -160,7 +159,7 @@ class BankAccountRestoreTest {
         BankAccountTestFixture.VALID_IBAN,
         AccountStatus.ACTIVE,
         ACCOUNT_CREATED_AT,
-        List.of(primaryAccountHolder1, primaryAccountHolder2)
+        AccountHolders.of(primaryAccountHolder1, primaryAccountHolder2)
       ))
       .isInstanceOf(InvalidBankAccountHoldersConfigurationException.class);
   }
@@ -179,7 +178,7 @@ class BankAccountRestoreTest {
         BankAccountTestFixture.VALID_IBAN,
         AccountStatus.ACTIVE,
         ACCOUNT_CREATED_AT,
-        List.of(primaryAccountHolder, jointAccountHolder1, jointAccountHolder2)
+        AccountHolders.of(primaryAccountHolder, jointAccountHolder1, jointAccountHolder2)
       ))
       .isInstanceOf(MaxJointAccountHoldersExceededException.class);
   }
