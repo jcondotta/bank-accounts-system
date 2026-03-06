@@ -94,7 +94,7 @@ class BankAccountTest {
   }
 
   @Test
-  void shouldReturnOnlyActiveRecipients() {
+  void shouldReturnOnlyActiveRecipients_whenCallingGetRecipients() {
     var bankAccount = BankAccount.restore(BANK_ACCOUNT_ID, AccountStatus.ACTIVE, Recipients.empty());
     var recipient = bankAccount.createRecipient(RECIPIENT_NAME, IBAN);
 
