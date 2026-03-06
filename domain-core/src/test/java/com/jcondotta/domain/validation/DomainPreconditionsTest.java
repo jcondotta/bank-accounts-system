@@ -36,6 +36,7 @@ class DomainPreconditionsTest {
   }
 
   @Test
+  @SuppressWarnings("ConstantConditions")
   void shouldThrowDomainValidationException_whenRequiredNotBlankValueIsNull() {
     assertThatThrownBy(() -> DomainPreconditions.requiredNotBlank(null, ERROR_MESSAGE))
       .isInstanceOf(DomainValidationException.class)
