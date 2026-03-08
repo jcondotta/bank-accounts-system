@@ -1,0 +1,110 @@
+package com.jcondotta.banking.recipients.application.bankaccount.command.create_recipient;
+
+import com.jcondotta.banking.recipients.domain.recipient.aggregate.BankAccount;
+import com.jcondotta.banking.recipients.domain.recipient.exceptions.BankAccountNotFoundException;
+import com.jcondotta.banking.recipients.domain.recipient.exceptions.DuplicateRecipientException;
+import com.jcondotta.banking.recipients.domain.recipient.identity.BankAccountId;
+import com.jcondotta.banking.recipients.domain.recipient.repository.BankAccountRepository;
+import com.jcondotta.banking.recipients.domain.recipient.testsupport.BankAccountBuilder;
+import com.jcondotta.banking.recipients.domain.recipient.testsupport.BankAccountFixtures;
+import com.jcondotta.banking.recipients.domain.recipient.testsupport.RecipientFixtures;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class CreateRecipientCommandHandlerTest {
+
+  private static final BankAccountId BANK_ACCOUNT_ID = BankAccountId.of(UUID.randomUUID());
+
+  @Mock
+  private BankAccountRepository bankAccountRepository;
+
+  private CreateRecipientCommandHandler commandHandler;
+
+  @BeforeEach
+  void setUp() {
+    commandHandler = new CreateRecipientCommandHandler(bankAccountRepository);
+  }
+
+  @Test
+  void shouldCreateRecipient_whenCommandIsValidAndBankAccountExists() {
+    BankAccount bankAccount = BankAccountFixtures.WITH_NO_RECIPIENTS.create();
+
+    when(bankAccountRepository.findById(BANK_ACCOUNT_ID))
+      .thenReturn(Optional.of(bankAccount));
+
+    var recipientFixture = RecipientFixtures.JEFFERSON;
+    var command = new CreateRecipientCommand(
+      BANK_ACCOUNT_ID,
+      recipientFixture.toName(),
+      recipientFixture.toIban()
+    );
+    commandHandler.handle(command);
+
+    assertThat(bankAccount.getRecipients())
+        .hasSize(1)
+        .singleElement()
+        .satisfies(
+            recipient -> {
+              assertThat(recipient.getId()).isNotNull();
+              assertThat(recipient.getRecipientName()).isEqualTo(recipientFixture.toName());
+              assertThat(recipient.getIban()).isEqualTo(recipientFixture.toIban());
+              assertThat(recipient.getCreatedAt()).isNotNull();
+            });
+
+    verify(bankAccountRepository).findById(BANK_ACCOUNT_ID);
+    verify(bankAccountRepository).save(bankAccount);
+    verifyNoMoreInteractions(bankAccountRepository);
+  }
+
+  @Test
+  void shouldThrowBankAccountNotFoundException_whenBankAccountDoesNotExist() {
+    when(bankAccountRepository.findById(BANK_ACCOUNT_ID)).thenReturn(Optional.empty());
+
+    var recipientFixture = RecipientFixtures.JEFFERSON;
+    var command = new CreateRecipientCommand(
+      BANK_ACCOUNT_ID,
+      recipientFixture.toName(),
+      recipientFixture.toIban()
+    );
+
+    assertThatThrownBy(() -> commandHandler.handle(command))
+        .isInstanceOf(BankAccountNotFoundException.class)
+        .hasMessage(BankAccountNotFoundException.BANK_ACCOUNT_NOT_FOUND.formatted(BANK_ACCOUNT_ID));
+
+    verify(bankAccountRepository).findById(BANK_ACCOUNT_ID);
+    verifyNoMoreInteractions(bankAccountRepository);
+  }
+
+  @Test
+  void shouldThrowDuplicateRecipientException_whenIbanAlreadyExists() {
+    BankAccount bankAccount = BankAccountBuilder.from(BankAccountFixtures.ACCOUNT_WITH_JEFFERSON).build();
+
+    when(bankAccountRepository.findById(BANK_ACCOUNT_ID))
+      .thenReturn(Optional.of(bankAccount));
+
+    var recipientFixture = RecipientFixtures.JEFFERSON;
+    var command = new CreateRecipientCommand(
+      BANK_ACCOUNT_ID,
+      recipientFixture.toName(),
+      recipientFixture.toIban()
+    );
+
+    assertThatThrownBy(() -> commandHandler.handle(command))
+      .isInstanceOf(DuplicateRecipientException.class)
+      .hasMessage(DuplicateRecipientException.RECIPIENT_WITH_IBAN_ALREADY_EXISTS.formatted(recipientFixture.toIban().value()));
+
+    verify(bankAccountRepository).findById(BANK_ACCOUNT_ID);
+    verifyNoMoreInteractions(bankAccountRepository);
+  }
+}

@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.jcondotta</groupId>
-        <artifactId>accounts</artifactId>
+        <artifactId>recipients</artifactId>
         <version>1.0.0</version>
-        <relativePath/>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>recipients-domain</artifactId>

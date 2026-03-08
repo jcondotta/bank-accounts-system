@@ -23,6 +23,22 @@ class BankAccountTest {
   private static final Iban IBAN = RecipientFixtures.JEFFERSON.toIban();
 
   @Test
+  void shouldRegisterBankAccountWithActiveStatus_whenBankAccountIdIsValid() {
+    var bankAccount = BankAccount.register(BANK_ACCOUNT_ID);
+
+    assertThat(bankAccount.getId()).isEqualTo(BANK_ACCOUNT_ID);
+    assertThat(bankAccount.getAccountStatus()).isEqualTo(AccountStatus.ACTIVE);
+    assertThat(bankAccount.getRecipients()).isEmpty();
+  }
+
+  @Test
+  void shouldThrowException_whenRegisterBankAccountWithNullId() {
+    assertThatThrownBy(() -> BankAccount.register(null))
+      .isInstanceOf(DomainValidationException.class)
+      .hasMessage(BankAccountErrors.ID_MUST_BE_PROVIDED);
+  }
+
+  @Test
   void shouldRestoreBankAccount_whenAllValuesAreProvided() {
     var recipients = Recipients.empty();
 

@@ -1,7 +1,6 @@
 package com.jcondotta.banking.recipients.domain.recipient.exceptions;
 
 import com.jcondotta.banking.recipients.domain.recipient.fixtures.RecipientFixtures;
-import com.jcondotta.banking.recipients.domain.recipient.value_objects.Iban;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

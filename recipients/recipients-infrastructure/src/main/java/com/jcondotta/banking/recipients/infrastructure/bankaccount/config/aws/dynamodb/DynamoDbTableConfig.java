@@ -1,0 +1,27 @@
+package com.jcondotta.banking.recipients.infrastructure.bankaccount.config.aws.dynamodb;
+
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.output.persistence.entity.BankingEntity;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.RecipientsTableProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+
+@Configuration
+public class DynamoDbTableConfig {
+
+  @Bean
+  public DynamoDbTable<BankingEntity> dynamoDbTable(DynamoDbEnhancedClient dynamoDbEnhancedClient, RecipientsTableProperties tableProperties) {
+    return dynamoDbEnhancedClient.table(
+        tableProperties.tableName(),
+        TableSchema.fromBean(BankingEntity.class)
+    );
+  }
+
+//  @Bean
+//  public DynamoDbIndex<BankAccountEntity> recipientNameLSI(
+//      DynamoDbTable<BankAccountEntity> recipientsTable) {
+//    return recipientsTable.index("RecipientNameLSI");
+//  }
+}
