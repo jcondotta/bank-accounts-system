@@ -16,5 +16,35 @@
     <modules>
         <module>recipients-domain</module>
         <module>recipients-application</module>
+        <module>recipients-infrastructure</module>
+        <module>recipients-test-support</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.jcondotta</groupId>
+                <artifactId>domain-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jcondotta</groupId>
+                <artifactId>recipients-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jcondotta</groupId>
+                <artifactId>recipients-test-support</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jcondotta</groupId>
+                <artifactId>recipients-application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
