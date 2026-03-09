@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.application.fixtures;
 
-import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
-import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
-import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.address.Address;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.contact.ContactInfo;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.personal.PersonalInfo;
 
 public enum AccountHolderFixtures {
 

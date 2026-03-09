@@ -1,8 +1,8 @@
 package com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.input.rest.create_recipient.model;
 
 import com.jcondotta.banking.recipients.domain.recipient.testsupport.RecipientFixtures;
-import com.jcondotta.recipients.common.argument_provider.BlankValuesArgumentProvider;
-import com.jcondotta.recipients.common.factory.ValidatorTestFactory;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.testsupport.argument_provider.BlankValuesArgumentProvider;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.testsupport.factory.ValidatorTestFactory;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

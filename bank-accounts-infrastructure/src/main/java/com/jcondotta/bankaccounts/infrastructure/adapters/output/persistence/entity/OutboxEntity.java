@@ -28,7 +28,6 @@ public class OutboxEntity {
   private UUID eventId;
   private UUID aggregateId;
   private String eventType;
-  private Integer version;
 
   private String payload;
   private Instant publishedAt;
@@ -52,9 +51,6 @@ public class OutboxEntity {
 
   @DynamoDbAttribute("eventType")
   public String getEventType() { return eventType; }
-
-  @DynamoDbAttribute("version")
-  public Integer getVersion() { return version; }
 
   @DynamoDbAttribute("payload")
   public String getPayload() { return payload; }

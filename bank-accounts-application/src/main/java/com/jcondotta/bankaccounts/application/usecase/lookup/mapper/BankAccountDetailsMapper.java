@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDetails;
-import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.BankAccount;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

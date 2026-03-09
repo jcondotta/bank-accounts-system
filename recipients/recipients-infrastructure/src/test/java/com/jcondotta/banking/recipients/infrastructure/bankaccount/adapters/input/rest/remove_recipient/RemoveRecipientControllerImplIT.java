@@ -2,6 +2,7 @@ package com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.inp
 
 import com.jcondotta.application.core.CommandHandler;
 import com.jcondotta.application.core.CommandHandlerWithResult;
+import com.jcondotta.banking.infrastructure.ProblemTypes;
 import com.jcondotta.banking.recipients.application.bankaccount.command.create_recipient.CreateRecipientCommand;
 import com.jcondotta.banking.recipients.application.bankaccount.command.register.RegisterBankAccountCommand;
 import com.jcondotta.banking.recipients.domain.recipient.enums.RecipientStatus;
@@ -11,9 +12,8 @@ import com.jcondotta.banking.recipients.domain.recipient.identity.BankAccountId;
 import com.jcondotta.banking.recipients.domain.recipient.identity.RecipientId;
 import com.jcondotta.banking.recipients.domain.recipient.repository.BankAccountRepository;
 import com.jcondotta.banking.recipients.domain.recipient.testsupport.RecipientFixtures;
-import com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.input.rest.common.exception_handler.ProblemTypes;
 import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.RecipientURIProperties;
-import com.jcondotta.recipients.common.container.LocalStackTestContainer;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.testsupport.container.LocalStackTestContainer;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;

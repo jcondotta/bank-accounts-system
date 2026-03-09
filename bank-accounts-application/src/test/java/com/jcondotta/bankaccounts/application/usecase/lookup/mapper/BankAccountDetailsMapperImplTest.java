@@ -4,8 +4,8 @@ import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.AccountHolderDetails;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDetails;
-import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
-import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.BankAccount;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.HolderType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,8 +42,8 @@ class BankAccountDetailsMapperImplTest {
     assertThat(bankAccountDetails.createdAt()).isNotNull();
 
     assertThat(bankAccountDetails.accountHolders())
-      .extracting(AccountHolderDetails::accountHolderType)
-      .containsExactly(AccountHolderType.PRIMARY);
+      .extracting(AccountHolderDetails::type)
+      .containsExactly(HolderType.PRIMARY);
   }
 
   @Test
@@ -59,8 +59,8 @@ class BankAccountDetailsMapperImplTest {
     BankAccountDetails details = bankAccountMapper.toDetails(bankAccount);
     assertThat(details.accountHolders())
       .hasSize(2)
-      .extracting(AccountHolderDetails::accountHolderType)
-      .containsExactlyInAnyOrder(AccountHolderType.PRIMARY, AccountHolderType.JOINT);
+      .extracting(AccountHolderDetails::type)
+      .containsExactlyInAnyOrder(HolderType.PRIMARY, HolderType.JOINT);
   }
 
   @Test

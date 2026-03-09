@@ -1,43 +1,37 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.addjointaccountholder.model;
 
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderName;
-import com.jcondotta.bankaccounts.domain.value_objects.PassportNumber;
+import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.common.AddressRequest;
+import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.common.ContactInfoRequest;
+import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.common.PersonalInfoRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
-
-import java.time.LocalDate;
-
-import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 
 @Schema(description = "Request object used for creating a new account holder.")
 public record AddJointAccountHolderRequest(
 
-  @Schema(description = "Name of the account holder", example = "Jefferson Condotta", requiredMode = RequiredMode.REQUIRED)
-  @NotBlank
-  @Size(max = AccountHolderName.MAX_LENGTH, message = "must not exceed {max} characters")
-  String name,
-
-  @Schema(description = "Passport number of the account holder", example = "FH254787", requiredMode = RequiredMode.REQUIRED)
-  @Size(min = PassportNumber.LENGTH, max = PassportNumber.LENGTH, message = "must have exactly {max} characters")
+  @Valid
   @NotNull
-  String passportNumber,
-
-  @Schema(description = "Date of birth of the account holder", example = "1990-11-23", pattern = "yyyy-MM-dd", requiredMode = RequiredMode.REQUIRED)
-  @Past
-  @NotNull
-  LocalDate dateOfBirth,
-
   @Schema(
-    description = "Email address of the account holder",
-    example = "jefferson.condotta@email.com",
-    requiredMode = RequiredMode.REQUIRED
+    description = "Personal information of the account holder.",
+    requiredMode = Schema.RequiredMode.REQUIRED
   )
-//  @Email
-  @NotBlank
-  @Size(max = com.jcondotta.bankaccounts.domain.value_objects.Email.MAX_LENGTH, message = "must not exceed {max} characters")
-  String email
+  PersonalInfoRequest personalInfo,
+
+  @Valid
+  @NotNull
+  @Schema(
+    description = "Contact information of the account holder.",
+    requiredMode = Schema.RequiredMode.REQUIRED
+  )
+  ContactInfoRequest contactInfo,
+
+  @Valid
+  @NotNull
+  @Schema(
+    description = "Address of the account holder.",
+    requiredMode = Schema.RequiredMode.REQUIRED
+  )
+  AddressRequest address
 ) {
 }

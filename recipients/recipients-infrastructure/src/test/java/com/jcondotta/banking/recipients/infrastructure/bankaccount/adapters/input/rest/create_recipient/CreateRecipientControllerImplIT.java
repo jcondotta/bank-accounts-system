@@ -1,6 +1,7 @@
 package com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.input.rest.create_recipient;
 
 import com.jcondotta.application.core.CommandHandler;
+import com.jcondotta.banking.infrastructure.ProblemTypes;
 import com.jcondotta.banking.recipients.application.bankaccount.command.register.RegisterBankAccountCommand;
 import com.jcondotta.banking.recipients.domain.recipient.aggregate.BankAccount;
 import com.jcondotta.banking.recipients.domain.recipient.aggregate.Recipients;
@@ -10,11 +11,10 @@ import com.jcondotta.banking.recipients.domain.recipient.exceptions.BankAccountN
 import com.jcondotta.banking.recipients.domain.recipient.identity.BankAccountId;
 import com.jcondotta.banking.recipients.domain.recipient.repository.BankAccountRepository;
 import com.jcondotta.banking.recipients.domain.recipient.testsupport.RecipientFixtures;
-import com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.input.rest.common.exception_handler.ProblemTypes;
 import com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.input.rest.create_recipient.model.CreateRecipientRestRequest;
 import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.RecipientURIProperties;
-import com.jcondotta.recipients.common.argument_provider.BlankValuesArgumentProvider;
-import com.jcondotta.recipients.common.container.LocalStackTestContainer;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.testsupport.argument_provider.BlankValuesArgumentProvider;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.testsupport.container.LocalStackTestContainer;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
@@ -136,7 +136,7 @@ class CreateRecipientControllerImplIT {
       .getMessage();
 
     assertAll(
-        () -> assertThat(problemDetail.getType()).hasToString(ProblemTypes.BUSINESS_RULE_VIOLATION.toString()),
+        () -> assertThat(problemDetail.getType()).hasToString(ProblemTypes.RULE_VIOLATION.toString()),
         () -> assertThat(problemDetail.getTitle()).hasToString("Operation not allowed"),
         () -> assertThat(problemDetail.getDetail()).isEqualTo(expectedMessageError),
         () -> assertThat(problemDetail.getInstance()).isEqualTo(uriProperties.recipientsURI(bankAccountId)));

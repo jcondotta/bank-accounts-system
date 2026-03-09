@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.common.exception_handler;
 
-import com.jcondotta.bankaccounts.domain.exceptions.DomainRuleValidationException;
+import com.jcondotta.domain.exception.DomainRuleValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +29,7 @@ public class BusinessRuleExceptionHandler {
     var problemDetail = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_ENTITY);
     problemDetail.setType(ProblemTypes.BUSINESS_RULE_VIOLATION);
     problemDetail.setTitle("Operation not allowed");
+    problemDetail.s("Operation not allowed");
     problemDetail.setInstance(URI.create(request.getRequestURI()));
 
     return ResponseEntity

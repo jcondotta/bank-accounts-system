@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.AddressDetails;
-import com.jcondotta.bankaccounts.domain.value_objects.address.Address;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.address.Address;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -4,7 +4,7 @@ import com.jcondotta.bankaccounts.contracts.IntegrationEvent;
 import com.jcondotta.bankaccounts.contracts.IntegrationEventMetadata;
 import com.jcondotta.bankaccounts.contracts.unblock.BankAccountUnblockedIntegrationEvent;
 import com.jcondotta.bankaccounts.contracts.unblock.BankAccountUnblockedIntegrationPayload;
-import com.jcondotta.bankaccounts.domain.events.BankAccountUnblockedEvent;
+import com.jcondotta.banking.accounts.domain.bankaccount.events.BankAccountUnblockedEvent;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,7 +17,7 @@ public class BankAccountUnblockedIntegrationEventMapper extends AbstractDomainEv
   @Override
   protected IntegrationEvent<?> buildIntegrationEvent(BankAccountUnblockedEvent event, IntegrationEventMetadata metadata) {
     BankAccountUnblockedIntegrationPayload payload = new BankAccountUnblockedIntegrationPayload(
-      event.bankAccountId().value()
+      event.aggregateId().value()
     );
 
     return new BankAccountUnblockedIntegrationEvent(metadata, payload);

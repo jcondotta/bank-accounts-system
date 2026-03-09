@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.addholder;
 
 import com.jcondotta.bankaccounts.application.usecase.addholder.model.AddJointAccountHolderCommand;
-import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
-import com.jcondotta.bankaccounts.domain.repository.BankAccountRepository;
+import com.jcondotta.banking.accounts.domain.bankaccount.exceptions.BankAccountNotFoundException;
+import com.jcondotta.banking.accounts.domain.bankaccount.repository.BankAccountRepository;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

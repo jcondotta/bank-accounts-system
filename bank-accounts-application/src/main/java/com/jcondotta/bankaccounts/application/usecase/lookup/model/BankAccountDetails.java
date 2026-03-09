@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.model;
 
-import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.AccountStatus;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.AccountType;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.Currency;
 
 import java.time.Instant;
 import java.util.List;
@@ -29,6 +29,9 @@ public record BankAccountDetails(
     requireNonNull(createdAt, "createdAt must not be null");
 
     requireNonNull(accountHolders, "accountHolders must not be null");
+    accountHolders.forEach(holder ->
+      requireNonNull(holder, "accountHolders must not contain null elements")
+    );
     accountHolders = List.copyOf(accountHolders);
   }
 }

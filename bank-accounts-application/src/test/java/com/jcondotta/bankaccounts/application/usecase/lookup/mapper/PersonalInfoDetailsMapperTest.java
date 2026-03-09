@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 
-import com.jcondotta.bankaccounts.domain.enums.DocumentCountry;
-import com.jcondotta.bankaccounts.domain.enums.DocumentType;
-import com.jcondotta.bankaccounts.domain.value_objects.personal.*;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.DocumentCountry;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.DocumentType;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.personal.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

@@ -2,7 +2,7 @@ package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.unblockban
 
 import com.jcondotta.bankaccounts.application.usecase.unblock.UnblockBankAccountUseCase;
 import com.jcondotta.bankaccounts.application.usecase.unblock.model.UnblockBankAccountCommand;
-import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.BankAccountId;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

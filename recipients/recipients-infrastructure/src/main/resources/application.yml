@@ -6,7 +6,7 @@ app:
 
 spring:
   application:
-    name: recipients
+    name: account-recipients
 
 cloud:
   aws:
@@ -15,7 +15,7 @@ cloud:
     dynamodb:
       tables:
         recipients:
-          table-name: ${AWS_DYNAMODB_RECIPIENTS_TABLE_NAME}
+          table-name: ${AWS_DYNAMODB_ACCOUNT_RECIPIENTS_TABLE_NAME}
 
 api:
   v1:

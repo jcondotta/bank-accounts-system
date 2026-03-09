@@ -1,9 +1,9 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.ContactInfoDetails;
-import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
-import com.jcondotta.bankaccounts.domain.value_objects.contact.Email;
-import com.jcondotta.bankaccounts.domain.value_objects.contact.PhoneNumber;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.contact.ContactInfo;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.contact.Email;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.contact.PhoneNumber;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

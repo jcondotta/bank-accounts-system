@@ -1,10 +1,10 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.outbox;
 
-import com.jcondotta.bankaccounts.domain.aggregates.AggregateRoot;
 import com.jcondotta.bankaccounts.infrastructure.adapters.CorrelationIdProvider;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.DefaultEventMetadataContext;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.DomainEventToIntegrationEventResolver;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.OutboxEntity;
+import com.jcondotta.domain.core.AggregateRoot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,7 @@ public class OutboxEventCollector {
   public List<OutboxEntity> collect(AggregateRoot<?> aggregate) {
     Objects.requireNonNull(aggregate, "aggregate must not be null");
 
-    var aggregateId = aggregate.id();
+    var aggregateId = aggregate.getId();
     var eventMetadataContext = DefaultEventMetadataContext.of(
       correlationIdProvider.get()
     );

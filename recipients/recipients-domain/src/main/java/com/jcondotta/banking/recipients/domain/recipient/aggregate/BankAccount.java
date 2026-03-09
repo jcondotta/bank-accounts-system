@@ -56,4 +56,8 @@ public final class BankAccount extends AggregateRoot<BankAccountId> {
   public List<Recipient> getRecipients() {
     return recipients.values();
   }
+
+  public List<Recipient> getActiveRecipients() {
+    return recipients.active();
+  }
 }

@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount;
 
-import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.AccountStatus;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.AccountType;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.Currency;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
@@ -17,7 +17,7 @@ public record BankAccountDetailsResponse(
   @Schema(description = "The UUID value representing the bank account identifier.",
     example = "01920bff-1338-7efd-ade6-e9128debe5d4",
     requiredMode = RequiredMode.REQUIRED)
-  UUID bankAccountId,
+  UUID id,
 
   @Schema(description = "Type of bank account (e.g., SAVINGS, CHECKING)", example = "SAVINGS",
     requiredMode = RequiredMode.REQUIRED, allowableValues = {"SAVINGS", "CHECKING"})

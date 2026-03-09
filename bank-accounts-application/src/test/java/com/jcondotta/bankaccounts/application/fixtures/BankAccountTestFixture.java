@@ -1,12 +1,12 @@
 package com.jcondotta.bankaccounts.application.fixtures;
 
-import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
-import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
-import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
-import com.jcondotta.bankaccounts.domain.value_objects.Iban;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.AccountHolder;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.BankAccount;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.AccountType;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.Currency;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.HolderType;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.AccountHolderId;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.Iban;
 
 import java.time.Instant;
 
@@ -54,7 +54,7 @@ public final class BankAccountTestFixture {
       fixtures.personalInfo(),
       fixtures.contactInfo(),
       fixtures.address(),
-      AccountHolderType.PRIMARY,
+      HolderType.PRIMARY,
       createdAt
     );
   }
@@ -65,7 +65,7 @@ public final class BankAccountTestFixture {
       fixtures.personalInfo(),
       fixtures.contactInfo(),
       fixtures.address(),
-      AccountHolderType.JOINT,
+      HolderType.JOINT,
       createdAt
     );
   }

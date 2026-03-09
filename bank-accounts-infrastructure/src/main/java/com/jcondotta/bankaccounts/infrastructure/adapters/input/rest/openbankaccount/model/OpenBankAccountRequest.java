@@ -1,7 +1,8 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.openbankaccount.model;
 
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
+import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.common.AccountHolderRequest;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.AccountType;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.Currency;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +23,10 @@ public record OpenBankAccountRequest(
 
     @Valid
     @NotNull
-    @Schema(description = "Information about the primary account holder", requiredMode = RequiredMode.REQUIRED)
-    PrimaryAccountHolderRequest accountHolder
+    @Schema(
+      description = "Account holder information required to open the bank account.",
+      requiredMode = Schema.RequiredMode.REQUIRED
+    )
+    AccountHolderRequest accountHolder
 ){
 }

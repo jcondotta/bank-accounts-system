@@ -1,9 +1,8 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount;
 
 import com.jcondotta.bankaccounts.application.usecase.lookup.BankAccountLookupUseCase;
-import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.mapper.BankAccountLookupResponseControllerMapper;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model.BankAccountLookupResponse;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.BankAccountId;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +20,10 @@ public class BankAccountLookupControllerImpl implements BankAccountLookupControl
   private final BankAccountLookupUseCase bankAccountLookupUseCase;
   private final BankAccountLookupResponseControllerMapper mapper;
 
-  public ResponseEntity<BankAccountLookupResponse> getBankAccount(UUID bankAccountId) {
-    log.info("Received request to retrieve bank account [bankAccountId={}]", bankAccountId);
+  public ResponseEntity<BankAccountDetailsResponse> getBankAccount(UUID bankAccountId) {
+    log.info("Received request to retrieve bank account [id={}]", bankAccountId);
 
     var bankAccountLookupResult = bankAccountLookupUseCase.lookup(BankAccountId.of(bankAccountId));
-    return ResponseEntity.ok(mapper.toResponse(bankAccountLookupResult));
+    return ResponseEntity.ok(mapper.toBankAccountDetailsResponse(bankAccountLookupResult));
   }
 }

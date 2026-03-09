@@ -30,6 +30,18 @@
 
             <dependency>
                 <groupId>com.jcondotta</groupId>
+                <artifactId>application-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jcondotta</groupId>
+                <artifactId>infrastructure-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jcondotta</groupId>
                 <artifactId>recipients-domain</artifactId>
                 <version>${project.version}</version>
             </dependency>

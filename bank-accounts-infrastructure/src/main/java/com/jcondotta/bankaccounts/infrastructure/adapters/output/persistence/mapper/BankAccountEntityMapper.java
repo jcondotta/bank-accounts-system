@@ -1,13 +1,13 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.mapper;
 
-import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.BankingEntity;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.BankAccount;
 
 import java.util.List;
 
 public interface BankAccountEntityMapper {
 
-    List<BankingEntity> toBankingEntities(BankAccount bankAccount);
+  List<BankingEntity> toEntities(BankAccount bankAccount);
 
-    BankAccount toDomain(BankingEntity entity, List<BankingEntity> holderEntities);
+  BankAccount restore(List<BankingEntity> bankingEntities);
 }

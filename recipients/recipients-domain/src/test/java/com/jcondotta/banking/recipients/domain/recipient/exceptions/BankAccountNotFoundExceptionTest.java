@@ -18,7 +18,7 @@ class BankAccountNotFoundExceptionTest {
     assertThat(exception)
       .isInstanceOf(RuntimeException.class)
       .hasMessage(
-        BankAccountNotFoundException.BANK_ACCOUNT_NOT_FOUND.formatted(bankAccountId)
+        BankAccountNotFoundException.BANK_ACCOUNT_NOT_FOUND.formatted(bankAccountId.value())
       );
   }
 }

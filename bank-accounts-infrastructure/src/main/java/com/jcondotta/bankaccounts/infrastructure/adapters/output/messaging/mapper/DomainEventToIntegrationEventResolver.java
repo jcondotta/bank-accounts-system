@@ -1,9 +1,7 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper;
 
 import com.jcondotta.bankaccounts.contracts.IntegrationEvent;
-import com.jcondotta.bankaccounts.domain.events.DomainEvent;
-
-import java.util.UUID;
+import com.jcondotta.domain.events.DomainEvent;
 
 public interface DomainEventToIntegrationEventResolver {
 

@@ -12,4 +12,4 @@ cloud:
       endpoint: ${AWS_DYNAMODB_ENDPOINT}
       tables:
         recipients:
-          table-name: 'recipients'
+          table-name: 'account-recipients'

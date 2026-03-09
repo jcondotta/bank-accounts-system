@@ -1,6 +1,5 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount;
 
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model.BankAccountLookupResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.MediaType;
@@ -20,7 +19,7 @@ public interface BankAccountLookupController {
     description = "Retrieves the details of a bank account identified by its bank account id."
   )
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<BankAccountLookupResponse> getBankAccount(
+  ResponseEntity<BankAccountDetailsResponse> getBankAccount(
     @Parameter(description = "Unique identifier of the bank account", required = true, example = "01920bff-1338-7efd-ade6-e9128debe5d4")
     @PathVariable("bank-account-id") UUID bankAccountId);
 }

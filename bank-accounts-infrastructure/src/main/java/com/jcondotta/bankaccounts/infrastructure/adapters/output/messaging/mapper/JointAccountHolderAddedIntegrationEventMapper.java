@@ -4,20 +4,20 @@ import com.jcondotta.bankaccounts.contracts.IntegrationEvent;
 import com.jcondotta.bankaccounts.contracts.IntegrationEventMetadata;
 import com.jcondotta.bankaccounts.contracts.addholder.JointAccountHolderAddedIntegrationEvent;
 import com.jcondotta.bankaccounts.contracts.addholder.JointAccountHolderAddedIntegrationPayload;
-import com.jcondotta.bankaccounts.domain.events.JointAccountHolderAddedEvent;
+import com.jcondotta.banking.accounts.domain.bankaccount.events.BankAccountJointHolderAddedEvent;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JointAccountHolderAddedIntegrationEventMapper extends AbstractDomainEventMapper<JointAccountHolderAddedEvent> {
+public class JointAccountHolderAddedIntegrationEventMapper extends AbstractDomainEventMapper<BankAccountJointHolderAddedEvent> {
 
   public JointAccountHolderAddedIntegrationEventMapper() {
-    super(JointAccountHolderAddedEvent.class);
+    super(BankAccountJointHolderAddedEvent.class);
   }
 
   @Override
-  protected IntegrationEvent<?> buildIntegrationEvent(JointAccountHolderAddedEvent event, IntegrationEventMetadata metadata) {
+  protected IntegrationEvent<?> buildIntegrationEvent(BankAccountJointHolderAddedEvent event, IntegrationEventMetadata metadata) {
     JointAccountHolderAddedIntegrationPayload payload = new JointAccountHolderAddedIntegrationPayload(
-      event.bankAccountId().value(),
+      event.aggregateId().value(),
       event.accountHolderId().value()
     );
 

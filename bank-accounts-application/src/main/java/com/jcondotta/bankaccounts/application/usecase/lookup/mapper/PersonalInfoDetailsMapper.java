@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.PersonalInfoDetails;
-import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.personal.PersonalInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

@@ -1,9 +1,9 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper;
 
-import com.jcondotta.bankaccounts.contracts.DefaultEventMetadata;
+import com.jcondotta.bankaccounts.contracts.DefaultIntegrationEventMetadata;
 import com.jcondotta.bankaccounts.contracts.IntegrationEvent;
 import com.jcondotta.bankaccounts.contracts.IntegrationEventMetadata;
-import com.jcondotta.bankaccounts.domain.events.DomainEvent;
+import com.jcondotta.domain.events.DomainEvent;
 
 import java.util.Objects;
 
@@ -32,10 +32,10 @@ public abstract class AbstractDomainEventMapper<E extends DomainEvent> implement
   }
 
   protected IntegrationEventMetadata buildMetadata(E event, EventMetadataContext context) {
-    return DefaultEventMetadata.create(
+    return DefaultIntegrationEventMetadata.create(
       event.eventId().value(),
       context.correlationId(),
-      event.eventType().value(),
+      event.eventType().toString(),
       eventMetadataVersion(),
       event.occurredAt()
     );

@@ -1,9 +1,9 @@
 package com.jcondotta.bankaccounts.application.fixtures;
 
-import com.jcondotta.bankaccounts.domain.enums.DocumentCountry;
-import com.jcondotta.bankaccounts.domain.enums.DocumentType;
-import com.jcondotta.bankaccounts.domain.value_objects.personal.DocumentNumber;
-import com.jcondotta.bankaccounts.domain.value_objects.personal.IdentityDocument;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.DocumentCountry;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.DocumentType;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.personal.DocumentNumber;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.personal.IdentityDocument;
 
 public enum IdentityDocumentFixtures {
 

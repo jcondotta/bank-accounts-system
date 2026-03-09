@@ -2,7 +2,7 @@ package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.closebanka
 
 import com.jcondotta.bankaccounts.application.usecase.close.CloseBankAccountUseCase;
 import com.jcondotta.bankaccounts.application.usecase.close.model.CloseBankAccountCommand;
-import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.BankAccountId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

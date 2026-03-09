@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper;
 
 import com.jcondotta.bankaccounts.contracts.IntegrationEvent;
-import com.jcondotta.bankaccounts.domain.events.DomainEvent;
+import com.jcondotta.domain.events.DomainEvent;
 
 public interface DomainEventMapper<E extends DomainEvent> {
 

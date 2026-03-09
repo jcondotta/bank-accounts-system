@@ -3,10 +3,10 @@ package com.jcondotta.bankaccounts.application.usecase.addholder;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.application.usecase.addholder.model.AddJointAccountHolderCommand;
-import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
-import com.jcondotta.bankaccounts.domain.exceptions.BankAccountNotFoundException;
-import com.jcondotta.bankaccounts.domain.repository.BankAccountRepository;
-import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.BankAccount;
+import com.jcondotta.banking.accounts.domain.bankaccount.exceptions.BankAccountNotFoundException;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.BankAccountId;
+import com.jcondotta.banking.accounts.domain.bankaccount.repository.BankAccountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,7 +52,7 @@ class AddJointAccountHolderUseCaseImplTest {
     verifyNoMoreInteractions(bankAccountRepository);
 
 
-    assertThat(bankAccount.jointAccountHolders())
+    assertThat(bankAccount.getJointHolders())
       .hasSize(1);
   }
 

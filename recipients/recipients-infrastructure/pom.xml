@@ -16,6 +16,11 @@
     <dependencies>
         <dependency>
             <groupId>com.jcondotta</groupId>
+            <artifactId>infrastructure-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jcondotta</groupId>
             <artifactId>recipients-domain</artifactId>
         </dependency>
 

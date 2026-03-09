@@ -3,16 +3,15 @@ package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.outb
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcondotta.bankaccounts.contracts.IntegrationEvent;
-import com.jcondotta.bankaccounts.domain.value_objects.AggregateId;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.OutboxEntity;
-import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.OutboxEntityKey;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.OutboxKey;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.OutboxKeyFactory;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.enums.EntityType;
+import com.jcondotta.domain.identity.EntityId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -20,11 +19,11 @@ public class OutboxEntityMapper {
 
   private final ObjectMapper objectMapper;
 
-  public OutboxEntity toOutboxEntity(AggregateId aggregateId, IntegrationEvent<?> integrationEvent) {
+  public OutboxEntity toOutboxEntity(EntityId entityId, IntegrationEvent<?> integrationEvent) {
     OutboxKey key = OutboxKeyFactory.pending(
-      aggregateId.value(),
+      (UUID) entityId.value(),
       integrationEvent.metadata().eventId(),
-      Instant.now()
+      integrationEvent.metadata().occurredAt()
     );
 
     return OutboxEntity.builder()
@@ -32,13 +31,11 @@ public class OutboxEntityMapper {
       .sortKey(key.sortKey())
       .gsi1pk(key.gsi1pk())
       .gsi1sk(key.gsi1sk())
-      .entityType(EntityType.OUTBOX_EVENT)
       .eventId(integrationEvent.metadata().eventId())
-      .aggregateId(aggregateId.value())
+      .aggregateId((UUID) entityId.value())
+      .entityType(EntityType.OUTBOX_EVENT)
       .eventType(integrationEvent.metadata().eventType())
-      .version(integrationEvent.metadata().version())
       .payload(serialize(integrationEvent))
-//      .status(OutboxStatus.PENDING)
       .publishedAt(null)
       .build();
   }

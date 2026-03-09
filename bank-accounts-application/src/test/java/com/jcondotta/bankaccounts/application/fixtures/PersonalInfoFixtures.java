@@ -1,9 +1,9 @@
 package com.jcondotta.bankaccounts.application.fixtures;
 
-import com.jcondotta.bankaccounts.domain.value_objects.personal.AccountHolderName;
-import com.jcondotta.bankaccounts.domain.value_objects.personal.DateOfBirth;
-import com.jcondotta.bankaccounts.domain.value_objects.personal.IdentityDocument;
-import com.jcondotta.bankaccounts.domain.value_objects.personal.PersonalInfo;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.personal.AccountHolderName;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.personal.DateOfBirth;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.personal.IdentityDocument;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.personal.PersonalInfo;
 
 import java.time.LocalDate;
 import java.time.Month;

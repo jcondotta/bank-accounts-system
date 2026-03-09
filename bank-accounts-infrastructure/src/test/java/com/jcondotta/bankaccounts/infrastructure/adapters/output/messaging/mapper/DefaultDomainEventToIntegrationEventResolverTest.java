@@ -1,11 +1,11 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper;
 
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
-import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
-import com.jcondotta.bankaccounts.domain.value_objects.EventId;
 import com.jcondotta.bankaccounts.infrastructure.config.ClockTestFactory;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.AccountType;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.Currency;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.AccountHolderId;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.BankAccountId;
+import com.jcondotta.domain.identity.EventId;
 
 import java.time.Instant;
 import java.util.UUID;

@@ -1,10 +1,10 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.IdentityDocumentDetails;
-import com.jcondotta.bankaccounts.domain.value_objects.personal.IdentityDocument;
-import org.springframework.stereotype.Component;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.personal.IdentityDocument;
+import org.mapstruct.Mapper;
 
-@Component
+@Mapper(componentModel = "spring")
 public interface IdentityDocumentDetailsMapper {
 
   default IdentityDocumentDetails toDetails(IdentityDocument identityDocument) {

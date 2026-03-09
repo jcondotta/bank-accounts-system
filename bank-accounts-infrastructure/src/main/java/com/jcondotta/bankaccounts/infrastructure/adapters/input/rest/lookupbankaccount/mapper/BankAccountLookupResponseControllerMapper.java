@@ -2,10 +2,8 @@ package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbank
 
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDetails;
 import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.BankAccountDetailsResponse;
-import com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.lookupbankaccount.model.BankAccountLookupResponse;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 @Mapper(
@@ -15,11 +13,5 @@ import org.mapstruct.MappingConstants;
 )
 public interface BankAccountLookupResponseControllerMapper {
 
-    @Mapping(target = "bankAccount", source = "bankAccountDetails")
-    BankAccountLookupResponse toResponse(BankAccountDetails bankAccountDetails);
-
-    @Mapping(target = "bankAccountId", source = "bankAccountId.value")
-    @Mapping(target = "iban", source = "iban.value")
     BankAccountDetailsResponse toBankAccountDetailsResponse(BankAccountDetails bankAccountDetails);
-
 }

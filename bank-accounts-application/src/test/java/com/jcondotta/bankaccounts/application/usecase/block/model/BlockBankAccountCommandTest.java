@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.application.usecase.block.model;
 
-import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.BankAccountId;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,10 +1,10 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.kafka;
 
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountOpenedEventPublisher;
-import com.jcondotta.bankaccounts.domain.events.BankAccountOpenedEvent;
-import com.jcondotta.bankaccounts.domain.events.DomainEvent;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.BankAccountOpenedIntegrationEventMapper;
 import com.jcondotta.bankaccounts.infrastructure.properties.BankAccountOpenedTopicProperties;
+import com.jcondotta.banking.accounts.domain.bankaccount.events.BankAccountOpenedEvent;
+import com.jcondotta.domain.events.DomainEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -23,14 +23,14 @@ public class KafkaBankAccountOpenedEventPublisher implements BankAccountOpenedEv
   public void publish(DomainEvent event) {
     if (event instanceof BankAccountOpenedEvent bankAccountOpenedEvent) {
 
-      var bankAccountId = bankAccountOpenedEvent.bankAccountId().value();
+      var bankAccountId = bankAccountOpenedEvent.aggregateId().value();
       log.info(
         "Publishing BankAccountOpenedEvent to Kafka [topic={}, key={}]", topicProperties.topicName(), bankAccountId
       );
 
 //      var producerRecord = new ProducerRecord<String, Object>(
 //        topicProperties.topicName(),
-//        bankAccountId.toString(),
+//        id.toString(),
 //        messageMapper.toIntegrationEvent(bankAccountOpenedEvent, UUID.randomUUID().toString())
 //      );
 //

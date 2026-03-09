@@ -10,18 +10,16 @@
 	</parent>
 
 	<groupId>com.jcondotta</groupId>
-	<artifactId>bank-accounts-system</artifactId>
+	<artifactId>banking-system</artifactId>
 	<version>1.0.0</version>
 
 	<packaging>pom</packaging>
-	<name>bank-accounts-system</name>
+	<name>banking-system</name>
 
 	<modules>
-		<module>bank-accounts-domain</module>
-		<module>bank-accounts-application</module>
-		<module>bank-accounts-infrastructure</module>
-		<module>bank-accounts-contracts</module>
-		<module>bank-accounts-messaging</module>
+		<module>banking-core</module>
+		<module>accounts</module>
+		<module>recipients</module>
 	</modules>
 
 	<properties>
@@ -66,7 +64,19 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.jcondotta</groupId>
-				<artifactId>bank-accounts-domain</artifactId>
+				<artifactId>domain-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.jcondotta</groupId>
+				<artifactId>application-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.jcondotta</groupId>
+				<artifactId>accounts-domain</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

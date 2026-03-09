@@ -1,9 +1,5 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity;
 
-import com.jcondotta.bankaccounts.domain.enums.AccountHolderType;
-import com.jcondotta.bankaccounts.domain.enums.AccountStatus;
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.enums.EntityType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,18 +26,28 @@ public class BankingEntity {
   private EntityType entityType;
 
   private UUID bankAccountId;
-  private AccountType accountType;
-  private Currency currency;
+  private String accountType;
+  private String currency;
   private String iban;
-  private AccountStatus status;
+  private String status;
 
   private UUID accountHolderId;
-  private String accountHolderName;
-  private String passportNumber;
+  private String holderFirstName;
+  private String holderLastName;
+  private String documentType;
+  private String documentCountry;
+  private String documentNumber;
   private LocalDate dateOfBirth;
   private String email;
-  private AccountHolderType accountHolderType;
+  private String phoneNumber;
 
+  private String street;
+  private String streetNumber;
+  private String addressComplement;
+  private String postalCode;
+  private String city;
+
+  private String holderType;
   private Instant createdAt;
 
   @DynamoDbPartitionKey
@@ -61,18 +67,18 @@ public class BankingEntity {
     return entityType;
   }
 
-  @DynamoDbAttribute("bankAccountId")
+  @DynamoDbAttribute("id")
   public UUID getBankAccountId() {
     return bankAccountId;
   }
 
   @DynamoDbAttribute("accountType")
-  public AccountType getAccountType() {
+  public String getAccountType() {
     return accountType;
   }
 
   @DynamoDbAttribute("currency")
-  public Currency getCurrency() {
+  public String getCurrency() {
     return currency;
   }
 
@@ -82,7 +88,7 @@ public class BankingEntity {
   }
 
   @DynamoDbAttribute("accountStatus")
-  public AccountStatus getStatus() {
+  public String getStatus() {
     return status;
   }
 
@@ -91,14 +97,29 @@ public class BankingEntity {
     return accountHolderId;
   }
 
-  @DynamoDbAttribute("name")
-  public String getAccountHolderName() {
-    return accountHolderName;
+  @DynamoDbAttribute("holderFirstName")
+  public String getHolderFirstName() {
+    return holderFirstName;
   }
 
-  @DynamoDbAttribute("passportNumber")
-  public String getPassportNumber() {
-    return passportNumber;
+  @DynamoDbAttribute("holderLastName")
+  public String getHolderLastName() {
+    return holderLastName;
+  }
+
+  @DynamoDbAttribute("documentType")
+  public String getDocumentType() {
+    return documentType;
+  }
+
+  @DynamoDbAttribute("documentCountry")
+  public String getDocumentCountry() {
+    return documentCountry;
+  }
+
+  @DynamoDbAttribute("documentNumber")
+  public String getDocumentNumber() {
+    return documentNumber;
   }
 
   @DynamoDbAttribute("dateOfBirth")
@@ -111,21 +132,52 @@ public class BankingEntity {
     return email;
   }
 
-  @DynamoDbAttribute("accountHolderType")
-  public AccountHolderType getAccountHolderType() {
-    return accountHolderType;
+  @DynamoDbAttribute("phoneNumber")
+  public String getPhoneNumber() {
+    return phoneNumber;
   }
+
+  @DynamoDbAttribute("street")
+  public String getStreet() {
+    return street;
+  }
+
+  @DynamoDbAttribute("streetNumber")
+  public String getStreetNumber() {
+    return streetNumber;
+  }
+
+  @DynamoDbAttribute("addressComplement")
+  public String getAddressComplement() {
+    return addressComplement;
+  }
+
+  @DynamoDbAttribute("postalCode")
+  public String getPostalCode() {
+    return postalCode;
+  }
+
+  @DynamoDbAttribute("city")
+  public String getCity() {
+    return city;
+  }
+
+  @DynamoDbAttribute("holderType")
+  public String getHolderType() {
+    return holderType;
+  }
+
 
   @DynamoDbAttribute("createdAt")
   public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public boolean isEntityTypeBankAccount() {
+  public boolean isBankAccount() {
     return entityType == EntityType.BANK_ACCOUNT;
   }
 
-  public boolean isEntityTypeAccountHolder() {
+  public boolean isAccountHolder() {
     return entityType == EntityType.ACCOUNT_HOLDER;
   }
 }

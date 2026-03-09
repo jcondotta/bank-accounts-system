@@ -3,7 +3,7 @@ package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.AccountHolderDetails;
-import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.AccountHolder;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -28,7 +28,7 @@ class AccountHolderDetailsMapperTest {
     assertThat(details)
       .satisfies(holderDetails -> {
         assertThat(holderDetails.id()).isEqualTo(accountHolder.getId().value());
-        assertThat(holderDetails.accountHolderType()).isEqualTo(accountHolder.getAccountHolderType());
+        assertThat(holderDetails.type()).isEqualTo(accountHolder.getAccountHolderType());
         assertThat(holderDetails.createdAt()).isEqualTo(accountHolder.getCreatedAt());
 
         assertPersonalInfo(holderDetails, accountHolder);

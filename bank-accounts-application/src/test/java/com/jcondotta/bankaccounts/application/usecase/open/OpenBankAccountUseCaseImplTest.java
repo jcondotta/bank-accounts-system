@@ -3,15 +3,15 @@ package com.jcondotta.bankaccounts.application.usecase.open;
 import com.jcondotta.bankaccounts.application.argument_provider.AccountTypeAndCurrencyArgumentsProvider;
 import com.jcondotta.bankaccounts.application.command.open.OpenBankAccountUseCase;
 import com.jcondotta.bankaccounts.application.command.open.OpenBankAccountUseCaseImpl;
+import com.jcondotta.bankaccounts.application.command.open.model.OpenBankAccountCommand;
 import com.jcondotta.bankaccounts.application.fixtures.AccountHolderFixtures;
 import com.jcondotta.bankaccounts.application.fixtures.BankAccountTestFixture;
 import com.jcondotta.bankaccounts.application.ports.output.facade.IbanGeneratorFacade;
-import com.jcondotta.bankaccounts.application.command.open.model.OpenBankAccountCommand;
-import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
-import com.jcondotta.bankaccounts.domain.enums.AccountType;
-import com.jcondotta.bankaccounts.domain.enums.Currency;
-import com.jcondotta.bankaccounts.domain.repository.BankAccountRepository;
-import com.jcondotta.bankaccounts.domain.value_objects.Iban;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.BankAccount;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.AccountType;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.Currency;
+import com.jcondotta.banking.accounts.domain.bankaccount.repository.BankAccountRepository;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.Iban;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,7 +81,7 @@ class OpenBankAccountUseCaseImplTest {
         assertThat(bankAccount.getIban()).isEqualTo(GENERATED_IBAN);
         assertThat(bankAccount.getAccountStatus()).isEqualTo(BankAccount.ACCOUNT_STATUS_ON_OPENING);
         assertThat(bankAccount.getCreatedAt()).isNotNull();
-        assertThat(bankAccount.getAccountHolders())
+        assertThat(bankAccount.getActiveHolders())
           .hasSize(1)
           .singleElement()
           .satisfies(accountHolder -> {

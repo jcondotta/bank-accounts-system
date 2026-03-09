@@ -1,9 +1,9 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.kafka;
 
 import com.jcondotta.bankaccounts.application.ports.output.messaging.JointAccountHolderAddedEventPublisher;
-import com.jcondotta.bankaccounts.domain.events.DomainEvent;
-import com.jcondotta.bankaccounts.domain.events.JointAccountHolderAddedEvent;
 import com.jcondotta.bankaccounts.infrastructure.properties.JointAccountHolderAddedTopicProperties;
+import com.jcondotta.banking.accounts.domain.bankaccount.events.BankAccountJointHolderAddedEvent;
+import com.jcondotta.domain.events.DomainEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,17 +20,17 @@ public class KafkaJointAccountHolderAddedEventPublisher implements JointAccountH
 
   @Override
   public void publish(DomainEvent event) {
-    if (event instanceof JointAccountHolderAddedEvent jointAccountHolderAddedEvent) {
+    if (event instanceof BankAccountJointHolderAddedEvent bankAccountJointHolderAddedEvent) {
 
       log.info(
         "Publishing JointAccountHolderAddedEvent to Kafka [topic={}, key={}]",
         topicProperties.topicName(),
-        jointAccountHolderAddedEvent.bankAccountId()
+        bankAccountJointHolderAddedEvent.aggregateId()
       );
 
 //      var producerRecord = new ProducerRecord<String, Object>(
 //        topicProperties.topicName(),
-//        jointAccountHolderAddedEvent.bankAccountId().value().toString(),
+//        jointAccountHolderAddedEvent.id().value().toString(),
 //        messageMapper.toMessage(jointAccountHolderAddedEvent)
 //      );
 //

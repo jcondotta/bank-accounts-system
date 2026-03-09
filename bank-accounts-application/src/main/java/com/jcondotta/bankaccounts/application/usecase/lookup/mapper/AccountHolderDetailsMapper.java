@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.AccountHolderDetails;
-import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.AccountHolder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -17,7 +17,7 @@ public interface AccountHolderDetailsMapper {
   @Mapping(target = "personalInfo", source = "personalInfo")
   @Mapping(target = "contactInfo", source = "contactInfo")
   @Mapping(target = "address", source = "address")
-  @Mapping(target = "accountHolderType", source = "accountHolderType")
+  @Mapping(target = "type", source = "accountHolderType")
   @Mapping(target = "createdAt", source = "createdAt")
   AccountHolderDetails toDetails(AccountHolder accountHolder);
 }

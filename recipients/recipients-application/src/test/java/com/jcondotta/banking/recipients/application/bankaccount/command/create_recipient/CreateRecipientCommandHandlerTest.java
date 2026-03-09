@@ -80,7 +80,7 @@ class CreateRecipientCommandHandlerTest {
 
     assertThatThrownBy(() -> commandHandler.handle(command))
         .isInstanceOf(BankAccountNotFoundException.class)
-        .hasMessage(BankAccountNotFoundException.BANK_ACCOUNT_NOT_FOUND.formatted(BANK_ACCOUNT_ID));
+        .hasMessage(BankAccountNotFoundException.BANK_ACCOUNT_NOT_FOUND.formatted(BANK_ACCOUNT_ID.value()));
 
     verify(bankAccountRepository).findById(BANK_ACCOUNT_ID);
     verifyNoMoreInteractions(bankAccountRepository);

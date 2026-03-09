@@ -1,7 +1,7 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity;
 
-import com.jcondotta.bankaccounts.domain.value_objects.AccountHolderId;
-import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.AccountHolderId;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.BankAccountId;
 
 public final class AccountHolderEntityKey {
 

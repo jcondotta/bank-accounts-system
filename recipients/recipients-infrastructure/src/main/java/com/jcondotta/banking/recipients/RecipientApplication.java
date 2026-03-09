@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
-@SpringBootApplication(scanBasePackages = "com.jcondotta.banking.recipients")
+@SpringBootApplication(scanBasePackages = "com.jcondotta.banking")
 @ConfigurationPropertiesScan(basePackages = "com.jcondotta.banking.recipients.infrastructure.bankaccount.properties")
 public class RecipientApplication {
 

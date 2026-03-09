@@ -1,10 +1,10 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.kafka;
 
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountActivatedEventPublisher;
-import com.jcondotta.bankaccounts.domain.events.BankAccountActivatedEvent;
-import com.jcondotta.bankaccounts.domain.events.DomainEvent;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.BankAccountActivatedIntegrationEventMapper;
 import com.jcondotta.bankaccounts.infrastructure.properties.BankAccountActivatedTopicProperties;
+import com.jcondotta.banking.accounts.domain.bankaccount.events.BankAccountActivatedEvent;
+import com.jcondotta.domain.events.DomainEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -26,12 +26,12 @@ public class KafkaBankAccountActivatedEventPublisher implements BankAccountActiv
       log.info(
         "Publishing BankAccountActivatedEvent to Kafka [topic={}, key={}]",
         topicProperties.topicName(),
-        bankAccountActivatedEvent.bankAccountId()
+        bankAccountActivatedEvent.aggregateId()
       );
 
 //      var producerRecord = new ProducerRecord<String, Object>(
 //        topicProperties.topicName(),
-//        bankAccountActivatedEvent.bankAccountId().value().toString(),
+//        bankAccountActivatedEvent.id().value().toString(),
 //        messageMapper.toMessage(bankAccountActivatedEvent)
 //      );
 //

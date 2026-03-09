@@ -1,6 +1,6 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.input.rest.common.exception_handler;
 
-import com.jcondotta.bankaccounts.domain.exceptions.DomainNotFoundException;
+import com.jcondotta.domain.exception.DomainNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

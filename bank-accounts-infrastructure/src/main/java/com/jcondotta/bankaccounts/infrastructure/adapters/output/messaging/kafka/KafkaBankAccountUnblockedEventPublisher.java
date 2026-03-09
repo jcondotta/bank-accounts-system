@@ -1,10 +1,10 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.kafka;
 
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountUnblockedEventPublisher;
-import com.jcondotta.bankaccounts.domain.events.BankAccountUnblockedEvent;
-import com.jcondotta.bankaccounts.domain.events.DomainEvent;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.BankAccountUnblockedIntegrationEventMapper;
 import com.jcondotta.bankaccounts.infrastructure.properties.BankAccountUnblockedTopicProperties;
+import com.jcondotta.banking.accounts.domain.bankaccount.events.BankAccountUnblockedEvent;
+import com.jcondotta.domain.events.DomainEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -26,12 +26,12 @@ public class KafkaBankAccountUnblockedEventPublisher implements BankAccountUnblo
       log.info(
         "Publishing BankAccountUnblockedEvent to Kafka [topic={}, key={}]",
         topicProperties.topicName(),
-        bankAccountUnblockedEvent.bankAccountId()
+        bankAccountUnblockedEvent.aggregateId()
       );
 
 //      var producerRecord = new ProducerRecord<String, Object>(
 //        topicProperties.topicName(),
-//        bankAccountUnblockedEvent.bankAccountId().value().toString(),
+//        bankAccountUnblockedEvent.id().value().toString(),
 //        messageMapper.toMessage(bankAccountUnblockedEvent)
 //      );
 //

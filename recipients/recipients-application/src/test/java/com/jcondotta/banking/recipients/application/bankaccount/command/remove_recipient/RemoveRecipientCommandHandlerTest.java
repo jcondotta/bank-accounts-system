@@ -53,7 +53,7 @@ class RemoveRecipientCommandHandlerTest {
 
     commandHandler.handle(command);
 
-    assertThat(bankAccount.getRecipients()).isEmpty();
+    assertThat(bankAccount.getActiveRecipients()).isEmpty();
 
     verify(bankAccountRepository).findById(BANK_ACCOUNT_ID);
     verify(bankAccountRepository).save(bankAccount);
@@ -72,7 +72,7 @@ class RemoveRecipientCommandHandlerTest {
 
     assertThatThrownBy(() -> commandHandler.handle(command))
       .isInstanceOf(BankAccountNotFoundException.class)
-      .hasMessage(BankAccountNotFoundException.BANK_ACCOUNT_NOT_FOUND.formatted(BANK_ACCOUNT_ID));
+      .hasMessage(BankAccountNotFoundException.BANK_ACCOUNT_NOT_FOUND.formatted(BANK_ACCOUNT_ID.value()));
 
     verify(bankAccountRepository).findById(BANK_ACCOUNT_ID);
     verifyNoMoreInteractions(bankAccountRepository);

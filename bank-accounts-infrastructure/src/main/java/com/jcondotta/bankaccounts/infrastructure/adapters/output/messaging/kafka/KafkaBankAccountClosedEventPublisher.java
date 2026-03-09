@@ -1,9 +1,9 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.kafka;
 
 import com.jcondotta.bankaccounts.application.ports.output.messaging.BankAccountClosedEventPublisher;
-import com.jcondotta.bankaccounts.domain.events.BankAccountClosedEvent;
-import com.jcondotta.bankaccounts.domain.events.DomainEvent;
 import com.jcondotta.bankaccounts.infrastructure.properties.BankAccountClosedTopicProperties;
+import com.jcondotta.banking.accounts.domain.bankaccount.events.BankAccountClosedEvent;
+import com.jcondotta.domain.events.DomainEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -24,12 +24,12 @@ public class KafkaBankAccountClosedEventPublisher implements BankAccountClosedEv
       log.info(
         "Publishing BankAccountClosedEvent to Kafka [topic={}, key={}]",
         topicProperties.topicName(),
-        bankAccountClosedEvent.bankAccountId()
+        bankAccountClosedEvent.aggregateId()
       );
 
 //      var producerRecord = new ProducerRecord<String, Object>(
 //        topicProperties.topicName(),
-//        bankAccountClosedEvent.bankAccountId().value().toString(),
+//        bankAccountClosedEvent.id().value().toString(),
 //        messageMapper.toMessage(bankAccountClosedEvent)
 //      );
 //

@@ -2,7 +2,7 @@ package com.jcondotta.bankaccounts.application.usecase.lookup;
 
 
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.BankAccountDetails;
-import com.jcondotta.bankaccounts.domain.value_objects.BankAccountId;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.BankAccountId;
 
 public interface BankAccountLookupUseCase {
 

@@ -1,10 +1,10 @@
 package com.jcondotta.bankaccounts.application.usecase.lookup.mapper;
 
 import com.jcondotta.bankaccounts.application.usecase.lookup.model.ContactInfoDetails;
-import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
-import org.springframework.stereotype.Component;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.contact.ContactInfo;
+import org.mapstruct.Mapper;
 
-@Component
+@Mapper(componentModel = "spring")
 public interface ContactInfoDetailsMapper {
 
   default ContactInfoDetails toDetails(ContactInfo contactInfo) {

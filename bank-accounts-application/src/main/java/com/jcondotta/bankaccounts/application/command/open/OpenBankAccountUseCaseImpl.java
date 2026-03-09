@@ -1,10 +1,10 @@
 package com.jcondotta.bankaccounts.application.command.open;
 
-import com.jcondotta.bankaccounts.application.ports.output.facade.IbanGeneratorFacade;
 import com.jcondotta.bankaccounts.application.command.open.model.OpenBankAccountCommand;
 import com.jcondotta.bankaccounts.application.command.open.model.OpenBankAccountResult;
-import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
-import com.jcondotta.bankaccounts.domain.repository.BankAccountRepository;
+import com.jcondotta.bankaccounts.application.ports.output.facade.IbanGeneratorFacade;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.BankAccount;
+import com.jcondotta.banking.accounts.domain.bankaccount.repository.BankAccountRepository;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

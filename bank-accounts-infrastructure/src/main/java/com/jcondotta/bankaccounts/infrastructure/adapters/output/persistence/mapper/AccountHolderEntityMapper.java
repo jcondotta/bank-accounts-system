@@ -1,11 +1,20 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.mapper;
 
-import com.jcondotta.bankaccounts.domain.aggregates.AccountHolder;
-import com.jcondotta.bankaccounts.domain.aggregates.BankAccount;
-import com.jcondotta.bankaccounts.domain.value_objects.*;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.AccountHolderEntityKey;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.entity.BankingEntity;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.persistence.enums.EntityType;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.AccountHolder;
+import com.jcondotta.banking.accounts.domain.bankaccount.aggregate.BankAccount;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.DocumentCountry;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.DocumentType;
+import com.jcondotta.banking.accounts.domain.bankaccount.enums.HolderType;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.AccountHolderId;
+import com.jcondotta.banking.accounts.domain.bankaccount.identity.BankAccountId;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.address.*;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.contact.ContactInfo;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.contact.Email;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.contact.PhoneNumber;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.personal.*;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -14,28 +23,59 @@ public interface AccountHolderEntityMapper {
   default BankingEntity toAccountHolderEntity(BankAccountId bankAccountId, AccountHolder accountHolder) {
     return BankingEntity.builder()
       .partitionKey(AccountHolderEntityKey.partitionKey(bankAccountId))
-      .sortKey(AccountHolderEntityKey.sortKey(accountHolder.id()))
+      .sortKey(AccountHolderEntityKey.sortKey(accountHolder.getId()))
       .entityType(EntityType.ACCOUNT_HOLDER)
       .bankAccountId(bankAccountId.value())
-      .accountHolderId(accountHolder.id().value())
-      .accountHolderName(accountHolder.name().value())
-      .passportNumber(accountHolder.passportNumber().value())
-      .dateOfBirth(accountHolder.dateOfBirth().value())
-      .email(accountHolder.email().value())
-      .accountHolderType(accountHolder.accountHolderType())
-      .createdAt(accountHolder.createdAt())
+      .accountHolderId(accountHolder.getId().value())
+      .holderFirstName(accountHolder.getPersonalInfo().holderName().firstName())
+      .holderLastName(accountHolder.getPersonalInfo().holderName().lastName())
+      .documentType(accountHolder.getPersonalInfo().identityDocument().type().toString())
+      .documentCountry(accountHolder.getPersonalInfo().identityDocument().country().toString())
+      .documentNumber(accountHolder.getPersonalInfo().identityDocument().number().value())
+      .dateOfBirth(accountHolder.getPersonalInfo().dateOfBirth().value())
+      .email(accountHolder.getContactInfo().email().value())
+      .phoneNumber(accountHolder.getContactInfo().phoneNumber().value())
+      .street(accountHolder.getAddress().street().value())
+      .streetNumber(accountHolder.getAddress().streetNumber().value())
+      .addressComplement(accountHolder.getAddress().complement().value())
+      .postalCode(accountHolder.getAddress().postalCode().value())
+      .city(accountHolder.getAddress().city().value())
+      .holderType(accountHolder.getAccountHolderType().name())
+      .createdAt(accountHolder.getCreatedAt())
       .build();
   }
 
-  default AccountHolder toDomain(BankingEntity accountHolderEntity) {
+  default AccountHolder toDomain(BankingEntity entity) {
+    PersonalInfo personalInfo = PersonalInfo.of(
+      AccountHolderName.of(entity.getHolderFirstName(), entity.getHolderLastName()),
+      IdentityDocument.of(
+        DocumentCountry.SPAIN,
+        DocumentType.valueOf(entity.getDocumentType()),
+        DocumentNumber.of(entity.getDocumentNumber())
+      ),
+      DateOfBirth.of(entity.getDateOfBirth())
+    );
+
+    ContactInfo contactInfo = ContactInfo.of(
+      Email.of(entity.getEmail()),
+      PhoneNumber.of(entity.getPhoneNumber())
+    );
+
+    Address address = new Address(
+      Street.of(entity.getStreet()),
+      StreetNumber.of(entity.getStreetNumber()),
+      entity.getAddressComplement() != null ? AddressComplement.of(entity.getAddressComplement()) : null,
+      PostalCode.of(entity.getPostalCode()),
+      City.of(entity.getCity())
+    );
+
     return BankAccount.restoreAccountHolder(
-      AccountHolderId.of(accountHolderEntity.getAccountHolderId()),
-      AccountHolderName.of(accountHolderEntity.getAccountHolderName()),
-      PassportNumber.of(accountHolderEntity.getPassportNumber()),
-      DateOfBirth.of(accountHolderEntity.getDateOfBirth()),
-      Email.of(accountHolderEntity.getEmail()),
-      accountHolderEntity.getAccountHolderType(),
-      accountHolderEntity.getCreatedAt()
+      AccountHolderId.of(entity.getAccountHolderId()),
+      personalInfo,
+      contactInfo,
+      address,
+      HolderType.valueOf(entity.getHolderType()),
+      entity.getCreatedAt()
     );
   }
 }

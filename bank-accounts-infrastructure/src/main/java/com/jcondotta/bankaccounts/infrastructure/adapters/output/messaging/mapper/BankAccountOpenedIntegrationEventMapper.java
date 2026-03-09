@@ -4,7 +4,7 @@ import com.jcondotta.bankaccounts.contracts.IntegrationEvent;
 import com.jcondotta.bankaccounts.contracts.IntegrationEventMetadata;
 import com.jcondotta.bankaccounts.contracts.open.BankAccountOpenedIntegrationEvent;
 import com.jcondotta.bankaccounts.contracts.open.BankAccountOpenedIntegrationPayload;
-import com.jcondotta.bankaccounts.domain.events.BankAccountOpenedEvent;
+import com.jcondotta.banking.accounts.domain.bankaccount.events.BankAccountOpenedEvent;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,7 +18,7 @@ public class BankAccountOpenedIntegrationEventMapper extends AbstractDomainEvent
   protected IntegrationEvent<?> buildIntegrationEvent(BankAccountOpenedEvent event, IntegrationEventMetadata metadata) {
     BankAccountOpenedIntegrationPayload payload =
       new BankAccountOpenedIntegrationPayload(
-        event.bankAccountId().value(),
+        event.aggregateId().value(),
         event.accountType().name(),
         event.currency().name(),
         event.primaryAccountHolderId().value()

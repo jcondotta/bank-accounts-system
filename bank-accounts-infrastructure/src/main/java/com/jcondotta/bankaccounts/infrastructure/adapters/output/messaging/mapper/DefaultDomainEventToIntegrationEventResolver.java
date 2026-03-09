@@ -1,9 +1,9 @@
 package com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper;
 
 import com.jcondotta.bankaccounts.contracts.IntegrationEvent;
-import com.jcondotta.bankaccounts.domain.events.DomainEvent;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.exceptions.DomainEventMapperNotFoundException;
 import com.jcondotta.bankaccounts.infrastructure.adapters.output.messaging.mapper.exceptions.DuplicateDomainEventMapperException;
+import com.jcondotta.domain.events.DomainEvent;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

@@ -74,7 +74,7 @@ class BankAccountTest {
     var recipient = bankAccount.createRecipient(RECIPIENT_NAME, IBAN);
 
     bankAccount.removeRecipient(recipient.getId());
-    assertThat(bankAccount.getRecipients()).isEmpty();
+    assertThat(bankAccount.getActiveRecipients()).isEmpty();
   }
 
   @Test
@@ -109,7 +109,24 @@ class BankAccountTest {
   }
 
   @Test
-  void shouldReturnOnlyActiveRecipients_whenCallingGetRecipients() {
+  void shouldReturnAllRecipientsIncludingRemoved_whenCallingGetRecipients() {
+    var bankAccount = BankAccount.restore(BANK_ACCOUNT_ID, AccountStatus.ACTIVE, Recipients.empty());
+
+    var recipient1 = bankAccount.createRecipient(RECIPIENT_NAME, IBAN);
+
+    bankAccount.removeRecipient(recipient1.getId());
+
+    var anotherRecipientName = RecipientFixtures.PATRIZIO.toName();
+    var anotherIban = RecipientFixtures.PATRIZIO.toIban();
+
+    var recipient2 = bankAccount.createRecipient(anotherRecipientName, anotherIban);
+
+    assertThat(bankAccount.getRecipients())
+      .containsExactly(recipient1, recipient2);
+  }
+
+  @Test
+  void shouldReturnOnlyActiveRecipients_whenCallingGetActiveRecipients() {
     var bankAccount = BankAccount.restore(BANK_ACCOUNT_ID, AccountStatus.ACTIVE, Recipients.empty());
     var recipient1 = bankAccount.createRecipient(RECIPIENT_NAME, IBAN);
 
@@ -119,7 +136,7 @@ class BankAccountTest {
     var anotherIBAN = RecipientFixtures.PATRIZIO.toIban();
     Recipient recipient2 = bankAccount.createRecipient(anotherRecipientName, anotherIBAN);
 
-    assertThat(bankAccount.getRecipients())
+    assertThat(bankAccount.getActiveRecipients())
       .containsExactly(recipient2);
   }
 }

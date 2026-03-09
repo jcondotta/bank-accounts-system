@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.jcondotta</groupId>
-        <artifactId>bank-accounts-system</artifactId>
+        <artifactId>banking-system</artifactId>
         <version>1.0.0</version>
     </parent>
 
@@ -12,7 +12,7 @@
     <dependencies>
         <dependency>
             <groupId>com.jcondotta</groupId>
-            <artifactId>bank-accounts-domain</artifactId>
+            <artifactId>accounts-domain</artifactId>
         </dependency>
 
         <dependency>

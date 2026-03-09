@@ -26,7 +26,6 @@
         <dependency>
             <groupId>com.jcondotta</groupId>
             <artifactId>application-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>

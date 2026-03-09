@@ -1,8 +1,8 @@
 package com.jcondotta.bankaccounts.application.fixtures;
 
-import com.jcondotta.bankaccounts.domain.value_objects.contact.ContactInfo;
-import com.jcondotta.bankaccounts.domain.value_objects.contact.Email;
-import com.jcondotta.bankaccounts.domain.value_objects.contact.PhoneNumber;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.contact.ContactInfo;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.contact.Email;
+import com.jcondotta.banking.accounts.domain.bankaccount.value_objects.contact.PhoneNumber;
 
 public enum ContactInfoFixtures {
 
