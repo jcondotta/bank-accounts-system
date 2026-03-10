@@ -5,7 +5,7 @@ import com.jcondotta.banking.recipients.application.bankaccount.command.create_r
 import com.jcondotta.banking.recipients.domain.recipient.identity.RecipientId;
 import com.jcondotta.banking.recipients.domain.recipient.testsupport.RecipientFixtures;
 import com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.input.rest.create_recipient.model.CreateRecipientRestRequest;
-import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.RecipientURIProperties;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.AccountRecipientsURIProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +40,7 @@ class CreateRecipientControllerImplTest {
   private CommandHandlerWithResult<CreateRecipientCommand, RecipientId> commandHandler;
 
   @Mock
-  private RecipientURIProperties uriProperties;
+  private AccountRecipientsURIProperties uriProperties;
 
   @Captor
   private ArgumentCaptor<CreateRecipientCommand> commandCaptor;

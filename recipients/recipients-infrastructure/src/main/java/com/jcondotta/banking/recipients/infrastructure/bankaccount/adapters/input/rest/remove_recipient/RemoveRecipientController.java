@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.UUID;
 
-@RequestMapping("${api.v1.recipients.recipient-id-path}")
+@RequestMapping("${app.api.v1.recipients.recipient-id-path}")
 public interface RemoveRecipientController {
 
   @ResponseStatus(HttpStatus.NO_CONTENT)

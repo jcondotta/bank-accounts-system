@@ -7,7 +7,7 @@ import com.jcondotta.banking.recipients.domain.recipient.identity.RecipientId;
 import com.jcondotta.banking.recipients.domain.recipient.value_objects.Iban;
 import com.jcondotta.banking.recipients.domain.recipient.value_objects.RecipientName;
 import com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.input.rest.create_recipient.model.CreateRecipientRestRequest;
-import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.RecipientURIProperties;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.AccountRecipientsURIProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ import java.util.UUID;
 public class CreateRecipientControllerImpl implements CreateRecipientController {
 
   private final CommandHandlerWithResult<CreateRecipientCommand, RecipientId> commandHandler;
-  private final RecipientURIProperties uriProperties;
+  private final AccountRecipientsURIProperties uriProperties;
 
   @Override
   @ResponseStatus(HttpStatus.CREATED)

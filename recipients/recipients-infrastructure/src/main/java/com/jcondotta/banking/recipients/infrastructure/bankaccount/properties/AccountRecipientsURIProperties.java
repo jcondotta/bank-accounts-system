@@ -8,8 +8,8 @@ import java.net.URI;
 import java.util.UUID;
 
 @Validated
-@ConfigurationProperties(prefix = "api.v1.recipients")
-public record RecipientURIProperties(
+@ConfigurationProperties(prefix = "app.api.v1.recipients")
+public record AccountRecipientsURIProperties(
     @NotBlank String rootPath, @NotBlank String recipientIdPath) {
 
   public URI recipientsURI(UUID bankAccountId) {

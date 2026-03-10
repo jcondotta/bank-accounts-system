@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.UUID;
 
-@RequestMapping("${api.v1.recipients.root-path}")
+@RequestMapping("${app.api.v1.recipients.root-path}")
 public interface ListRecipientsController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

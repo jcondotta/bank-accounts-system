@@ -12,8 +12,9 @@ import com.jcondotta.banking.recipients.domain.recipient.identity.BankAccountId;
 import com.jcondotta.banking.recipients.domain.recipient.repository.BankAccountRepository;
 import com.jcondotta.banking.recipients.domain.recipient.testsupport.RecipientFixtures;
 import com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.input.rest.create_recipient.model.CreateRecipientRestRequest;
-import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.RecipientURIProperties;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.AccountRecipientsURIProperties;
 import com.jcondotta.banking.recipients.infrastructure.bankaccount.testsupport.argument_provider.BlankValuesArgumentProvider;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.testsupport.container.KafkaTestContainer;
 import com.jcondotta.banking.recipients.infrastructure.bankaccount.testsupport.container.LocalStackTestContainer;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -44,7 +45,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ActiveProfiles("test")
-@ContextConfiguration(initializers = { LocalStackTestContainer.class })
+@ContextConfiguration(initializers = { LocalStackTestContainer.class, KafkaTestContainer.class })
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class CreateRecipientControllerImplIT {
 
@@ -55,7 +56,7 @@ class CreateRecipientControllerImplIT {
   private BankAccountRepository bankAccountRepository;
 
   @Autowired
-  private RecipientURIProperties uriProperties;
+  private AccountRecipientsURIProperties uriProperties;
 
   private UUID bankAccountId;
   private String recipientName;

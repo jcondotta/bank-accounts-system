@@ -9,7 +9,8 @@ import com.jcondotta.banking.recipients.application.bankaccount.query.model.Reci
 import com.jcondotta.banking.recipients.domain.recipient.identity.BankAccountId;
 import com.jcondotta.banking.recipients.domain.recipient.identity.RecipientId;
 import com.jcondotta.banking.recipients.domain.recipient.testsupport.RecipientFixtures;
-import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.RecipientURIProperties;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.AccountRecipientsURIProperties;
+import com.jcondotta.banking.recipients.infrastructure.bankaccount.testsupport.container.KafkaTestContainer;
 import com.jcondotta.banking.recipients.infrastructure.bankaccount.testsupport.container.LocalStackTestContainer;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -32,7 +33,7 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
-@ContextConfiguration(initializers = {LocalStackTestContainer.class})
+@ContextConfiguration(initializers = { LocalStackTestContainer.class, KafkaTestContainer.class })
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class ListRecipientsControllerImplIT {
 
@@ -46,7 +47,7 @@ class ListRecipientsControllerImplIT {
   private CommandHandler<RemoveRecipientCommand> removeRecipientHandler;
 
   @Autowired
-  private RecipientURIProperties uriProperties;
+  private AccountRecipientsURIProperties uriProperties;
 
   private BankAccountId bankAccountId;
 

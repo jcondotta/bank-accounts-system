@@ -1,5 +1,6 @@
-app:
-  environment: ${APPLICATION_ENV:local}
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
 
 cloud:
   aws:
@@ -13,3 +14,15 @@ cloud:
       tables:
         account-recipients:
           table-name: ${AWS_DYNAMODB_ACCOUNT_RECIPIENTS_TABLE_NAME:account-recipients}
+
+app:
+  environment: local
+  api:
+    v1:
+      recipients:
+        root-path: '/api/v1/bank-accounts/{bank-account-id}/recipients'
+        recipient-id-path: '/api/v1/bank-accounts/{bank-account-id}/recipients/{recipient-id}'
+  kafka:
+    topics:
+      bank-account-activated:
+        topic-name: ${KAFKA_BANK_ACCOUNT_ACTIVATED_TOPIC_NAME:bank-account-activated}
