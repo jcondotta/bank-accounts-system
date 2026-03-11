@@ -20,6 +20,7 @@
 		<module>banking-core</module>
 		<module>accounts</module>
 		<module>recipients</module>
+		<module>bank-accounts-contracts</module>
 	</modules>
 
 	<properties>

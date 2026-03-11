@@ -5,7 +5,6 @@ import com.jcondotta.banking.recipients.domain.recipient.exceptions.BankAccountN
 import com.jcondotta.banking.recipients.domain.recipient.identity.BankAccountId;
 import com.jcondotta.banking.recipients.domain.recipient.identity.RecipientId;
 import com.jcondotta.banking.recipients.domain.recipient.repository.BankAccountRepository;
-import com.jcondotta.banking.recipients.domain.recipient.testsupport.BankAccountBuilder;
 import com.jcondotta.banking.recipients.domain.recipient.testsupport.BankAccountFixtures;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,9 +36,7 @@ class RemoveRecipientCommandHandlerTest {
 
   @Test
   void shouldRemoveRecipient_whenCommandIsValidAndBankAccountExists() {
-    BankAccount bankAccount = BankAccountBuilder
-      .from(BankAccountFixtures.ACCOUNT_WITH_JEFFERSON)
-      .build();
+    BankAccount bankAccount = BankAccountFixtures.WITH_ONE_RECIPIENT.create();
 
     when(bankAccountRepository.findById(BANK_ACCOUNT_ID))
       .thenReturn(Optional.of(bankAccount));

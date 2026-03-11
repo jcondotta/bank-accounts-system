@@ -1,7 +1,7 @@
-package com.jcondotta.bankaccounts.contracts.activate;
+package com.jcondotta.banking.contracts.activate;
 
-import com.jcondotta.bankaccounts.contracts.DefaultIntegrationEventMetadata;
-import com.jcondotta.bankaccounts.contracts.IntegrationEvent;
+import com.jcondotta.banking.contracts.DefaultIntegrationEventMetadata;
+import com.jcondotta.banking.contracts.IntegrationEvent;
 
 public record BankAccountActivatedIntegrationEvent(DefaultIntegrationEventMetadata metadata, BankAccountActivatedIntegrationPayload payload)
   implements IntegrationEvent<BankAccountActivatedIntegrationPayload> {

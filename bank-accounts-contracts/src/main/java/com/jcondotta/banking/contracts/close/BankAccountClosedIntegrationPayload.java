@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.contracts.close;
+package com.jcondotta.banking.contracts.close;
 
 import java.util.UUID;
 

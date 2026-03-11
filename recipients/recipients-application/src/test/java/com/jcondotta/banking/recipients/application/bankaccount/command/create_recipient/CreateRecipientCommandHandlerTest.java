@@ -5,7 +5,6 @@ import com.jcondotta.banking.recipients.domain.recipient.exceptions.BankAccountN
 import com.jcondotta.banking.recipients.domain.recipient.exceptions.DuplicateRecipientException;
 import com.jcondotta.banking.recipients.domain.recipient.identity.BankAccountId;
 import com.jcondotta.banking.recipients.domain.recipient.repository.BankAccountRepository;
-import com.jcondotta.banking.recipients.domain.recipient.testsupport.BankAccountBuilder;
 import com.jcondotta.banking.recipients.domain.recipient.testsupport.BankAccountFixtures;
 import com.jcondotta.banking.recipients.domain.recipient.testsupport.RecipientFixtures;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,12 +87,12 @@ class CreateRecipientCommandHandlerTest {
 
   @Test
   void shouldThrowDuplicateRecipientException_whenIbanAlreadyExists() {
-    BankAccount bankAccount = BankAccountBuilder.from(BankAccountFixtures.ACCOUNT_WITH_JEFFERSON).build();
+    var recipientFixture = RecipientFixtures.JEFFERSON;
+    var bankAccount = BankAccountFixtures.create(recipientFixture);
 
     when(bankAccountRepository.findById(BANK_ACCOUNT_ID))
       .thenReturn(Optional.of(bankAccount));
 
-    var recipientFixture = RecipientFixtures.JEFFERSON;
     var command = new CreateRecipientCommand(
       BANK_ACCOUNT_ID,
       recipientFixture.toName(),

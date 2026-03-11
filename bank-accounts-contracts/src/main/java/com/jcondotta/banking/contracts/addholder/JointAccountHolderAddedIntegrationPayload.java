@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.contracts.addholder;
+package com.jcondotta.banking.contracts.addholder;
 
 import java.util.UUID;
 

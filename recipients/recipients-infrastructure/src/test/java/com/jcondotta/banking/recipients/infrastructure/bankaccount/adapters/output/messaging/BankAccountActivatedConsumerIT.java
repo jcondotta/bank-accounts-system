@@ -1,8 +1,8 @@
 package com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.output.messaging;
 
-import com.jcondotta.bankaccounts.contracts.DefaultIntegrationEventMetadata;
-import com.jcondotta.bankaccounts.contracts.activate.BankAccountActivatedIntegrationEvent;
-import com.jcondotta.bankaccounts.contracts.activate.BankAccountActivatedIntegrationPayload;
+import com.jcondotta.banking.contracts.DefaultIntegrationEventMetadata;
+import com.jcondotta.banking.contracts.activate.BankAccountActivatedIntegrationEvent;
+import com.jcondotta.banking.contracts.activate.BankAccountActivatedIntegrationPayload;
 import com.jcondotta.banking.recipients.domain.recipient.identity.BankAccountId;
 import com.jcondotta.banking.recipients.domain.recipient.repository.BankAccountRepository;
 import com.jcondotta.banking.recipients.infrastructure.bankaccount.properties.BankAccountActivatedTopicProperties;
@@ -36,22 +36,47 @@ class BankAccountActivatedConsumerIT {
   @Autowired
   private BankAccountRepository repository;
 
+  private final UUID bankAccountId = UUID.randomUUID();
+  private final UUID eventId = UUID.randomUUID();
+  private final UUID correlationId = UUID.randomUUID();
+
   @Test
   void shouldCreateBankAccount_whenBankAccountActivatedEventIsPublished() {
-
-    var bankAccountId = UUID.randomUUID();
-
-    var metadata = new DefaultIntegrationEventMetadata(
-      UUID.randomUUID(),
-      UUID.randomUUID(),
+    var eventMetadata = DefaultIntegrationEventMetadata.create(
+      eventId,
+      correlationId,
       "BANK_ACCOUNT_ACTIVATED",
       1,
       Instant.now()
     );
 
     var payload = new BankAccountActivatedIntegrationPayload(bankAccountId);
-    var event = new BankAccountActivatedIntegrationEvent(metadata, payload);
+    var event = new BankAccountActivatedIntegrationEvent(eventMetadata, payload);
 
+    kafkaTemplate.send(topicProperties.topicName(), event);
+
+    Awaitility.await()
+      .atMost(Duration.ofSeconds(5))
+      .untilAsserted(() -> {
+        var account = repository.findById(new BankAccountId(bankAccountId));
+        assertThat(account).isPresent();
+      });
+  }
+
+  @Test
+  void shouldNotCreateDuplicateBankAccount_whenEventIsPublishedTwice() {
+    var eventMetadata = DefaultIntegrationEventMetadata.create(
+      eventId,
+      correlationId,
+      "BANK_ACCOUNT_ACTIVATED",
+      1,
+      Instant.now()
+    );
+
+    var payload = new BankAccountActivatedIntegrationPayload(bankAccountId);
+    var event = new BankAccountActivatedIntegrationEvent(eventMetadata, payload);
+
+    kafkaTemplate.send(topicProperties.topicName(), event);
     kafkaTemplate.send(topicProperties.topicName(), event);
 
     Awaitility.await()

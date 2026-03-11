@@ -1,7 +1,7 @@
-package com.jcondotta.bankaccounts.contracts.close;
+package com.jcondotta.banking.contracts.close;
 
-import com.jcondotta.bankaccounts.contracts.IntegrationEvent;
-import com.jcondotta.bankaccounts.contracts.IntegrationEventMetadata;
+import com.jcondotta.banking.contracts.IntegrationEvent;
+import com.jcondotta.banking.contracts.IntegrationEventMetadata;
 
 public record BankAccountClosedIntegrationEvent(IntegrationEventMetadata metadata, BankAccountClosedIntegrationPayload payload)
   implements IntegrationEvent<BankAccountClosedIntegrationPayload> {

@@ -1,6 +1,6 @@
 package com.jcondotta.banking.recipients.infrastructure.bankaccount.adapters.output.messaging;
 
-import com.jcondotta.bankaccounts.contracts.activate.BankAccountActivatedIntegrationEvent;
+import com.jcondotta.banking.contracts.activate.BankAccountActivatedIntegrationEvent;
 import com.jcondotta.banking.recipients.application.bankaccount.command.register.RegisterBankAccountCommand;
 import com.jcondotta.banking.recipients.application.bankaccount.command.register.RegisterBankAccountCommandHandler;
 import com.jcondotta.banking.recipients.domain.recipient.identity.BankAccountId;

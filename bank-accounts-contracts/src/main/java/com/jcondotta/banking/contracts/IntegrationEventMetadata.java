@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.contracts;
+package com.jcondotta.banking.contracts;
 
 import java.time.Instant;
 import java.util.UUID;

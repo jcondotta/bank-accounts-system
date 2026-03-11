@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.contracts.unblock;
+package com.jcondotta.banking.contracts.unblock;
 
 import java.util.UUID;
 

@@ -1,7 +1,7 @@
-package com.jcondotta.bankaccounts.contracts.addholder;
+package com.jcondotta.banking.contracts.addholder;
 
-import com.jcondotta.bankaccounts.contracts.IntegrationEvent;
-import com.jcondotta.bankaccounts.contracts.IntegrationEventMetadata;
+import com.jcondotta.banking.contracts.IntegrationEvent;
+import com.jcondotta.banking.contracts.IntegrationEventMetadata;
 
 public record JointAccountHolderAddedIntegrationEvent(IntegrationEventMetadata metadata, JointAccountHolderAddedIntegrationPayload payload)
   implements IntegrationEvent<JointAccountHolderAddedIntegrationPayload> {

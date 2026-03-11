@@ -1,4 +1,4 @@
-package com.jcondotta.bankaccounts.contracts;
+package com.jcondotta.banking.contracts;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -6,7 +6,6 @@ import java.util.UUID;
 import static java.util.Objects.requireNonNull;
 
 public record DefaultIntegrationEventMetadata(
-
   UUID eventId,
   UUID correlationId,
   String eventType,

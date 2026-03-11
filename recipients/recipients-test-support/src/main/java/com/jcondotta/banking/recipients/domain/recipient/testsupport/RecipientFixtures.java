@@ -1,8 +1,12 @@
 package com.jcondotta.banking.recipients.domain.recipient.testsupport;
 
 import com.jcondotta.banking.recipients.domain.recipient.aggregate.Recipient;
+import com.jcondotta.banking.recipients.domain.recipient.enums.RecipientStatus;
+import com.jcondotta.banking.recipients.domain.recipient.identity.RecipientId;
 import com.jcondotta.banking.recipients.domain.recipient.value_objects.Iban;
 import com.jcondotta.banking.recipients.domain.recipient.value_objects.RecipientName;
+
+import java.time.Instant;
 
 public enum RecipientFixtures {
 
@@ -27,6 +31,12 @@ public enum RecipientFixtures {
   }
 
   public Recipient toRecipient() {
-    return RecipientBuilder.from(this).build();
+    return Recipient.restore(
+        RecipientId.newId(),
+        toName(),
+        toIban(),
+        RecipientStatus.ACTIVE,
+        Instant.now(ClockTestFactory.FIXED_CLOCK)
+    );
   }
 }

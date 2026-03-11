@@ -11,9 +11,9 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: "*"
+        spring.json.trusted.packages: "com.jcondotta.banking.*"
         spring.json.write-dates-as-timestamps: false
-        spring.json.value.default.type: com.jcondotta.bankaccounts.contracts.activate.BankAccountActivatedIntegrationEvent
+        spring.json.value.default.type: com.jcondotta.banking.contracts.activate.BankAccountActivatedIntegrationEvent
 
 cloud:
   aws:

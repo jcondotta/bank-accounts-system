@@ -6,6 +6,8 @@ spring:
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#    listener:
+#      auto-startup: false
 
 cloud:
   aws:
